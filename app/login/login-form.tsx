@@ -18,31 +18,49 @@ export default function LoginForm() {
   return (
     <form
       action={formAction}
-      className="login-form"
+      className="login-form-v2"
       autoComplete="off"
     >
-      <div className="field">
+      <div className="login-field">
         <label htmlFor="nip">NIP</label>
 
-        <input
-          id="nip"
-          name="nip"
-          type="text"
-          inputMode="numeric"
-          maxLength={9}
-          placeholder="Masukkan NIP 9 digit"
-          autoComplete="off"
-          required
-        />
+        <div className="login-input-wrap">
+          <input
+            id="nip"
+            name="nip"
+            type="text"
+            inputMode="numeric"
+            maxLength={9}
+            placeholder="Masukkan NIP 9 digit"
+            autoComplete="off"
+            required
+          />
+
+          <span className="login-input-index">01</span>
+        </div>
       </div>
 
       {state.error ? (
-        <p className="form-error">{state.error}</p>
+        <p className="login-form-error" role="alert">
+          {state.error}
+        </p>
       ) : null}
 
-      <button type="submit" disabled={pending}>
-        {pending ? "Memeriksa..." : "Masuk"}
+      <button
+        className="login-submit"
+        type="submit"
+        disabled={pending}
+      >
+        <span>{pending ? "Memeriksa..." : "Masuk"}</span>
+
+        <span className="login-submit-arrow" aria-hidden="true">
+          →
+        </span>
       </button>
+
+      <p className="login-helper">
+        Gunakan NIP yang telah terdaftar sebagai peserta ATLANTIK RUN.
+      </p>
     </form>
   );
 }
