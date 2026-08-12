@@ -9600,3 +9600,45 @@ th:nth-child(3) {
     display: none;
   }
 }
+
+.admin-verify-mobile-back {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .admin-verify-mobile-back {
+    display: inline-flex;
+
+    width: fit-content;
+
+    min-height: 36px;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    margin-bottom: 18px;
+
+    padding:
+      0
+      11px;
+
+    border:
+      1px solid
+      rgba(159, 103, 255, 0.2);
+
+    border-radius: 10px;
+
+    background:
+      rgba(139, 92, 246, 0.07);
+
+    color:
+      var(--run-purple-soft);
+
+    font-size: 9px;
+    font-weight: 600;
+
+    text-decoration: none;
+  }
+}
