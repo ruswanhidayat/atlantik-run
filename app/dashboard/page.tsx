@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import {
   getGeneralStats,
+  getIndividualLeaderboard,
   getPersonalStats,
   getSubditGenderLeaderboard,
 } from "@/lib/dashboard";
@@ -57,6 +58,7 @@ export default async function DashboardPage() {
     personalStats,
     generalStats,
     subditLeaderboard,
+    individualLeaderboard,
   ] = await Promise.all([
     sql`
       SELECT DISTINCT ON (tanggal)
@@ -76,6 +78,8 @@ export default async function DashboardPage() {
     getGeneralStats(),
 
     getSubditGenderLeaderboard(),
+
+    getIndividualLeaderboard(),
   ]);
 
   const activityMap =
@@ -108,6 +112,16 @@ export default async function DashboardPage() {
 
   const femaleSubditLeaderboard =
     subditLeaderboard.filter(
+      (row) => row.gender === "F"
+    );
+
+  const maleIndividualLeaderboard =
+    individualLeaderboard.filter(
+      (row) => row.gender === "M"
+    );
+
+  const femaleIndividualLeaderboard =
+    individualLeaderboard.filter(
       (row) => row.gender === "F"
     );
 
@@ -151,6 +165,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
+        {/* RECAP SAYA */}
         <section className="personal-recap">
           <div className="section-heading">
             <div>
@@ -211,6 +226,7 @@ export default async function DashboardPage() {
           </div>
         </section>
 
+        {/* AKTIVITAS SAYA */}
         <section className="activity-section">
           <div className="section-heading">
             <div>
@@ -258,6 +274,7 @@ export default async function DashboardPage() {
           </div>
         </section>
 
+        {/* STATISTIK UMUM */}
         <section className="general-stats-section">
           <div className="section-heading">
             <div>
@@ -296,6 +313,7 @@ export default async function DashboardPage() {
           </div>
         </section>
 
+        {/* LEADERBOARD SUBDIT */}
         <section className="leaderboard-section">
           <div className="section-heading">
             <div>
@@ -311,6 +329,7 @@ export default async function DashboardPage() {
           </div>
 
           <div className="leaderboard-gender-grid">
+            {/* SUBDIT PRIA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
@@ -374,11 +393,23 @@ export default async function DashboardPage() {
                         </tr>
                       )
                     )}
+
+                    {maleSubditLeaderboard.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={4}
+                          className="table-empty"
+                        >
+                          Belum ada data.
+                        </td>
+                      </tr>
+                    ) : null}
                   </tbody>
                 </table>
               </div>
             </section>
 
+            {/* SUBDIT WANITA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
@@ -442,6 +473,181 @@ export default async function DashboardPage() {
                         </tr>
                       )
                     )}
+
+                    {femaleSubditLeaderboard.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={4}
+                          className="table-empty"
+                        >
+                          Belum ada data.
+                        </td>
+                      </tr>
+                    ) : null}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        {/* LEADERBOARD INDIVIDUAL */}
+        <section className="leaderboard-section">
+          <div className="section-heading">
+            <div>
+              <h2>
+                Leaderboard Individual
+              </h2>
+
+              <p>
+                Peringkat individu berdasarkan total jarak
+                aktivitas Approved.
+              </p>
+            </div>
+          </div>
+
+          <div className="leaderboard-gender-grid">
+            {/* INDIVIDUAL PRIA */}
+            <section className="leaderboard-card">
+              <div className="leaderboard-card-header">
+                <div>
+                  <span className="leaderboard-label">
+                    Individual
+                  </span>
+
+                  <h3>Pria</h3>
+                </div>
+              </div>
+
+              <div className="leaderboard-table-wrap">
+                <table className="leaderboard-table individual-leaderboard-table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Overall</th>
+                      <th>Nama</th>
+                      <th>Subdit</th>
+                      <th>Jarak</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {maleIndividualLeaderboard.map(
+                      (row) => (
+                        <tr key={row.nip}>
+                          <td>
+                            <strong>
+                              #{row.genderRank}
+                            </strong>
+                          </td>
+
+                          <td>
+                            #{row.overallRank}
+                          </td>
+
+                          <td>
+                            <strong>
+                              {row.nama}
+                            </strong>
+                          </td>
+
+                          <td>
+                            {row.subdit}
+                          </td>
+
+                          <td>
+                            {formatDistance(
+                              row.totalDistance
+                            )}{" "}
+                            km
+                          </td>
+                        </tr>
+                      )
+                    )}
+
+                    {maleIndividualLeaderboard.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={5}
+                          className="table-empty"
+                        >
+                          Belum ada data Approved.
+                        </td>
+                      </tr>
+                    ) : null}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            {/* INDIVIDUAL WANITA */}
+            <section className="leaderboard-card">
+              <div className="leaderboard-card-header">
+                <div>
+                  <span className="leaderboard-label">
+                    Individual
+                  </span>
+
+                  <h3>Wanita</h3>
+                </div>
+              </div>
+
+              <div className="leaderboard-table-wrap">
+                <table className="leaderboard-table individual-leaderboard-table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Overall</th>
+                      <th>Nama</th>
+                      <th>Subdit</th>
+                      <th>Jarak</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {femaleIndividualLeaderboard.map(
+                      (row) => (
+                        <tr key={row.nip}>
+                          <td>
+                            <strong>
+                              #{row.genderRank}
+                            </strong>
+                          </td>
+
+                          <td>
+                            #{row.overallRank}
+                          </td>
+
+                          <td>
+                            <strong>
+                              {row.nama}
+                            </strong>
+                          </td>
+
+                          <td>
+                            {row.subdit}
+                          </td>
+
+                          <td>
+                            {formatDistance(
+                              row.totalDistance
+                            )}{" "}
+                            km
+                          </td>
+                        </tr>
+                      )
+                    )}
+
+                    {femaleIndividualLeaderboard.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={5}
+                          className="table-empty"
+                        >
+                          Belum ada data Approved.
+                        </td>
+                      </tr>
+                    ) : null}
                   </tbody>
                 </table>
               </div>

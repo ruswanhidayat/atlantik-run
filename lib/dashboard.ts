@@ -229,3 +229,92 @@ export async function getSubditGenderLeaderboard(): Promise<
     };
   });
 }
+
+export type IndividualLeaderboardRow = {
+  nip: string;
+  nama: string;
+  subdit: string;
+  gender: "M" | "F";
+  totalDistance: number;
+  genderRank: number;
+  overallRank: number;
+};
+
+export async function getIndividualLeaderboard(): Promise<
+  IndividualLeaderboardRow[]
+> {
+  const rows = await sql`
+    WITH totals AS (
+      SELECT
+        u.nip,
+        u.nama,
+        u.subdit,
+        u.gender,
+        COALESCE(
+          SUM(ra.jarak) FILTER (WHERE ra.status = 1),
+          0
+        )::numeric AS total_distance
+
+      FROM users u
+
+      LEFT JOIN run_activities ra
+        ON ra.nip = u.nip
+
+      GROUP BY
+        u.nip,
+        u.nama,
+        u.subdit,
+        u.gender
+    ),
+
+    eligible AS (
+      SELECT *
+      FROM totals
+      WHERE total_distance > 0
+    ),
+
+    ranked AS (
+      SELECT
+        nip,
+        nama,
+        subdit,
+        gender,
+        total_distance,
+
+        RANK() OVER (
+          ORDER BY total_distance DESC
+        ) AS overall_rank,
+
+        RANK() OVER (
+          PARTITION BY gender
+          ORDER BY total_distance DESC
+        ) AS gender_rank
+
+      FROM eligible
+    )
+
+    SELECT
+      nip,
+      nama,
+      subdit,
+      gender,
+      total_distance,
+      gender_rank,
+      overall_rank
+    FROM ranked
+    ORDER BY
+      gender ASC,
+      gender_rank ASC,
+      nama ASC
+  `;
+
+  return rows.map((row) => ({
+    nip: String(row.nip).trim(),
+    nama: String(row.nama),
+    subdit: String(row.subdit),
+    gender: row.gender as "M" | "F",
+    totalDistance: Number(row.total_distance),
+    genderRank: Number(row.gender_rank),
+    overallRank: Number(row.overall_rank),
+  }));
+}

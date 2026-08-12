@@ -865,3 +865,12 @@ p {
     grid-template-columns: 1fr;
   }
 }
+
+.individual-leaderboard-table {
+  min-width: 560px;
+}
+
+.individual-leaderboard-table td:nth-child(1),
+.individual-leaderboard-table td:nth-child(2) {
+  white-space: nowrap;
+}
