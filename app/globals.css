@@ -9788,3 +9788,35 @@ th:nth-child(3) {
     margin: 0 !important;
   }
 }
+
+.admin-table-scroll-hint {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .admin-table-scroll-hint {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    margin-bottom: 8px;
+
+    color:
+      var(--run-muted-dark);
+
+    font-size: 8px;
+    font-weight: 500;
+
+    letter-spacing: 0.02em;
+  }
+
+  .admin-table-scroll-hint span {
+    color:
+      var(--run-purple-soft);
+
+    font-size: 10px;
+  }
+}

@@ -356,6 +356,14 @@ export default function ActivitiesTable({
         )}
       </div>
 
+      <div className="admin-table-scroll-hint">
+        <span aria-hidden="true">←</span>
+        Geser tabel untuk melihat data lengkap
+        <span aria-hidden="true">→</span>
+      </div>
+
+      <div className="admin-table-wrap-v2">
+
       {/* TABLE */}
       <div className="admin-table-wrap-v2">
         <table className="admin-table-v2">
