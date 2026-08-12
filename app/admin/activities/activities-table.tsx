@@ -22,12 +22,14 @@ type ActivitiesTableProps = {
 function getStatusLabel(status: number) {
   if (status === 0) return "Pending";
   if (status === 1) return "Approved";
+
   return "Rejected";
 }
 
 function getStatusClass(status: number) {
   if (status === 0) return "status-pending";
   if (status === 1) return "status-approved";
+
   return "status-rejected";
 }
 
@@ -120,27 +122,60 @@ export default function ActivitiesTable({
     setTanggal("");
   }
 
+  const hasActiveFilter =
+    search !== "" ||
+    status !== "" ||
+    subdit !== "" ||
+    gender !== "" ||
+    tanggal !== "";
+
   return (
-    <>
-      <section className="admin-filters">
-        <div className="filter-search">
+    <section className="admin-data-section-v2">
+      <div className="admin-data-section-heading">
+        <div>
+          <span className="dashboard-section-kicker">
+            DATA AKTIVITAS
+          </span>
+
+          <h2>Daftar Perekaman</h2>
+        </div>
+
+        <span className="admin-result-count">
+          {filteredActivities.length} / {activities.length}
+        </span>
+      </div>
+
+      <section className="admin-filters-v2">
+        <div className="admin-filter-field admin-filter-search">
           <label htmlFor="admin-search">
             Cari
           </label>
 
-          <input
-            id="admin-search"
-            type="text"
-            value={search}
-            onChange={(event) =>
-              setSearch(event.target.value)
-            }
-            placeholder="Nama atau NIP"
-            autoComplete="off"
-          />
+          <div className="admin-filter-input-wrap">
+            <span
+              className="admin-filter-search-icon"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="6" />
+                <path d="m16 16 4 4" />
+              </svg>
+            </span>
+
+            <input
+              id="admin-search"
+              type="text"
+              value={search}
+              onChange={(event) =>
+                setSearch(event.target.value)
+              }
+              placeholder="Nama atau NIP"
+              autoComplete="off"
+            />
+          </div>
         </div>
 
-        <div>
+        <div className="admin-filter-field">
           <label htmlFor="filter-status">
             Status
           </label>
@@ -152,22 +187,14 @@ export default function ActivitiesTable({
               setStatus(event.target.value)
             }
           >
-            <option value="">
-              Semua
-            </option>
-            <option value="0">
-              Pending
-            </option>
-            <option value="1">
-              Approved
-            </option>
-            <option value="2">
-              Rejected
-            </option>
+            <option value="">Semua</option>
+            <option value="0">Pending</option>
+            <option value="1">Approved</option>
+            <option value="2">Rejected</option>
           </select>
         </div>
 
-        <div>
+        <div className="admin-filter-field">
           <label htmlFor="filter-subdit">
             Subdit
           </label>
@@ -179,9 +206,7 @@ export default function ActivitiesTable({
               setSubdit(event.target.value)
             }
           >
-            <option value="">
-              Semua
-            </option>
+            <option value="">Semua</option>
 
             {subditOptions.map((item) => (
               <option
@@ -194,7 +219,7 @@ export default function ActivitiesTable({
           </select>
         </div>
 
-        <div>
+        <div className="admin-filter-field">
           <label htmlFor="filter-gender">
             Gender
           </label>
@@ -206,19 +231,13 @@ export default function ActivitiesTable({
               setGender(event.target.value)
             }
           >
-            <option value="">
-              Semua
-            </option>
-            <option value="M">
-              Pria
-            </option>
-            <option value="F">
-              Wanita
-            </option>
+            <option value="">Semua</option>
+            <option value="M">Pria</option>
+            <option value="F">Wanita</option>
           </select>
         </div>
 
-        <div>
+        <div className="admin-filter-field">
           <label htmlFor="filter-tanggal">
             Tanggal
           </label>
@@ -230,9 +249,7 @@ export default function ActivitiesTable({
               setTanggal(event.target.value)
             }
           >
-            <option value="">
-              Semua
-            </option>
+            <option value="">Semua</option>
             <option value="2026-08-15">
               15 Agustus
             </option>
@@ -245,33 +262,32 @@ export default function ActivitiesTable({
           </select>
         </div>
 
-        <div className="filter-actions">
+        <div className="admin-filter-actions">
           <button
             type="button"
-            className="filter-reset-button"
+            className="admin-filter-reset"
             onClick={resetFilters}
+            disabled={!hasActiveFilter}
           >
             Reset
           </button>
         </div>
       </section>
 
-      <div className="table-result-info">
+      <div className="admin-table-meta">
         Menampilkan{" "}
-        <strong>
-          {filteredActivities.length}
-        </strong>{" "}
+        <strong>{filteredActivities.length}</strong>{" "}
         dari{" "}
         <strong>{activities.length}</strong>{" "}
         data
       </div>
 
-      <div className="admin-table-wrap">
-        <table className="admin-table">
+      <div className="admin-table-wrap-v2">
+        <table className="admin-table-v2">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Nama</th>
+              <th>Pelari</th>
               <th>Subdit</th>
               <th>Gender</th>
               <th>Tanggal</th>
@@ -285,16 +301,16 @@ export default function ActivitiesTable({
             {filteredActivities.map(
               (activity) => (
                 <tr key={activity.id}>
-                  <td>
-                    {activity.id}
+                  <td className="admin-id-cell">
+                    #{activity.id}
                   </td>
 
                   <td>
-                    <strong>
+                    <strong className="admin-runner-name">
                       {activity.nama}
                     </strong>
 
-                    <small className="table-subtext">
+                    <small className="admin-table-subtext">
                       {activity.nip}
                     </small>
                   </td>
@@ -316,8 +332,10 @@ export default function ActivitiesTable({
                   </td>
 
                   <td>
-                    {activity.jarak.toFixed(2)}{" "}
-                    km
+                    <strong className="admin-distance">
+                      {activity.jarak.toFixed(2)}
+                    </strong>{" "}
+                    <small>km</small>
                   </td>
 
                   <td>
@@ -335,32 +353,40 @@ export default function ActivitiesTable({
                   <td>
                     <Link
                       href={`/admin/activities/${activity.id}`}
-                      className="table-action-link"
+                      className={
+                        activity.status === 0
+                          ? "admin-table-action admin-table-action-primary"
+                          : "admin-table-action"
+                      }
                     >
-                      {activity.status === 0
-                        ? "Verifikasi"
-                        : "Lihat"}
+                      <span>
+                        {activity.status === 0
+                          ? "Verifikasi"
+                          : "Lihat"}
+                      </span>
+
+                      <span aria-hidden="true">
+                        →
+                      </span>
                     </Link>
                   </td>
                 </tr>
               )
             )}
 
-            {filteredActivities.length ===
-            0 ? (
+            {filteredActivities.length === 0 ? (
               <tr>
                 <td
                   colSpan={8}
-                  className="table-empty"
+                  className="admin-table-empty"
                 >
-                  Tidak ada data yang sesuai
-                  dengan filter.
+                  Tidak ada data yang sesuai dengan filter.
                 </td>
               </tr>
             ) : null}
           </tbody>
         </table>
       </div>
-    </>
+    </section>
   );
 }

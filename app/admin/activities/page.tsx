@@ -52,17 +52,12 @@ export default async function AdminActivitiesPage() {
     jarak: Number(activity.jarak),
     status: Number(activity.status),
     avgPaceSeconds:
-      activity.avg_pace_seconds
-        ? Number(
-            activity.avg_pace_seconds
-          )
+      activity.avg_pace_seconds !== null
+        ? Number(activity.avg_pace_seconds)
         : null,
-
     elapsedTimeSeconds:
-      activity.elapsed_time_seconds
-        ? Number(
-            activity.elapsed_time_seconds
-          )
+      activity.elapsed_time_seconds !== null
+        ? Number(activity.elapsed_time_seconds)
         : null,
     feedback: activity.feedback
       ? String(activity.feedback)
@@ -70,66 +65,89 @@ export default async function AdminActivitiesPage() {
   }));
 
   return (
-    <main className="admin-shell">
-      <section className="admin-container">
-        <div className="admin-page-header">
+    <main className="run-app admin-activities-v2">
+      <div
+        className="run-app-glow run-app-glow-one"
+        aria-hidden="true"
+      />
+
+      <div
+        className="run-app-glow run-app-glow-two"
+        aria-hidden="true"
+      />
+
+      <header className="run-topbar">
+        <div className="run-brand">
+          <span className="run-brand-dot" />
+          <span>ATLANTIK RUN</span>
+          <small>ADMIN</small>
+        </div>
+
+        <div className="run-topbar-actions">
+          <Link
+            href="/dashboard"
+            className="run-admin-link"
+          >
+            Dashboard
+          </Link>
+
+          <form action={adminLogoutAction}>
+            <button
+              type="submit"
+              className="run-icon-button"
+            >
+              <span>Keluar Admin</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+          </form>
+        </div>
+      </header>
+
+      <div className="admin-activities-container">
+        <section className="admin-activities-heading">
           <div>
-            <span className="eyebrow">
-              ATLANTIK RUN 2026
+            <span className="dashboard-kicker">
+              PANEL VERIFIKASI
             </span>
 
             <h1>Data Perekaman</h1>
 
             <p>
-              Login sebagai {admin.nama}
+              Login sebagai <strong>{admin.nama}</strong>
             </p>
           </div>
+        </section>
 
-          <div className="dashboard-actions">
-            <Link
-              href="/dashboard"
-              className="secondary-link"
-            >
-              Dashboard
-            </Link>
-
-            <form action={adminLogoutAction}>
-              <button
-                type="submit"
-                className="secondary-button"
-              >
-                Keluar Admin
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <section className="admin-stats">
-          <article className="admin-stat-card">
+        <section className="admin-stats-v2">
+          <article className="admin-stat-card-v2 admin-stat-total">
             <span>Total Data Masuk</span>
             <strong>{Number(stats.total)}</strong>
+            <small>seluruh aktivitas</small>
           </article>
 
-          <article className="admin-stat-card">
+          <article className="admin-stat-card-v2 admin-stat-pending">
             <span>Pending</span>
             <strong>{Number(stats.pending)}</strong>
+            <small>menunggu verifikasi</small>
           </article>
 
-          <article className="admin-stat-card">
+          <article className="admin-stat-card-v2 admin-stat-approved">
             <span>Approved</span>
             <strong>{Number(stats.approved)}</strong>
+            <small>sudah disetujui</small>
           </article>
 
-          <article className="admin-stat-card">
+          <article className="admin-stat-card-v2 admin-stat-rejected">
             <span>Rejected</span>
             <strong>{Number(stats.rejected)}</strong>
+            <small>ditolak</small>
           </article>
         </section>
 
         <ActivitiesTable
           activities={normalizedActivities}
         />
-      </section>
+      </div>
     </main>
   );
 }
