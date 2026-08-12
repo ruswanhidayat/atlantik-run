@@ -24,23 +24,51 @@ const initialState: RecordRunState = {};
 
 function sanitizeTimeInput(
   value: string,
-  groups: number[]
+  type: "pace" | "elapsed"
 ) {
   const digits = value.replace(/\D/g, "");
 
-  const parts: string[] = [];
-  let index = 0;
+  if (type === "pace") {
+    const minutes = digits.slice(0, 2);
 
-  for (const length of groups) {
-    if (index >= digits.length) {
-      break;
+    let seconds = digits.slice(2, 4);
+
+    if (seconds.length === 2) {
+      seconds = String(
+        Math.min(Number(seconds), 59)
+      ).padStart(2, "0");
     }
 
-    parts.push(
-      digits.slice(index, index + length)
-    );
+    return seconds
+      ? `${minutes}:${seconds}`
+      : minutes;
+  }
 
-    index += length;
+  const hours = digits.slice(0, 2);
+
+  let minutes = digits.slice(2, 4);
+  let seconds = digits.slice(4, 6);
+
+  if (minutes.length === 2) {
+    minutes = String(
+      Math.min(Number(minutes), 59)
+    ).padStart(2, "0");
+  }
+
+  if (seconds.length === 2) {
+    seconds = String(
+      Math.min(Number(seconds), 59)
+    ).padStart(2, "0");
+  }
+
+  const parts = [hours];
+
+  if (minutes) {
+    parts.push(minutes);
+  }
+
+  if (seconds) {
+    parts.push(seconds);
   }
 
   return parts.join(":");
@@ -119,7 +147,7 @@ export default function RecordForm({
     setAvgPace(
       sanitizeTimeInput(
         event.target.value,
-        [2, 2]
+        "pace"
       )
     );
   }
@@ -130,7 +158,7 @@ export default function RecordForm({
     setElapsedTime(
       sanitizeTimeInput(
         event.target.value,
-        [2, 2, 2]
+        "elapsed"
       )
     );
   }
