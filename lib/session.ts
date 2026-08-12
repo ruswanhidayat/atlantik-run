@@ -20,7 +20,7 @@ async function signSession(payload: SessionPayload) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime("30m")
     .sign(encodedSecret);
 }
 
@@ -37,7 +37,7 @@ export async function createSession(nip: string) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 30,
   });
 }
 
@@ -86,7 +86,7 @@ export async function setAdminAuthenticated() {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 30,
   });
 }
 
@@ -109,7 +109,7 @@ export async function clearAdminAuthenticated() {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 30,
   });
 }
 
