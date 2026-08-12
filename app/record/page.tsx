@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import RecordBottomNav from "./record-bottom-nav";
 import RecordForm from "./record-form";
 
 import { requireUser } from "@/lib/auth";
@@ -28,10 +29,12 @@ export default async function RecordPage() {
   );
 
   const availableDates = RUN_DATES.filter(
-    (date) => !blockedDates.has(date.value)
+    (date) =>
+      !blockedDates.has(date.value)
   );
 
-  const submissionOpen = isSubmissionOpen();
+  const submissionOpen =
+    isSubmissionOpen();
 
   return (
     <main className="run-app record-v2">
@@ -87,9 +90,13 @@ export default async function RecordPage() {
               PELARI
             </span>
 
-            <strong>{user.nama}</strong>
+            <strong>
+              {user.nama}
+            </strong>
 
-            <span>{user.subdit}</span>
+            <span>
+              {user.subdit}
+            </span>
           </div>
         </section>
 
@@ -102,7 +109,9 @@ export default async function RecordPage() {
                   AKTIVITAS BARU
                 </span>
 
-                <h2>Detail Lari</h2>
+                <h2>
+                  Detail Lari
+                </h2>
               </div>
 
               <span className="record-required-note">
@@ -153,19 +162,23 @@ export default async function RecordPage() {
               </div>
             ) : (
               <RecordForm
-                availableDates={availableDates}
+                availableDates={
+                  availableDates
+                }
               />
             )}
           </section>
 
-          {/* INFO SIDE */}
+          {/* GUIDE */}
           <aside className="record-guide">
             <div className="record-guide-heading">
               <span className="dashboard-section-kicker">
                 SEBELUM MENGIRIM
               </span>
 
-              <h2>Pastikan datanya benar.</h2>
+              <h2>
+                Pastikan datanya benar.
+              </h2>
             </div>
 
             <div className="record-guide-list">
@@ -175,12 +188,15 @@ export default async function RecordPage() {
                 </span>
 
                 <div>
-                  <strong>Pilih tanggal lari</strong>
+                  <strong>
+                    Pilih tanggal lari
+                  </strong>
 
                   <p>
-                    Hanya tanggal yang belum memiliki
-                    aktivitas Pending atau Approved
-                    yang dapat dipilih.
+                    Hanya tanggal yang belum
+                    memiliki aktivitas Pending
+                    atau Approved yang dapat
+                    dipilih.
                   </p>
                 </div>
               </article>
@@ -223,7 +239,9 @@ export default async function RecordPage() {
             </div>
 
             <div className="record-guide-accent">
-              <span>15—17 AUG 2026</span>
+              <span>
+                15—17 AUG 2026
+              </span>
 
               <p>
                 Every kilometer
@@ -235,54 +253,11 @@ export default async function RecordPage() {
         </div>
       </div>
 
-      {/* MOBILE BOTTOM NAV */}
-      <nav
-        className="run-bottom-nav"
-        aria-label="Navigasi utama"
-      >
-        <Link
-          href="/dashboard"
-          className="run-bottom-nav-item"
-        >
-          <span
-            className="run-nav-icon"
-            aria-hidden="true"
-          >
-            <svg viewBox="0 0 24 24">
-              <path d="M3 10.8 12 3l9 7.8v9.4a.8.8 0 0 1-.8.8h-5.4v-6.2H9.2V21H3.8a.8.8 0 0 1-.8-.8Z" />
-            </svg>
-          </span>
-
-          <span>Home</span>
-        </Link>
-
-        <span className="run-bottom-nav-item run-bottom-nav-primary is-active">
-          <span
-            className="run-nav-primary-icon"
-            aria-hidden="true"
-          >
-            ＋
-          </span>
-
-          <span>Lapor</span>
-        </span>
-
-        <Link
-          href="/dashboard#leaderboard"
-          className="run-bottom-nav-item"
-        >
-          <span
-            className="run-nav-icon"
-            aria-hidden="true"
-          >
-            <svg viewBox="0 0 24 24">
-              <path d="M6 20V10M12 20V4M18 20v-7" />
-            </svg>
-          </span>
-
-          <span>Rank</span>
-        </Link>
-      </nav>
+      <RecordBottomNav
+        isAdmin={Boolean(
+          user.isadmin
+        )}
+      />
     </main>
   );
 }
