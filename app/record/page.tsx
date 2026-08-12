@@ -97,6 +97,7 @@ export default async function RecordPage() {
           </div>
         </section>
 
+        {/* TOMBOL DI SINI */}
         <div className="record-mobile-back-wrap">
           <Link
             href="/dashboard"
