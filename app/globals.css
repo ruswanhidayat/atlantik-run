@@ -6772,9 +6772,26 @@ and
 }
 
 .admin-filter-field {
+  position: relative;
   display: grid;
-
   gap: 7px;
+}
+
+.admin-filter-field:not(.admin-filter-search)::after {
+  content: "↓";
+
+  position: absolute;
+
+  right: 12px;
+  bottom: 12px;
+
+  color:
+    var(--run-purple-soft);
+
+  font-size: 12px;
+  line-height: 1;
+
+  pointer-events: none;
 }
 
 .admin-filter-field label {
@@ -6802,12 +6819,30 @@ and
 
 .admin-filter-field select {
   width: 100%;
+  min-height: 42px;
 
-  padding: 0 32px 0 11px;
+  padding:
+    0
+    38px
+    0
+    11px;
+
+  border:
+    1px solid
+    var(--run-border);
+
+  border-radius: 11px;
 
   outline: 0;
 
-  color: var(--run-text-soft);
+  appearance: none;
+  -webkit-appearance: none;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  color:
+    var(--run-text-soft);
 
   font-family:
     var(--font-open-sans),
@@ -6815,7 +6850,7 @@ and
 
   font-size: 11px;
 
-  appearance: auto;
+  cursor: pointer;
 }
 
 .admin-filter-field select option {
