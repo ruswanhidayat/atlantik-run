@@ -949,3 +949,90 @@ p {
     grid-template-columns: 1fr;
   }
 }
+
+.personal-stat-card-info {
+  position: relative;
+}
+
+.stat-info {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+  padding: 0;
+
+  border: 1px solid var(--border);
+  border-radius: 50%;
+
+  background: #f8fafc;
+  color: var(--muted);
+
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+
+  cursor: help;
+}
+
+.stat-info:hover,
+.stat-info:focus-visible {
+  background: #eef2f6;
+  color: var(--foreground);
+}
+
+.stat-tooltip {
+  position: absolute;
+  z-index: 20;
+
+  right: -4px;
+  bottom: calc(100% + 9px);
+
+  width: 240px;
+  padding: 10px 12px;
+
+  border-radius: 9px;
+
+  background: #0f172a;
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: left;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translateY(4px);
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s ease;
+}
+
+.stat-tooltip::after {
+  content: "";
+
+  position: absolute;
+  right: 8px;
+  top: 100%;
+
+  border: 5px solid transparent;
+  border-top-color: #0f172a;
+}
+
+.stat-info:hover .stat-tooltip,
+.stat-info:focus .stat-tooltip,
+.stat-info:focus-visible .stat-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
