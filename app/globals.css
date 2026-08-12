@@ -4978,3 +4978,648 @@ html {
       #fca5a5;
   }
 }
+
+/* =========================================================
+   ATLANTIK RUN V2 — DASHBOARD FINAL CORRECTION
+   ========================================================= */
+
+
+/* =========================================================
+   RANK CARD GLOW
+   Glow sekarang menjadi background card.
+   Tidak membutuhkan pseudo element yang meluber.
+   ========================================================= */
+
+.dashboard-v2
+.dashboard-rank-card {
+  position: relative;
+
+  overflow: visible;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.015)
+    ),
+    #17141d;
+}
+
+
+/* PRIA */
+
+.dashboard-v2
+.dashboard-rank-male {
+  background:
+    radial-gradient(
+      circle at 100% 115%,
+      rgba(37, 99, 235, 0.42),
+      rgba(37, 99, 235, 0.13) 32%,
+      transparent 61%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.015)
+    ),
+    #17141d;
+}
+
+
+/* WANITA */
+
+.dashboard-v2
+.dashboard-rank-female {
+  background:
+    radial-gradient(
+      circle at 100% 115%,
+      rgba(219, 39, 119, 0.42),
+      rgba(219, 39, 119, 0.13) 32%,
+      transparent 61%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.015)
+    ),
+    #17141d;
+}
+
+
+/* OVERALL */
+
+.dashboard-v2
+.dashboard-rank-overall {
+  background:
+    radial-gradient(
+      circle at 100% 115%,
+      rgba(234, 88, 12, 0.4),
+      rgba(234, 88, 12, 0.12) 32%,
+      transparent 61%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.015)
+    ),
+    #17141d;
+}
+
+
+/* Disable old glow pseudo element */
+
+.dashboard-v2
+.dashboard-rank-card::before {
+  display: none !important;
+}
+
+
+/* =========================================================
+   TOOLTIP
+   ========================================================= */
+
+.dashboard-v2
+.dashboard-rank-grid,
+.dashboard-v2
+.dashboard-recap-grid {
+  overflow: visible;
+}
+
+.dashboard-v2
+.dashboard-rank-header {
+  position: relative;
+
+  z-index: 30;
+}
+
+.dashboard-v2
+.dashboard-info-button {
+  position: relative;
+
+  z-index: 31;
+
+  overflow: visible;
+}
+
+
+/*
+ * Tooltip melekat langsung ke tombol ?.
+ * Dibuka ke kiri sehingga aman dari sisi kanan viewport.
+ */
+
+.dashboard-v2
+.dashboard-stat-tooltip {
+  position: absolute !important;
+
+  z-index: 500;
+
+  top: calc(100% + 9px) !important;
+
+  right: 0 !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  width: 230px;
+
+  padding:
+    12px
+    13px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.11);
+
+  border-radius: 12px;
+
+  background:
+    #292330;
+
+  color:
+    #ddd8e2;
+
+  box-shadow:
+    0 16px 38px
+    rgba(0, 0, 0, 0.46);
+
+  font-size: 11px;
+  font-weight: 400;
+
+  line-height: 1.5;
+
+  text-align: left;
+
+  white-space: normal;
+
+  opacity: 0;
+
+  visibility: hidden;
+
+  transform:
+    translateY(-4px);
+
+  pointer-events: none;
+
+  transition:
+    opacity 140ms ease,
+    visibility 140ms ease,
+    transform 140ms ease;
+}
+
+.dashboard-v2
+.dashboard-info-button:hover
+.dashboard-stat-tooltip,
+.dashboard-v2
+.dashboard-info-button:focus
+.dashboard-stat-tooltip,
+.dashboard-v2
+.dashboard-info-button:focus-visible
+.dashboard-stat-tooltip {
+  opacity: 1;
+
+  visibility: visible;
+
+  transform:
+    translateY(0);
+}
+
+
+/* little tooltip pointer */
+
+.dashboard-v2
+.dashboard-stat-tooltip::before {
+  content: "";
+
+  position: absolute;
+
+  top: -5px;
+  right: 8px;
+
+  width: 9px;
+  height: 9px;
+
+  border-top:
+    1px solid
+    rgba(255, 255, 255, 0.11);
+
+  border-left:
+    1px solid
+    rgba(255, 255, 255, 0.11);
+
+  background:
+    #292330;
+
+  transform:
+    rotate(45deg);
+}
+
+
+/* =========================================================
+   FEEDBACK
+   ========================================================= */
+
+.dashboard-v2
+.activity-feedback-box {
+  margin-top: 14px;
+
+  padding:
+    11px
+    12px;
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, 0.025);
+}
+
+.dashboard-v2
+.activity-feedback-box
+span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 0.04em;
+}
+
+.dashboard-v2
+.activity-feedback-box
+p {
+  margin: 0;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+}
+
+
+/* APPROVED + NOTE */
+
+.dashboard-v2
+.activity-feedback-approved {
+  border:
+    1px solid
+    rgba(139, 92, 246, 0.18);
+
+  background:
+    rgba(139, 92, 246, 0.07);
+}
+
+.dashboard-v2
+.activity-feedback-approved
+span {
+  color:
+    var(--run-purple-soft);
+}
+
+.dashboard-v2
+.activity-feedback-approved
+p {
+  color:
+    #c9c2d1;
+}
+
+
+/* REJECTED + NOTE */
+
+.dashboard-v2
+.activity-feedback-rejected {
+  border:
+    1px solid
+    rgba(248, 113, 113, 0.2);
+
+  background:
+    rgba(127, 29, 29, 0.14);
+}
+
+.dashboard-v2
+.activity-feedback-rejected
+span {
+  color:
+    #fca5a5;
+}
+
+.dashboard-v2
+.activity-feedback-rejected
+p {
+  color:
+    #f5b4b4;
+}
+
+
+/* =========================================================
+   TOPBAR MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  /*
+   * Admin + Logout hanya ada di bottom nav.
+   */
+
+  .dashboard-v2
+  .run-topbar-actions {
+    display: none;
+  }
+}
+
+
+/* =========================================================
+   MODERN MOBILE BOTTOM NAV
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  .dashboard-v2 {
+    padding-bottom:
+      calc(
+        94px +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+
+  .run-bottom-nav-modern {
+    position: fixed;
+
+    z-index: 1000;
+
+    right: 12px;
+    bottom:
+      calc(
+        10px +
+        env(safe-area-inset-bottom)
+      );
+    left: 12px;
+
+    display: grid;
+
+    min-height: 72px;
+
+    padding:
+      7px
+      8px;
+
+    border:
+      1px solid
+      rgba(255, 255, 255, 0.1);
+
+    border-radius: 25px;
+
+    background:
+      rgba(24, 20, 30, 0.96);
+
+    box-shadow:
+      0 16px 44px
+      rgba(0, 0, 0, 0.48);
+
+    backdrop-filter:
+      blur(20px);
+  }
+
+
+  .run-bottom-nav-five {
+    grid-template-columns:
+      repeat(
+        5,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .run-bottom-nav-four {
+    grid-template-columns:
+      repeat(
+        4,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .run-bottom-nav-modern
+  .run-bottom-nav-item {
+    display: flex;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 56px;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    padding: 5px 2px;
+
+    border: 0;
+
+    border-radius: 17px;
+
+    background: transparent;
+
+    color:
+      #898290;
+
+    font-family:
+      var(--font-open-sans),
+      sans-serif;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+      color 150ms ease,
+      background 150ms ease,
+      transform 150ms ease;
+  }
+
+
+  /*
+   * Only the active section gets the purple pill.
+   */
+
+  .run-bottom-nav-modern
+  .run-bottom-nav-item.is-active {
+    background:
+      linear-gradient(
+        145deg,
+        rgba(139, 92, 246, 0.19),
+        rgba(139, 92, 246, 0.09)
+      );
+
+    color:
+      var(--run-purple-soft);
+  }
+
+
+  .run-bottom-nav-modern
+  .run-nav-icon {
+    display: grid;
+
+    width: 24px;
+    height: 24px;
+
+    place-items: center;
+  }
+
+
+  .run-bottom-nav-modern
+  .run-nav-icon
+  svg {
+    width: 21px;
+    height: 21px;
+
+    fill: none;
+
+    stroke:
+      currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap:
+      round;
+
+    stroke-linejoin:
+      round;
+  }
+
+
+  /* RECORD */
+
+  .run-bottom-nav-modern
+  .run-bottom-nav-primary {
+    color:
+      var(--run-text);
+  }
+
+
+  .run-bottom-nav-modern
+  .run-nav-primary-icon {
+    display: grid;
+
+    width: 42px;
+    height: 42px;
+
+    margin-top: -20px;
+
+    place-items: center;
+
+    border:
+      1px solid
+      rgba(255, 255, 255, 0.12);
+
+    border-radius: 50%;
+
+    background:
+      linear-gradient(
+        135deg,
+        #7133df,
+        #a45eff
+      );
+
+    color: #fff;
+
+    box-shadow:
+      0 9px 28px
+      rgba(124, 58, 237, 0.44);
+
+    font-size: 24px;
+    font-weight: 300;
+  }
+
+
+  .run-bottom-nav-modern
+  .run-bottom-nav-primary.is-disabled {
+    opacity: 0.42;
+
+    pointer-events: none;
+  }
+
+
+  /* LOGOUT */
+
+  .run-bottom-nav-form {
+    display: contents;
+  }
+
+
+  .run-bottom-nav-modern
+  .run-bottom-nav-logout {
+    color:
+      #ef8d87;
+  }
+
+
+  /*
+   * Don't add a gray hover pill to non-active navigation.
+   */
+
+  .run-bottom-nav-modern
+  .run-bottom-nav-item:not(.is-active):hover {
+    background:
+      transparent;
+  }
+
+
+  /* =======================================================
+     MOBILE TOOLTIP
+     ======================================================= */
+
+  .dashboard-v2
+  .dashboard-stat-tooltip {
+    top:
+      calc(
+        100% + 8px
+      ) !important;
+
+    right:
+      -4px !important;
+
+    width:
+      min(
+        220px,
+        calc(
+          100vw - 56px
+        )
+      );
+
+    padding:
+      11px
+      12px;
+
+    border-radius:
+      11px;
+
+    font-size:
+      10px;
+
+    line-height:
+      1.5;
+  }
+
+
+  .dashboard-v2
+  .dashboard-stat-tooltip::before {
+    right: 11px;
+  }
+
+
+  /*
+   * Increase card stacking while tooltip is open/focused.
+   */
+
+  .dashboard-v2
+  .dashboard-rank-card:focus-within {
+    z-index: 80;
+  }
+}
