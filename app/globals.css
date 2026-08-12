@@ -4161,3 +4161,526 @@ p {
     padding: 17px;
   }
 }
+
+/* =========================================================
+   ATLANTIK RUN V2 — DASHBOARD CORRECTION 01
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   PERSONAL RANK — COLOR IDENTITY
+   --------------------------------------------------------- */
+
+.dashboard-v2 .dashboard-rank-card {
+  position: relative;
+
+  overflow: visible;
+
+  isolation: isolate;
+}
+
+.dashboard-v2 .dashboard-rank-card::before {
+  content: "";
+
+  position: absolute;
+
+  z-index: -1;
+
+  right: -35px;
+  bottom: -55px;
+
+  width: 170px;
+  height: 170px;
+
+  border-radius: 50%;
+
+  opacity: 0.6;
+
+  filter: blur(55px);
+
+  pointer-events: none;
+}
+
+
+/* PRIA — BLUE */
+
+.dashboard-v2 .dashboard-rank-male::before {
+  background:
+    rgba(59, 130, 246, 0.28);
+}
+
+.dashboard-v2
+.dashboard-rank-male
+.dashboard-rank-value {
+  text-shadow:
+    0 0 28px
+    rgba(59, 130, 246, 0.12);
+}
+
+
+/* WANITA — PINK */
+
+.dashboard-v2 .dashboard-rank-female::before {
+  background:
+    rgba(236, 72, 153, 0.28);
+}
+
+.dashboard-v2
+.dashboard-rank-female
+.dashboard-rank-value {
+  text-shadow:
+    0 0 28px
+    rgba(236, 72, 153, 0.12);
+}
+
+
+/* OVERALL — ORANGE */
+
+.dashboard-v2 .dashboard-rank-overall::before {
+  background:
+    rgba(249, 115, 22, 0.28);
+}
+
+.dashboard-v2
+.dashboard-rank-overall
+.dashboard-rank-value {
+  text-shadow:
+    0 0 28px
+    rgba(249, 115, 22, 0.12);
+}
+
+
+/* ---------------------------------------------------------
+   TOOLTIP
+   --------------------------------------------------------- */
+
+/*
+ * Rank card sebelumnya overflow:hidden sehingga tooltip
+ * terpotong tepat di batas card.
+ */
+
+.dashboard-v2 .dashboard-rank-card {
+  overflow: visible;
+}
+
+.dashboard-v2 .dashboard-rank-grid {
+  overflow: visible;
+}
+
+.dashboard-v2 .dashboard-recap-grid {
+  overflow: visible;
+}
+
+.dashboard-v2 .dashboard-info-button {
+  z-index: 20;
+}
+
+.dashboard-v2 .dashboard-stat-tooltip {
+  z-index: 200;
+
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 240px;
+
+  padding:
+    12px
+    13px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.11);
+
+  border-radius: 12px;
+
+  background:
+    #292330;
+
+  color:
+    #ddd8e2;
+
+  box-shadow:
+    0 18px 44px
+    rgba(0, 0, 0, 0.5);
+
+  font-size: 11px;
+  font-weight: 400;
+
+  line-height: 1.55;
+}
+
+
+/* ---------------------------------------------------------
+   ACTIVITY PROOF LINK
+   --------------------------------------------------------- */
+
+.dashboard-v2 .activity-proof-link {
+  display: inline-flex;
+
+  width: fit-content;
+
+  min-height: 30px;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  margin-top: 2px;
+
+  padding:
+    0
+    10px;
+
+  border:
+    1px solid
+    rgba(159, 103, 255, 0.22);
+
+  border-radius: 9px;
+
+  background:
+    rgba(139, 92, 246, 0.09);
+
+  color:
+    var(--run-purple-soft);
+
+  font-size: 10px;
+  font-weight: 600;
+
+  line-height: 1;
+
+  text-decoration: none;
+
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.dashboard-v2 .activity-proof-link:hover {
+  border-color:
+    rgba(159, 103, 255, 0.42);
+
+  background:
+    rgba(139, 92, 246, 0.15);
+
+  color: #d8c7ff;
+
+  transform:
+    translateY(-1px);
+}
+
+.dashboard-v2
+.activity-proof-link
+span:last-child {
+  font-size: 11px;
+
+  opacity: 0.8;
+}
+
+
+/* ---------------------------------------------------------
+   LEADERBOARD CARD
+   --------------------------------------------------------- */
+
+/*
+ * Override CSS leaderboard lama yang masih membuat
+ * header card hampir putih.
+ */
+
+.dashboard-v2 .leaderboard-card {
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--run-border) !important;
+
+  border-radius: 18px;
+
+  background:
+    #17141d !important;
+
+  box-shadow: none !important;
+}
+
+
+/* CARD HEADER */
+
+.dashboard-v2 .leaderboard-card-header {
+  display: flex;
+
+  min-height: 74px;
+
+  align-items: center;
+
+  padding:
+    16px
+    18px;
+
+  border-bottom:
+    1px solid
+    var(--run-border);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(139, 92, 246, 0.09),
+      rgba(255, 255, 255, 0.018)
+    ) !important;
+}
+
+.dashboard-v2
+.leaderboard-card-header
+h3 {
+  margin:
+    4px
+    0
+    0;
+
+  color:
+    var(--run-text) !important;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+.dashboard-v2 .leaderboard-label {
+  color:
+    var(--run-purple-soft) !important;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 0.09em;
+}
+
+
+/* TABLE */
+
+.dashboard-v2 .leaderboard-table-wrap {
+  overflow-x: auto;
+
+  background:
+    #17141d !important;
+}
+
+.dashboard-v2 .leaderboard-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  background:
+    transparent !important;
+
+  color:
+    var(--run-text-soft);
+
+  font-size: 11px;
+}
+
+.dashboard-v2 .leaderboard-table thead,
+.dashboard-v2 .leaderboard-table thead tr {
+  background:
+    #201c26 !important;
+}
+
+.dashboard-v2 .leaderboard-table th {
+  height: 38px;
+
+  padding:
+    9px
+    12px;
+
+  border-bottom:
+    1px solid
+    var(--run-border);
+
+  background:
+    #201c26 !important;
+
+  color:
+    #918a99 !important;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  letter-spacing: 0.02em;
+
+  text-transform: uppercase;
+}
+
+.dashboard-v2 .leaderboard-table td {
+  padding:
+    11px
+    12px;
+
+  border-bottom:
+    1px solid
+    rgba(255, 255, 255, 0.055);
+
+  background:
+    transparent !important;
+
+  color:
+    #d3ced8 !important;
+
+  font-size: 11px;
+
+  line-height: 1.35;
+}
+
+.dashboard-v2
+.leaderboard-table
+tbody
+tr {
+  background:
+    transparent !important;
+}
+
+.dashboard-v2
+.leaderboard-table
+tbody
+tr:nth-child(even) {
+  background:
+    rgba(255, 255, 255, 0.014) !important;
+}
+
+.dashboard-v2
+.leaderboard-table
+tbody
+tr:hover {
+  background:
+    rgba(139, 92, 246, 0.055) !important;
+}
+
+.dashboard-v2
+.leaderboard-table
+tbody
+tr:last-child
+td {
+  border-bottom: 0;
+}
+
+.dashboard-v2 .leaderboard-table td strong {
+  color:
+    #eeeaf2;
+
+  font-size: inherit;
+}
+
+.dashboard-v2 .leaderboard-subtext {
+  display: block;
+
+  margin-top: 2px;
+
+  color:
+    #77707f !important;
+
+  font-size: 9px;
+
+  line-height: 1.25;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE TABLE COMPACTION
+   --------------------------------------------------------- */
+
+@media (max-width: 760px) {
+
+  .dashboard-v2 .leaderboard-card {
+    border-radius: 16px;
+  }
+
+  .dashboard-v2 .leaderboard-card-header {
+    min-height: 62px;
+
+    padding:
+      13px
+      14px;
+  }
+
+  .dashboard-v2
+  .leaderboard-card-header
+  h3 {
+    font-size: 14px;
+  }
+
+  .dashboard-v2 .leaderboard-table {
+    /*
+     * Jangan dibuat 14–16px.
+     * Data table memang lebih efektif sedikit lebih kecil.
+     */
+    font-size: 10px;
+  }
+
+  .dashboard-v2 .leaderboard-table th {
+    height: 34px;
+
+    padding:
+      8px
+      8px;
+
+    font-size: 8px;
+
+    white-space: nowrap;
+  }
+
+  .dashboard-v2 .leaderboard-table td {
+    padding:
+      9px
+      8px;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+  }
+
+  .dashboard-v2 .leaderboard-subtext {
+    margin-top: 2px;
+
+    font-size: 8px;
+  }
+
+  .dashboard-v2 .activity-proof-link {
+    min-height: 28px;
+
+    padding:
+      0
+      9px;
+
+    font-size: 9px;
+  }
+
+  /*
+   * Tooltip mobile tidak menggunakan floating kecil.
+   * Lebih aman tampil seperti popover lebar.
+   */
+
+  .dashboard-v2 .dashboard-stat-tooltip {
+    position: fixed;
+
+    z-index: 500;
+
+    right: 16px;
+    bottom:
+      calc(
+        92px +
+        env(safe-area-inset-bottom)
+      );
+
+    top: auto;
+
+    width:
+      calc(100vw - 32px);
+
+    padding: 14px;
+
+    font-size: 11px;
+  }
+}

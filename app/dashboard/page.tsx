@@ -78,6 +78,23 @@ function formatElapsedTime(seconds: number | null) {
   )}:${String(remainingSeconds).padStart(2, "0")}`;
 }
 
+function normalizeExternalUrl(value: string | null) {
+  if (!value) return null;
+
+  const trimmed = value.trim();
+
+  if (!trimmed) return null;
+
+  if (
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("http://")
+  ) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+}
+
 export default async function DashboardPage() {
   const user = await requireUser();
 
@@ -287,7 +304,13 @@ export default async function DashboardPage() {
 
             {/* PERSONAL RANK */}
             <div className="dashboard-rank-grid">
-              <article className="dashboard-rank-card">
+              <article
+                className={`dashboard-rank-card ${
+                  user.gender === "M"
+                    ? "dashboard-rank-male"
+                    : "dashboard-rank-female"
+                }`}
+              >
                 <div className="dashboard-rank-header">
                   <span>
                     Rank{" "}
@@ -333,7 +356,7 @@ export default async function DashboardPage() {
                 </span>
               </article>
 
-              <article className="dashboard-rank-card">
+              <article className="dashboard-rank-card dashboard-rank-overall">
                 <div className="dashboard-rank-header">
                   <span>Overall Rank</span>
 
@@ -448,12 +471,13 @@ export default async function DashboardPage() {
 
                           {activity.tautan ? (
                             <a
-                              href={activity.tautan}
+                              href={normalizeExternalUrl(activity.tautan) ?? "#"}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="activity-proof-link"
                             >
-                              Lihat Aktivitas
+                              <span>Lihat Aktivitas</span>
+                              <span aria-hidden="true">↗</span>
                             </a>
                           ) : (
                             <strong>-</strong>
