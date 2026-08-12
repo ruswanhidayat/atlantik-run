@@ -1,14 +1,13 @@
-export default function Home() {
-  return (
-    <main className="shell">
-      <section className="card">
-        <span className="eyebrow">ATLANTIK 2026</span>
-        <h1>ATLANTIK RUN</h1>
-        <p>
-          Fondasi aplikasi sudah siap. Tahap berikutnya adalah menghubungkan
-          database dan membuat login menggunakan NIP.
-        </p>
-      </section>
-    </main>
-  );
+import { redirect } from "next/navigation";
+
+import { getCurrentUser } from "@/lib/auth";
+
+export default async function Home() {
+  const user = await getCurrentUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
+  redirect("/login");
 }
