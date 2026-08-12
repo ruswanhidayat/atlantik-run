@@ -8618,3 +8618,240 @@ th:nth-child(3),
 td:nth-child(3) {
   text-align: left !important;
 }
+
+/* =========================================================
+   DASHBOARD ACTIVITY — COMPACT LAYOUT
+   ========================================================= */
+
+.dashboard-v2 .activity-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.dashboard-v2 .activity-item {
+  padding: 18px;
+
+  border-radius: 18px;
+}
+
+.dashboard-v2 .activity-item-header {
+  margin-bottom: 14px;
+}
+
+.dashboard-v2 .activity-date {
+  font-size: 14px;
+}
+
+.dashboard-v2 .activity-detail-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 0;
+
+  border-top:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+}
+
+.dashboard-v2 .activity-detail-grid > div {
+  min-width: 0;
+
+  padding:
+    14px
+    12px
+    6px;
+
+  border-right:
+    1px solid
+    rgba(255, 255, 255, 0.055);
+}
+
+.dashboard-v2
+.activity-detail-grid
+> div:first-child {
+  padding-left: 0;
+}
+
+.dashboard-v2
+.activity-detail-grid
+> div:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.dashboard-v2 .activity-detail-grid span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color:
+    var(--run-muted);
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.dashboard-v2 .activity-detail-grid strong {
+  color:
+    var(--run-text);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  line-height: 1.35;
+}
+
+.dashboard-v2 .activity-proof-link {
+  min-height: 28px;
+
+  padding:
+    0
+    9px;
+
+  font-size: 9px;
+}
+
+.dashboard-v2 .activity-feedback-box {
+  margin-top: 12px;
+
+  padding:
+    10px
+    11px;
+
+  border-radius: 10px;
+}
+
+.dashboard-v2 .activity-feedback-box span {
+  margin-bottom: 3px;
+
+  font-size: 8px;
+}
+
+.dashboard-v2 .activity-feedback-box p {
+  font-size: 10px;
+
+  line-height: 1.45;
+}
+
+.dashboard-v2 .activity-empty-text {
+  margin:
+    14px
+    0
+    0;
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   MOBILE — 2 × 2
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  .dashboard-v2 .activity-grid {
+    gap: 10px;
+  }
+
+  .dashboard-v2 .activity-item {
+    padding: 16px;
+
+    border-radius: 17px;
+  }
+
+  .dashboard-v2 .activity-item-header {
+    margin-bottom: 12px;
+  }
+
+  .dashboard-v2 .activity-date {
+    font-size: 13px;
+  }
+
+  .dashboard-v2 .activity-detail-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-v2
+  .activity-detail-grid
+  > div {
+    padding:
+      12px
+      10px;
+
+    border-right:
+      1px solid
+      rgba(255, 255, 255, 0.055);
+
+    border-bottom:
+      1px solid
+      rgba(255, 255, 255, 0.055);
+  }
+
+  /* kiri */
+  .dashboard-v2
+  .activity-detail-grid
+  > div:nth-child(odd) {
+    padding-left: 0;
+  }
+
+  /* kanan */
+  .dashboard-v2
+  .activity-detail-grid
+  > div:nth-child(even) {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  /* baris terakhir */
+  .dashboard-v2
+  .activity-detail-grid
+  > div:nth-child(3),
+  .dashboard-v2
+  .activity-detail-grid
+  > div:nth-child(4) {
+    border-bottom: 0;
+  }
+
+  .dashboard-v2
+  .activity-detail-grid
+  span {
+    margin-bottom: 5px;
+
+    font-size: 8px;
+  }
+
+  .dashboard-v2
+  .activity-detail-grid
+  strong {
+    font-size: 11px;
+  }
+
+  .dashboard-v2
+  .activity-proof-link {
+    min-height: 27px;
+
+    padding:
+      0
+      8px;
+
+    font-size: 8px;
+  }
+
+  .dashboard-v2
+  .activity-feedback-box {
+    margin-top: 10px;
+
+    padding:
+      9px
+      10px;
+  }
+
+  .dashboard-v2
+  .activity-feedback-box
+  p {
+    font-size: 9px;
+  }
+}
