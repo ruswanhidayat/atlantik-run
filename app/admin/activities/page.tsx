@@ -76,6 +76,7 @@ export default async function AdminActivitiesPage() {
         aria-hidden="true"
       />
 
+      {/* TOP BAR */}
       <header className="run-topbar">
         <div className="run-brand">
           <span className="run-brand-dot" />
@@ -104,6 +105,7 @@ export default async function AdminActivitiesPage() {
       </header>
 
       <div className="admin-activities-container">
+        {/* HEADING */}
         <section className="admin-activities-heading">
           <div>
             <span className="dashboard-kicker">
@@ -118,6 +120,7 @@ export default async function AdminActivitiesPage() {
           </div>
         </section>
 
+        {/* STATS */}
         <section className="admin-stats-v2">
           <article className="admin-stat-card-v2 admin-stat-total">
             <span>Total Data Masuk</span>
@@ -148,6 +151,65 @@ export default async function AdminActivitiesPage() {
           activities={normalizedActivities}
         />
       </div>
+
+      {/* MOBILE ADMIN NAV */}
+      <nav
+        className="admin-mobile-nav"
+        aria-label="Navigasi admin"
+      >
+        <Link
+          href="/dashboard"
+          className="admin-mobile-nav-item"
+        >
+          <span
+            className="admin-mobile-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M3 10.8 12 3l9 7.8v9.4a.8.8 0 0 1-.8.8h-5.4v-6.2H9.2V21H3.8a.8.8 0 0 1-.8-.8Z" />
+            </svg>
+          </span>
+
+          <span>Dashboard</span>
+        </Link>
+
+        <span className="admin-mobile-nav-item is-active">
+          <span
+            className="admin-mobile-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M6 5h12M6 12h12M6 19h12" />
+              <path d="M3 5h.01M3 12h.01M3 19h.01" />
+            </svg>
+          </span>
+
+          <span>Data</span>
+        </span>
+
+        <form
+          action={adminLogoutAction}
+          className="admin-mobile-nav-form"
+        >
+          <button
+            type="submit"
+            className="admin-mobile-nav-item admin-mobile-nav-logout"
+          >
+            <span
+              className="admin-mobile-nav-icon"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 24 24">
+                <path d="M10 5H5.8a.8.8 0 0 0-.8.8v12.4a.8.8 0 0 0 .8.8H10" />
+                <path d="m14 8 4 4-4 4" />
+                <path d="M9 12h9" />
+              </svg>
+            </span>
+
+            <span>Logout</span>
+          </button>
+        </form>
+      </nav>
     </main>
   );
 }

@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 type Activity = {
   id: string;
@@ -18,6 +22,8 @@ type Activity = {
 type ActivitiesTableProps = {
   activities: Activity[];
 };
+
+const PAGE_SIZE = 10;
 
 function getStatusLabel(status: number) {
   if (status === 0) return "Pending";
@@ -53,6 +59,7 @@ export default function ActivitiesTable({
   const [subdit, setSubdit] = useState("");
   const [gender, setGender] = useState("");
   const [tanggal, setTanggal] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const subditOptions = useMemo(() => {
     return Array.from(
@@ -114,12 +121,59 @@ export default function ActivitiesTable({
     tanggal,
   ]);
 
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      filteredActivities.length / PAGE_SIZE
+    )
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    search,
+    status,
+    subdit,
+    gender,
+    tanggal,
+  ]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const paginatedActivities = useMemo(() => {
+    const start =
+      (currentPage - 1) * PAGE_SIZE;
+
+    return filteredActivities.slice(
+      start,
+      start + PAGE_SIZE
+    );
+  }, [
+    filteredActivities,
+    currentPage,
+  ]);
+
+  const firstItem =
+    filteredActivities.length === 0
+      ? 0
+      : (currentPage - 1) * PAGE_SIZE + 1;
+
+  const lastItem = Math.min(
+    currentPage * PAGE_SIZE,
+    filteredActivities.length
+  );
+
   function resetFilters() {
     setSearch("");
     setStatus("");
     setSubdit("");
     setGender("");
     setTanggal("");
+    setCurrentPage(1);
   }
 
   const hasActiveFilter =
@@ -145,6 +199,7 @@ export default function ActivitiesTable({
         </span>
       </div>
 
+      {/* FILTER */}
       <section className="admin-filters-v2">
         <div className="admin-filter-field admin-filter-search">
           <label htmlFor="admin-search">
@@ -157,7 +212,12 @@ export default function ActivitiesTable({
               aria-hidden="true"
             >
               <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="6" />
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="6"
+                />
+
                 <path d="m16 16 4 4" />
               </svg>
             </span>
@@ -250,12 +310,15 @@ export default function ActivitiesTable({
             }
           >
             <option value="">Semua</option>
+
             <option value="2026-08-15">
               15 Agustus
             </option>
+
             <option value="2026-08-16">
               16 Agustus
             </option>
+
             <option value="2026-08-17">
               17 Agustus
             </option>
@@ -274,19 +337,30 @@ export default function ActivitiesTable({
         </div>
       </section>
 
+      {/* RESULT INFO */}
       <div className="admin-table-meta">
-        Menampilkan{" "}
-        <strong>{filteredActivities.length}</strong>{" "}
-        dari{" "}
-        <strong>{activities.length}</strong>{" "}
-        data
+        {filteredActivities.length > 0 ? (
+          <>
+            Menampilkan{" "}
+            <strong>
+              {firstItem}–{lastItem}
+            </strong>{" "}
+            dari{" "}
+            <strong>
+              {filteredActivities.length}
+            </strong>{" "}
+            data
+          </>
+        ) : (
+          <>Tidak ada data yang ditampilkan</>
+        )}
       </div>
 
+      {/* TABLE */}
       <div className="admin-table-wrap-v2">
         <table className="admin-table-v2">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Pelari</th>
               <th>Subdit</th>
               <th>Gender</th>
@@ -298,13 +372,9 @@ export default function ActivitiesTable({
           </thead>
 
           <tbody>
-            {filteredActivities.map(
+            {paginatedActivities.map(
               (activity) => (
                 <tr key={activity.id}>
-                  <td className="admin-id-cell">
-                    #{activity.id}
-                  </td>
-
                   <td>
                     <strong className="admin-runner-name">
                       {activity.nama}
@@ -377,16 +447,88 @@ export default function ActivitiesTable({
             {filteredActivities.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={7}
                   className="admin-table-empty"
                 >
-                  Tidak ada data yang sesuai dengan filter.
+                  Tidak ada data yang sesuai
+                  dengan filter.
                 </td>
               </tr>
             ) : null}
           </tbody>
         </table>
       </div>
+
+      {/* PAGINATION */}
+      {filteredActivities.length > 0 &&
+      totalPages > 1 ? (
+        <nav
+          className="admin-pagination"
+          aria-label="Pagination data aktivitas"
+        >
+          <button
+            type="button"
+            className="admin-pagination-button admin-pagination-nav"
+            disabled={currentPage === 1}
+            onClick={() =>
+              setCurrentPage((page) =>
+                Math.max(1, page - 1)
+              )
+            }
+          >
+            ←
+            <span>Sebelumnya</span>
+          </button>
+
+          <div className="admin-pagination-pages">
+            {Array.from(
+              {
+                length: totalPages,
+              },
+              (_, index) => index + 1
+            ).map((page) => (
+              <button
+                key={page}
+                type="button"
+                className={`admin-pagination-button ${
+                  currentPage === page
+                    ? "is-active"
+                    : ""
+                }`}
+                onClick={() =>
+                  setCurrentPage(page)
+                }
+                aria-current={
+                  currentPage === page
+                    ? "page"
+                    : undefined
+                }
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="admin-pagination-button admin-pagination-nav"
+            disabled={
+              currentPage === totalPages
+            }
+            onClick={() =>
+              setCurrentPage((page) =>
+                Math.min(
+                  totalPages,
+                  page + 1
+                )
+              )
+            }
+          >
+            <span>Berikutnya</span>
+            →
+          </button>
+        </nav>
+      ) : null}
     </section>
   );
 }

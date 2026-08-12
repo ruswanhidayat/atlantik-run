@@ -7271,3 +7271,411 @@ and
     font-size: 8px;
   }
 }
+
+/* =========================================================
+   ATLANTIK RUN V2 — GLOBAL STATUS BADGE
+   ========================================================= */
+
+.status-badge {
+  display: inline-flex;
+
+  min-height: 26px;
+
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0
+    9px;
+
+  border:
+    1px solid transparent;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  letter-spacing: 0.015em;
+}
+
+
+/* PENDING */
+
+.status-badge.status-pending {
+  border-color:
+    rgba(232, 185, 106, 0.2) !important;
+
+  background:
+    rgba(184, 120, 35, 0.11) !important;
+
+  color:
+    #e4b96f !important;
+
+  box-shadow:
+    inset 0 0 16px
+    rgba(184, 120, 35, 0.025);
+}
+
+
+/* APPROVED */
+
+.status-badge.status-approved {
+  border-color:
+    rgba(114, 214, 174, 0.2) !important;
+
+  background:
+    rgba(35, 151, 108, 0.1) !important;
+
+  color:
+    #78d4b0 !important;
+
+  box-shadow:
+    inset 0 0 16px
+    rgba(35, 151, 108, 0.025);
+}
+
+
+/* REJECTED */
+
+.status-badge.status-rejected {
+  border-color:
+    rgba(239, 143, 146, 0.2) !important;
+
+  background:
+    rgba(180, 61, 67, 0.1) !important;
+
+  color:
+    #ed9295 !important;
+
+  box-shadow:
+    inset 0 0 16px
+    rgba(180, 61, 67, 0.025);
+}
+
+
+/* EMPTY / BELUM REKAM */
+
+.status-badge.status-empty {
+  border-color:
+    rgba(255, 255, 255, 0.08) !important;
+
+  background:
+    rgba(255, 255, 255, 0.035) !important;
+
+  color:
+    #8d8695 !important;
+}
+
+
+/* =========================================================
+   ADMIN ACTIVITIES — PAGINATION
+   ========================================================= */
+
+.admin-pagination {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  margin-top: 14px;
+}
+
+.admin-pagination-pages {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+.admin-pagination-button {
+  display: inline-flex;
+
+  min-width: 34px;
+  min-height: 34px;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding:
+    0
+    10px;
+
+  border:
+    1px solid
+    var(--run-border);
+
+  border-radius: 10px;
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  color:
+    var(--run-muted);
+
+  font-family:
+    var(--font-open-sans),
+    sans-serif;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.admin-pagination-button:hover:not(:disabled) {
+  border-color:
+    rgba(159, 103, 255, 0.25);
+
+  background:
+    rgba(139, 92, 246, 0.07);
+
+  color:
+    var(--run-purple-soft);
+}
+
+.admin-pagination-button.is-active {
+  border-color:
+    rgba(159, 103, 255, 0.28);
+
+  background:
+    rgba(139, 92, 246, 0.12);
+
+  color:
+    var(--run-purple-soft);
+}
+
+.admin-pagination-button:disabled {
+  opacity: 0.25;
+
+  cursor: default;
+}
+
+
+/* =========================================================
+   ADMIN MOBILE NAV
+   ========================================================= */
+
+.admin-mobile-nav {
+  display: none;
+}
+
+
+@media (max-width: 760px) {
+
+  /*
+   * Desktop-style actions disappear.
+   * Navigation moves to bottom.
+   */
+
+  .admin-activities-v2
+  .run-topbar-actions {
+    display: none;
+  }
+
+
+  .admin-activities-v2 {
+    padding-bottom:
+      calc(
+        92px +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+
+  .admin-mobile-nav {
+    position: fixed;
+
+    z-index: 1000;
+
+    right: 12px;
+    bottom:
+      calc(
+        10px +
+        env(safe-area-inset-bottom)
+      );
+    left: 12px;
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+
+    min-height: 70px;
+
+    padding:
+      7px
+      8px;
+
+    border:
+      1px solid
+      rgba(255, 255, 255, 0.1);
+
+    border-radius: 24px;
+
+    background:
+      rgba(24, 20, 30, 0.96);
+
+    box-shadow:
+      0 16px 44px
+      rgba(0, 0, 0, 0.46);
+
+    backdrop-filter:
+      blur(20px);
+  }
+
+
+  .admin-mobile-nav-item {
+    display: flex;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 54px;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    padding:
+      5px
+      4px;
+
+    border: 0;
+
+    border-radius: 16px;
+
+    background: transparent;
+
+    color:
+      var(--run-muted);
+
+    font-family:
+      var(--font-open-sans),
+      sans-serif;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    text-decoration: none;
+
+    cursor: pointer;
+  }
+
+
+  .admin-mobile-nav-item.is-active {
+    background:
+      linear-gradient(
+        145deg,
+        rgba(139, 92, 246, 0.18),
+        rgba(139, 92, 246, 0.08)
+      );
+
+    color:
+      var(--run-purple-soft);
+  }
+
+
+  .admin-mobile-nav-icon {
+    display: grid;
+
+    width: 24px;
+    height: 24px;
+
+    place-items: center;
+  }
+
+
+  .admin-mobile-nav-icon svg {
+    width: 21px;
+    height: 21px;
+
+    fill: none;
+
+    stroke:
+      currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+
+  .admin-mobile-nav-form {
+    display: contents;
+  }
+
+
+  .admin-mobile-nav-logout {
+    color:
+      #ef8d87;
+  }
+
+
+  /* pagination */
+
+  .admin-pagination {
+    gap: 8px;
+
+    margin-top: 12px;
+  }
+
+
+  .admin-pagination-nav span {
+    display: none;
+  }
+
+
+  .admin-pagination-button {
+    min-width: 32px;
+    min-height: 32px;
+
+    padding:
+      0
+      8px;
+
+    font-size: 8px;
+  }
+
+
+  .admin-pagination-pages {
+    gap: 4px;
+
+    overflow-x: auto;
+  }
+
+
+  /* slightly smaller status badge on mobile */
+
+  .status-badge {
+    min-height: 24px;
+
+    padding:
+      0
+      8px;
+
+    font-size: 8px;
+  }
+}
