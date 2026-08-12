@@ -97,6 +97,14 @@ export default async function RecordPage() {
           </div>
         </section>
 
+        <Link
+          href="/dashboard"
+          className="record-mobile-back"
+        >
+          <span aria-hidden="true">←</span>
+          <span>Kembali ke Dashboard</span>
+        </Link>
+
         {/* CONTENT */}
         <div className="record-layout">
           <section className="record-form-panel">
@@ -249,14 +257,6 @@ export default async function RecordPage() {
           </aside>
         </div>
       </div>
-
-      <Link
-        href="/dashboard"
-        className="record-mobile-back"
-      >
-        <span aria-hidden="true">←</span>
-        <span>Kembali ke Dashboard</span>
-      </Link>
 
       <RecordBottomNav
         isAdmin={Boolean(

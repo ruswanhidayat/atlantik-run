@@ -9619,6 +9619,7 @@ th:nth-child(3) {
     gap: 7px;
 
     margin-bottom: 18px;
+    margin-left: auto;
 
     padding:
       0
@@ -9671,7 +9672,8 @@ th:nth-child(3) {
     margin:
       4px
       16px
-      22px;
+      22px
+      auto;
 
     padding:
       0
