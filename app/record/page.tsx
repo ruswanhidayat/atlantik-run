@@ -97,13 +97,15 @@ export default async function RecordPage() {
           </div>
         </section>
 
-        <Link
-          href="/dashboard"
-          className="record-mobile-back"
-        >
-          <span aria-hidden="true">←</span>
-          <span>Kembali ke Dashboard</span>
-        </Link>
+        <div className="record-mobile-back-wrap">
+          <Link
+            href="/dashboard"
+            className="record-mobile-back"
+          >
+            <span aria-hidden="true">←</span>
+            <span>Kembali ke Dashboard</span>
+          </Link>
+        </div>
 
         {/* CONTENT */}
         <div className="record-layout">

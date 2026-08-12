@@ -242,13 +242,15 @@ export default async function AdminActivityDetailPage({
           </span>
         </section>
 
-        <Link
-          href="/admin/activities"
-          className="admin-verify-mobile-back"
-        >
-          <span aria-hidden="true">←</span>
-          <span>Kembali ke Data</span>
-        </Link>
+        <div className="admin-verify-mobile-back-wrap">
+          <Link
+            href="/admin/activities"
+            className="admin-verify-mobile-back"
+          >
+            <span aria-hidden="true">←</span>
+            <span>Kembali ke Data</span>
+          </Link>
+        </div>
 
         <div className="admin-verify-layout">
           {/* SUMMARY */}
