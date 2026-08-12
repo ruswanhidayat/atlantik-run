@@ -362,8 +362,6 @@ export default function ActivitiesTable({
         <span aria-hidden="true">→</span>
       </div>
 
-      <div className="admin-table-wrap-v2">
-
       {/* TABLE */}
       <div className="admin-table-wrap-v2">
         <table className="admin-table-v2">
