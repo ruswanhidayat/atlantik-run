@@ -35,8 +35,6 @@ export default function LoginForm() {
             autoComplete="off"
             required
           />
-
-          <span className="login-input-index">01</span>
         </div>
       </div>
 
@@ -59,7 +57,8 @@ export default function LoginForm() {
       </button>
 
       <p className="login-helper">
-        Gunakan NIP yang telah terdaftar sebagai peserta ATLANTIK RUN.
+        Gunakan NIP yang telah terdaftar sebagai peserta
+        ATLANTIK RUN.
       </p>
     </form>
   );
