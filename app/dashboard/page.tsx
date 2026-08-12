@@ -55,9 +55,7 @@ function formatPercentage(value: number) {
 }
 
 function formatPace(seconds: number | null) {
-  if (!seconds) {
-    return "-";
-  }
+  if (!seconds) return "-";
 
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
@@ -68,9 +66,7 @@ function formatPace(seconds: number | null) {
 }
 
 function formatElapsedTime(seconds: number | null) {
-  if (!seconds) {
-    return "-";
-  }
+  if (!seconds) return "-";
 
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -110,11 +106,8 @@ export default async function DashboardPage() {
     `,
 
     getPersonalStats(user.nip),
-
     getGeneralStats(),
-
     getSubditGenderLeaderboard(),
-
     getIndividualLeaderboard(),
   ]);
 
@@ -150,182 +143,250 @@ export default async function DashboardPage() {
     isSubmissionOpen() &&
     RUN_DATES.some((date) => {
       const activity = activityMap.get(date.value);
-
       return !activity || activity.status === 2;
     });
 
-  const maleSubditLeaderboard =
-    subditLeaderboard.filter(
-      (row) => row.gender === "M"
-    );
+  const maleSubditLeaderboard = subditLeaderboard.filter(
+    (row) => row.gender === "M"
+  );
 
-  const femaleSubditLeaderboard =
-    subditLeaderboard.filter(
-      (row) => row.gender === "F"
-    );
+  const femaleSubditLeaderboard = subditLeaderboard.filter(
+    (row) => row.gender === "F"
+  );
 
-  const maleIndividualLeaderboard =
-    individualLeaderboard.filter(
-      (row) => row.gender === "M"
-    );
+  const maleIndividualLeaderboard = individualLeaderboard.filter(
+    (row) => row.gender === "M"
+  );
 
-  const femaleIndividualLeaderboard =
-    individualLeaderboard.filter(
-      (row) => row.gender === "F"
-    );
+  const femaleIndividualLeaderboard = individualLeaderboard.filter(
+    (row) => row.gender === "F"
+  );
 
   return (
-    <main className="shell dashboard-shell">
-      <section className="card dashboard-card">
-        <div className="dashboard-header">
+    <main className="run-app dashboard-v2">
+      {/* Ambient */}
+      <div
+        className="run-app-glow run-app-glow-one"
+        aria-hidden="true"
+      />
+      <div
+        className="run-app-glow run-app-glow-two"
+        aria-hidden="true"
+      />
+
+      {/* TOP BAR */}
+      <header className="run-topbar">
+        <Link href="/dashboard" className="run-brand">
+          <span className="run-brand-dot" />
+          <span>ATLANTIK RUN</span>
+          <small>2026</small>
+        </Link>
+
+        <div className="run-topbar-actions">
+          {user.isadmin ? (
+            <Link
+              href="/admin/login"
+              className="run-admin-link"
+            >
+              Panel Admin
+            </Link>
+          ) : null}
+
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              className="run-icon-button"
+              aria-label="Keluar"
+            >
+              <span>Keluar</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+          </form>
+        </div>
+      </header>
+
+      <div className="run-dashboard-container">
+        {/* WELCOME */}
+        <section className="dashboard-welcome">
           <div>
-            <span className="eyebrow">
-              ATLANTIK RUN 2026
+            <span className="dashboard-kicker">
+              DASHBOARD PELARI
             </span>
 
             <h1>Halo, {user.nama}</h1>
 
             <p>
-              {user.subdit} ·{" "}
-              {user.gender === "M"
-                ? "Pria"
-                : "Wanita"}
+              <span>{user.subdit}</span>
+              <span className="dashboard-meta-dot">·</span>
+              <span>
+                {user.gender === "M" ? "Pria" : "Wanita"}
+              </span>
             </p>
           </div>
 
-          <div className="dashboard-actions">
-            {user.isadmin ? (
-              <Link
-                href="/admin/login"
-                className="primary-link"
-              >
-                Panel Admin
-              </Link>
-            ) : null}
-
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="secondary-button"
-              >
-                Keluar
-              </button>
-            </form>
-          </div>
-        </div>
+          {canRecord ? (
+            <Link
+              href="/record"
+              className="dashboard-record-desktop"
+            >
+              <span>Rekam Aktivitas</span>
+              <span aria-hidden="true">＋</span>
+            </Link>
+          ) : null}
+        </section>
 
         {/* RECAP SAYA */}
-        <section className="personal-recap">
-          <div className="section-heading">
+        <section className="dashboard-recap-v2">
+          <div className="dashboard-section-heading">
             <div>
-              <h2>Recap Saya</h2>
+              <span className="dashboard-section-kicker">
+                PENCAPAIAN SAYA
+              </span>
 
-              <p>
-                Ringkasan pencapaian ATLANTIK RUN.
-              </p>
+              <h2>Recap Saya</h2>
             </div>
 
-            {canRecord ? (
-              <Link
-                href="/record"
-                className="primary-link"
-              >
-                Rekam Aktivitas
-              </Link>
-            ) : null}
+            <p>
+              Ringkasan aktivitas yang telah disetujui.
+            </p>
           </div>
 
-          <div className="personal-stat-grid">
-            <article className="personal-stat-card">
-              <span>Total Jarak</span>
+          <div className="dashboard-recap-grid">
+            {/* TOTAL DISTANCE */}
+            <article className="dashboard-distance-card">
+              <div className="dashboard-distance-top">
+                <span>Total Jarak</span>
 
-              <strong>
-                {formatDistance(
-                  personalStats.totalDistance
-                )}
-              </strong>
+                <span className="dashboard-distance-status">
+                  APPROVED
+                </span>
+              </div>
 
-              <small>km</small>
+              <div className="dashboard-distance-value">
+                <strong>
+                  {formatDistance(
+                    personalStats.totalDistance
+                  )}
+                </strong>
+
+                <span>km</span>
+              </div>
+
+              <div
+                className="dashboard-distance-line"
+                aria-hidden="true"
+              >
+                <span />
+              </div>
+
+              <p>
+                Akumulasi seluruh aktivitas lari yang telah
+                disetujui.
+              </p>
             </article>
 
-            <article className="personal-stat-card personal-stat-card-info">
-              <button
-                type="button"
-                className="stat-info"
-                aria-label={`Informasi Rank ${
-                  user.gender === "M"
-                    ? "Pria"
-                    : "Wanita"
-                }`}
-              >
-                ?
+            {/* PERSONAL RANK */}
+            <div className="dashboard-rank-grid">
+              <article className="dashboard-rank-card">
+                <div className="dashboard-rank-header">
+                  <span>
+                    Rank{" "}
+                    {user.gender === "M"
+                      ? "Pria"
+                      : "Wanita"}
+                  </span>
 
-                <span className="stat-tooltip">
-                  Peringkat personal berdasarkan total jarak
-                  Approved dibandingkan dengan seluruh pelari{" "}
+                  <button
+                    type="button"
+                    className="dashboard-info-button"
+                    aria-label={`Informasi Rank ${
+                      user.gender === "M"
+                        ? "Pria"
+                        : "Wanita"
+                    }`}
+                  >
+                    ?
+
+                    <span className="dashboard-stat-tooltip">
+                      Peringkat personal berdasarkan total
+                      jarak Approved dibandingkan dengan
+                      seluruh pelari{" "}
+                      {user.gender === "M"
+                        ? "pria"
+                        : "wanita"}
+                      .
+                    </span>
+                  </button>
+                </div>
+
+                <strong className="dashboard-rank-value">
+                  {personalStats.genderRank
+                    ? `#${personalStats.genderRank}`
+                    : "-"}
+                </strong>
+
+                <span className="dashboard-rank-caption">
+                  kategori{" "}
                   {user.gender === "M"
                     ? "pria"
                     : "wanita"}
-                  .
                 </span>
-              </button>
+              </article>
 
-              <span>
-                Rank{" "}
-                {user.gender === "M"
-                  ? "Pria"
-                  : "Wanita"}
-              </span>
+              <article className="dashboard-rank-card">
+                <div className="dashboard-rank-header">
+                  <span>Overall Rank</span>
 
-              <strong>
-                {personalStats.genderRank
-                  ? `#${personalStats.genderRank}`
-                  : "-"}
-              </strong>
-            </article>
+                  <button
+                    type="button"
+                    className="dashboard-info-button"
+                    aria-label="Informasi Overall Rank"
+                  >
+                    ?
 
-            <article className="personal-stat-card personal-stat-card-info">
-              <button
-                type="button"
-                className="stat-info"
-                aria-label="Informasi Overall Rank"
-              >
-                ?
+                    <span className="dashboard-stat-tooltip">
+                      Peringkat personal berdasarkan total
+                      jarak Approved dibandingkan dengan
+                      seluruh pelari, tanpa membedakan
+                      gender.
+                    </span>
+                  </button>
+                </div>
 
-                <span className="stat-tooltip">
-                  Peringkat personal berdasarkan total jarak
-                  Approved dibandingkan dengan seluruh pelari,
-                  tanpa membedakan gender.
+                <strong className="dashboard-rank-value">
+                  {personalStats.overallRank
+                    ? `#${personalStats.overallRank}`
+                    : "-"}
+                </strong>
+
+                <span className="dashboard-rank-caption">
+                  seluruh pelari
                 </span>
-              </button>
-
-              <span>Overall Rank</span>
-
-              <strong>
-                {personalStats.overallRank
-                  ? `#${personalStats.overallRank}`
-                  : "-"}
-              </strong>
-            </article>
+              </article>
+            </div>
           </div>
         </section>
 
         {/* AKTIVITAS SAYA */}
-        <section className="activity-section">
+        <section className="activity-section dashboard-content-section">
           <div className="section-heading">
             <div>
+              <span className="dashboard-section-kicker">
+                AKTIVITAS
+              </span>
+
               <h2>Aktivitas Saya</h2>
 
               <p>
-                Status dan detail perekaman selama tiga hari kegiatan.
+                Status dan detail perekaman selama tiga hari
+                kegiatan.
               </p>
             </div>
           </div>
 
           <div className="activity-grid">
             {RUN_DATES.map((date) => {
-              const activity =
-                activityMap.get(date.value);
+              const activity = activityMap.get(date.value);
 
               return (
                 <article
@@ -342,9 +403,7 @@ export default async function DashboardPage() {
                         activity?.status
                       )}`}
                     >
-                      {getStatusLabel(
-                        activity?.status
-                      )}
+                      {getStatusLabel(activity?.status)}
                     </span>
                   </div>
 
@@ -375,9 +434,7 @@ export default async function DashboardPage() {
                         </div>
 
                         <div>
-                          <span>
-                            Elapsed Time
-                          </span>
+                          <span>Elapsed Time</span>
 
                           <strong>
                             {formatElapsedTime(
@@ -407,13 +464,9 @@ export default async function DashboardPage() {
                       {activity.status === 2 &&
                       activity.feedback ? (
                         <div className="activity-feedback-box">
-                          <span>
-                            Feedback Admin
-                          </span>
+                          <span>Feedback Admin</span>
 
-                          <p>
-                            {activity.feedback}
-                          </p>
+                          <p>{activity.feedback}</p>
                         </div>
                       ) : null}
                     </>
@@ -429,12 +482,14 @@ export default async function DashboardPage() {
         </section>
 
         {/* STATISTIK UMUM */}
-        <section className="general-stats-section">
+        <section className="general-stats-section dashboard-content-section">
           <div className="section-heading">
             <div>
-              <h2>
-                Statistik ATLANTIK RUN
-              </h2>
+              <span className="dashboard-section-kicker">
+                ATLANTIK RUN
+              </span>
+
+              <h2>Statistik Keseluruhan</h2>
 
               <p>
                 Akumulasi aktivitas yang sudah disetujui.
@@ -468,12 +523,17 @@ export default async function DashboardPage() {
         </section>
 
         {/* LEADERBOARD SUBDIT */}
-        <section className="leaderboard-section">
+        <section
+          className="leaderboard-section dashboard-content-section"
+          id="leaderboard"
+        >
           <div className="section-heading">
             <div>
-              <h2>
-                Leaderboard Subdit
-              </h2>
+              <span className="dashboard-section-kicker">
+                PERINGKAT TIM
+              </span>
+
+              <h2>Leaderboard Subdit</h2>
 
               <p>
                 Peringkat berdasarkan akumulasi jarak
@@ -483,11 +543,12 @@ export default async function DashboardPage() {
           </div>
 
           <div className="leaderboard-gender-grid">
+            {/* PRIA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
                   <span className="leaderboard-label">
-                    Kategori
+                    KATEGORI
                   </span>
 
                   <h3>Pria</h3>
@@ -506,48 +567,43 @@ export default async function DashboardPage() {
                   </thead>
 
                   <tbody>
-                    {maleSubditLeaderboard.map(
-                      (row) => (
-                        <tr
-                          key={`${row.subdit}-${row.gender}`}
-                        >
-                          <td>
-                            <strong>
-                              #{row.rank}
-                            </strong>
-                          </td>
+                    {maleSubditLeaderboard.map((row) => (
+                      <tr
+                        key={`${row.subdit}-${row.gender}`}
+                      >
+                        <td>
+                          <strong>#{row.rank}</strong>
+                        </td>
 
-                          <td>
-                            <strong>
-                              {row.subdit}
-                            </strong>
-                          </td>
+                        <td>
+                          <strong>{row.subdit}</strong>
+                        </td>
 
-                          <td>
-                            {formatDistance(
-                              row.totalDistance
-                            )}{" "}
-                            km
-                          </td>
+                        <td>
+                          {formatDistance(
+                            row.totalDistance
+                          )}{" "}
+                          km
+                        </td>
 
-                          <td>
-                            <strong>
-                              {formatPercentage(
-                                row.participationRate
-                              )}
-                              %
-                            </strong>
+                        <td>
+                          <strong>
+                            {formatPercentage(
+                              row.participationRate
+                            )}
+                            %
+                          </strong>
 
-                            <small className="leaderboard-subtext">
-                              {row.activeRunners}/
-                              {row.totalUsers} pelari
-                            </small>
-                          </td>
-                        </tr>
-                      )
-                    )}
+                          <small className="leaderboard-subtext">
+                            {row.activeRunners}/
+                            {row.totalUsers} pelari
+                          </small>
+                        </td>
+                      </tr>
+                    ))}
 
-                    {maleSubditLeaderboard.length === 0 ? (
+                    {maleSubditLeaderboard.length ===
+                    0 ? (
                       <tr>
                         <td
                           colSpan={4}
@@ -562,11 +618,12 @@ export default async function DashboardPage() {
               </div>
             </section>
 
+            {/* WANITA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
                   <span className="leaderboard-label">
-                    Kategori
+                    KATEGORI
                   </span>
 
                   <h3>Wanita</h3>
@@ -626,7 +683,8 @@ export default async function DashboardPage() {
                       )
                     )}
 
-                    {femaleSubditLeaderboard.length === 0 ? (
+                    {femaleSubditLeaderboard.length ===
+                    0 ? (
                       <tr>
                         <td
                           colSpan={4}
@@ -644,12 +702,14 @@ export default async function DashboardPage() {
         </section>
 
         {/* LEADERBOARD INDIVIDUAL */}
-        <section className="leaderboard-section">
+        <section className="leaderboard-section dashboard-content-section">
           <div className="section-heading">
             <div>
-              <h2>
-                Leaderboard Individual
-              </h2>
+              <span className="dashboard-section-kicker">
+                PERINGKAT PELARI
+              </span>
+
+              <h2>Leaderboard Individual</h2>
 
               <p>
                 Peringkat individu berdasarkan total jarak
@@ -659,11 +719,12 @@ export default async function DashboardPage() {
           </div>
 
           <div className="leaderboard-gender-grid">
+            {/* PRIA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
                   <span className="leaderboard-label">
-                    Individual
+                    INDIVIDUAL
                   </span>
 
                   <h3>Pria</h3>
@@ -702,9 +763,7 @@ export default async function DashboardPage() {
                             </strong>
                           </td>
 
-                          <td>
-                            {row.subdit}
-                          </td>
+                          <td>{row.subdit}</td>
 
                           <td>
                             {formatDistance(
@@ -716,7 +775,8 @@ export default async function DashboardPage() {
                       )
                     )}
 
-                    {maleIndividualLeaderboard.length === 0 ? (
+                    {maleIndividualLeaderboard.length ===
+                    0 ? (
                       <tr>
                         <td
                           colSpan={5}
@@ -731,11 +791,12 @@ export default async function DashboardPage() {
               </div>
             </section>
 
+            {/* WANITA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
                   <span className="leaderboard-label">
-                    Individual
+                    INDIVIDUAL
                   </span>
 
                   <h3>Wanita</h3>
@@ -774,9 +835,7 @@ export default async function DashboardPage() {
                             </strong>
                           </td>
 
-                          <td>
-                            {row.subdit}
-                          </td>
+                          <td>{row.subdit}</td>
 
                           <td>
                             {formatDistance(
@@ -788,7 +847,8 @@ export default async function DashboardPage() {
                       )
                     )}
 
-                    {femaleIndividualLeaderboard.length === 0 ? (
+                    {femaleIndividualLeaderboard.length ===
+                    0 ? (
                       <tr>
                         <td
                           colSpan={5}
@@ -804,7 +864,72 @@ export default async function DashboardPage() {
             </section>
           </div>
         </section>
-      </section>
+      </div>
+
+      {/* MOBILE BOTTOM NAVIGATION */}
+      <nav
+        className="run-bottom-nav"
+        aria-label="Navigasi utama"
+      >
+        <Link
+          href="/dashboard"
+          className="run-bottom-nav-item is-active"
+        >
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M3 10.8 12 3l9 7.8v9.4a.8.8 0 0 1-.8.8h-5.4v-6.2H9.2V21H3.8a.8.8 0 0 1-.8-.8Z" />
+            </svg>
+          </span>
+
+          <span>Home</span>
+        </Link>
+
+        {canRecord ? (
+          <Link
+            href="/record"
+            className="run-bottom-nav-item run-bottom-nav-primary"
+          >
+            <span
+              className="run-nav-primary-icon"
+              aria-hidden="true"
+            >
+              ＋
+            </span>
+
+            <span>Lapor</span>
+          </Link>
+        ) : (
+          <span className="run-bottom-nav-item run-bottom-nav-primary is-disabled">
+            <span
+              className="run-nav-primary-icon"
+              aria-hidden="true"
+            >
+              ＋
+            </span>
+
+            <span>Lapor</span>
+          </span>
+        )}
+
+        <a
+          href="#leaderboard"
+          className="run-bottom-nav-item"
+        >
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M6 20V10M12 20V4M18 20v-7" />
+            </svg>
+          </span>
+
+          <span>Rank</span>
+        </a>
+      </nav>
     </main>
   );
 }
