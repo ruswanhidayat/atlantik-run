@@ -763,12 +763,6 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <div className="full-leaderboard-scroll-hint">
-            <span aria-hidden="true">←</span>
-            Geser tabel untuk melihat data lengkap
-            <span aria-hidden="true">→</span>
-          </div>
-
           <div className="leaderboard-gender-grid">
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
@@ -974,6 +968,12 @@ export default async function DashboardPage() {
               <span>Lihat Semua Peringkat</span>
               <span aria-hidden="true">→</span>
             </Link>
+          </div>
+
+          <div className="full-leaderboard-scroll-hint">
+            <span aria-hidden="true">←</span>
+            Geser tabel untuk melihat data lengkap
+            <span aria-hidden="true">→</span>
           </div>
 
           <div className="leaderboard-gender-grid">

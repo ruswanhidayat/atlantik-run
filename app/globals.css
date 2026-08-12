@@ -9584,3 +9584,19 @@ th:nth-child(3) {
     font-size: 10px;
   }
 }
+
+@media (max-width: 760px) {
+  .full-leaderboard-v2 {
+    padding-bottom:
+      calc(
+        94px +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+  .full-leaderboard-v2
+  .run-topbar
+  .run-admin-link {
+    display: none;
+  }
+}
