@@ -14,9 +14,45 @@ export type RecordRunState = {
   values?: {
     tanggal: string;
     jarak: string;
+    avgPace: string;
+    elapsedTime: string;
     tautan: string;
   };
 };
+
+function parsePace(value: string): number | null {
+  const match = value.match(/^(\d{1,2}):([0-5]\d)$/);
+
+  if (!match) {
+    return null;
+  }
+
+  const minutes = Number(match[1]);
+  const seconds = Number(match[2]);
+
+  const totalSeconds = minutes * 60 + seconds;
+
+  return totalSeconds > 0 ? totalSeconds : null;
+}
+
+function parseElapsedTime(value: string): number | null {
+  const match = value.match(/^(\d{1,2}):([0-5]\d):([0-5]\d)$/);
+
+  if (!match) {
+    return null;
+  }
+
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  const seconds = Number(match[3]);
+
+  const totalSeconds =
+    hours * 3600 +
+    minutes * 60 +
+    seconds;
+
+  return totalSeconds > 0 ? totalSeconds : null;
+}
 
 export async function recordRunAction(
   _previousState: RecordRunState,
@@ -34,11 +70,15 @@ export async function recordRunAction(
   const rawTautan = formData.get("tautan");
   const rawJarak = formData.get("jarak");
   const rawTanggal = formData.get("tanggal");
+  const rawAvgPace = formData.get("avgPace");
+  const rawElapsedTime = formData.get("elapsedTime");
 
   if (
     typeof rawTautan !== "string" ||
     typeof rawJarak !== "string" ||
-    typeof rawTanggal !== "string"
+    typeof rawTanggal !== "string" ||
+    typeof rawAvgPace !== "string" ||
+    typeof rawElapsedTime !== "string"
   ) {
     return {
       error: "Data perekaman tidak lengkap.",
@@ -49,10 +89,14 @@ export async function recordRunAction(
   const jarakInput = rawJarak.trim();
   const jarakText = jarakInput.replace(",", ".");
   const tanggal = rawTanggal.trim();
+  const avgPace = rawAvgPace.trim();
+  const elapsedTime = rawElapsedTime.trim();
 
   const values = {
     tanggal,
     jarak: jarakInput,
+    avgPace,
+    elapsedTime,
     tautan,
   };
 
@@ -94,6 +138,27 @@ export async function recordRunAction(
     };
   }
 
+  const avgPaceSeconds = parsePace(avgPace);
+
+  if (avgPaceSeconds === null) {
+    return {
+      error:
+        "Avg. Pace harus menggunakan format menit:detik, contoh 12:58.",
+      values,
+    };
+  }
+
+  const elapsedTimeSeconds =
+    parseElapsedTime(elapsedTime);
+
+  if (elapsedTimeSeconds === null) {
+    return {
+      error:
+        "Elapsed Time harus menggunakan format jam:menit:detik, contoh 01:08:04.",
+      values,
+    };
+  }
+
   const existing = await sql`
     SELECT id, status
     FROM run_activities
@@ -117,6 +182,8 @@ export async function recordRunAction(
         nip,
         tautan,
         jarak,
+        avg_pace_seconds,
+        elapsed_time_seconds,
         tanggal,
         status
       )
@@ -124,6 +191,8 @@ export async function recordRunAction(
         ${user.nip},
         ${tautan},
         ${jarak},
+        ${avgPaceSeconds},
+        ${elapsedTimeSeconds},
         ${tanggal}::date,
         0
       )

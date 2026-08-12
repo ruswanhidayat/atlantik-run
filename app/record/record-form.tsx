@@ -1,6 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useState,
+} from "react";
 
 import {
   recordRunAction,
@@ -18,22 +22,62 @@ type RecordFormProps = {
 
 const initialState: RecordRunState = {};
 
+function sanitizeTimeInput(
+  value: string,
+  groups: number[]
+) {
+  const digits = value.replace(/\D/g, "");
+
+  const parts: string[] = [];
+  let index = 0;
+
+  for (const length of groups) {
+    if (index >= digits.length) {
+      break;
+    }
+
+    parts.push(
+      digits.slice(index, index + length)
+    );
+
+    index += length;
+  }
+
+  return parts.join(":");
+}
+
 export default function RecordForm({
   availableDates,
 }: RecordFormProps) {
-  const [state, formAction, pending] = useActionState(
-    recordRunAction,
-    initialState
-  );
+  const [state, formAction, pending] =
+    useActionState(
+      recordRunAction,
+      initialState
+    );
 
-  const [tanggal, setTanggal] = useState("");
-  const [jarak, setJarak] = useState("");
-  const [tautan, setTautan] = useState("");
+  const [tanggal, setTanggal] =
+    useState("");
+
+  const [jarak, setJarak] =
+    useState("");
+
+  const [avgPace, setAvgPace] =
+    useState("");
+
+  const [elapsedTime, setElapsedTime] =
+    useState("");
+
+  const [tautan, setTautan] =
+    useState("");
 
   useEffect(() => {
     if (state.values) {
       setTanggal(state.values.tanggal);
       setJarak(state.values.jarak);
+      setAvgPace(state.values.avgPace);
+      setElapsedTime(
+        state.values.elapsedTime
+      );
       setTautan(state.values.tautan);
     }
   }, [state]);
@@ -43,16 +87,17 @@ export default function RecordForm({
   ) {
     let value = event.target.value;
 
-    // Hanya izinkan angka, koma dan titik
     value = value.replace(/[^0-9.,]/g, "");
 
-    // Samakan separator sementara untuk validasi
-    const separatorIndex = value.search(/[.,]/);
+    const separatorIndex =
+      value.search(/[.,]/);
 
     if (separatorIndex !== -1) {
-      const beforeDecimal = value.slice(0, separatorIndex);
+      const beforeDecimal =
+        value.slice(0, separatorIndex);
 
-      const separator = value[separatorIndex];
+      const separator =
+        value[separatorIndex];
 
       const afterDecimal = value
         .slice(separatorIndex + 1)
@@ -66,6 +111,28 @@ export default function RecordForm({
     }
 
     setJarak(value);
+  }
+
+  function handleAvgPaceChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    setAvgPace(
+      sanitizeTimeInput(
+        event.target.value,
+        [2, 2]
+      )
+    );
+  }
+
+  function handleElapsedTimeChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    setElapsedTime(
+      sanitizeTimeInput(
+        event.target.value,
+        [2, 2, 2]
+      )
+    );
   }
 
   return (
@@ -84,7 +151,9 @@ export default function RecordForm({
           name="tanggal"
           value={tanggal}
           onChange={(event) =>
-            setTanggal(event.target.value)
+            setTanggal(
+              event.target.value
+            )
           }
           autoComplete="off"
           required
@@ -124,9 +193,58 @@ export default function RecordForm({
 
           <span>km</span>
         </div>
+      </div>
+
+      <div className="field">
+        <label htmlFor="avgPace">
+          Avg. Pace
+        </label>
+
+        <div className="input-suffix">
+          <input
+            id="avgPace"
+            name="avgPace"
+            type="text"
+            inputMode="numeric"
+            value={avgPace}
+            onChange={handleAvgPaceChange}
+            placeholder="12:58"
+            maxLength={5}
+            autoComplete="off"
+            required
+          />
+
+          <span>/km</span>
+        </div>
 
         <small>
-          Maksimal 2 angka di belakang koma.
+          Format menit:detik, contoh 12:58.
+        </small>
+      </div>
+
+      <div className="field">
+        <label htmlFor="elapsedTime">
+          Elapsed Time
+        </label>
+
+        <input
+          id="elapsedTime"
+          name="elapsedTime"
+          type="text"
+          inputMode="numeric"
+          value={elapsedTime}
+          onChange={
+            handleElapsedTimeChange
+          }
+          placeholder="01:08:04"
+          maxLength={8}
+          autoComplete="off"
+          required
+        />
+
+        <small>
+          Format jam:menit:detik,
+          contoh 01:08:04.
         </small>
       </div>
 
@@ -141,18 +259,15 @@ export default function RecordForm({
           type="text"
           value={tautan}
           onChange={(event) =>
-            setTautan(event.target.value)
+            setTautan(
+              event.target.value
+            )
           }
           maxLength={500}
           placeholder="Tempel tautan bukti aktivitas"
           autoComplete="off"
           required
         />
-
-        <small>
-          Masukkan tautan aktivitas sebagai bukti
-          perekaman.
-        </small>
       </div>
 
       {state.error ? (

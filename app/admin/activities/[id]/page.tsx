@@ -54,6 +54,8 @@ export default async function AdminActivityDetailPage({
       ra.feedback,
       ra.verified_by,
       ra.verified_at,
+      ra.avg_pace_seconds,
+      ra.elapsed_time_seconds,
       verifier.nama AS verifier_name
     FROM run_activities ra
 
@@ -73,6 +75,55 @@ export default async function AdminActivityDetailPage({
 
   const activity = rows[0];
   const status = Number(activity.status);
+
+  function formatPace(
+    seconds: number | null
+  ) {
+    if (!seconds) {
+      return "-";
+    }
+
+    const minutes =
+      Math.floor(seconds / 60);
+
+    const remainingSeconds =
+      seconds % 60;
+
+    return `${String(
+      minutes
+    ).padStart(2, "0")}:${String(
+      remainingSeconds
+    ).padStart(2, "0")}`;
+  }
+
+  function formatElapsedTime(
+    seconds: number | null
+  ) {
+    if (!seconds) {
+      return "-";
+    }
+
+    const hours =
+      Math.floor(
+        seconds / 3600
+      );
+
+    const minutes =
+      Math.floor(
+        (seconds % 3600) / 60
+      );
+
+    const remainingSeconds =
+      seconds % 60;
+
+    return `${String(
+      hours
+    ).padStart(2, "0")}:${String(
+      minutes
+    ).padStart(2, "0")}:${String(
+      remainingSeconds
+    ).padStart(2, "0")}`;
+  }
 
   return (
     <main className="shell">
@@ -148,12 +199,53 @@ export default async function AdminActivityDetailPage({
           </a>
         </div>
 
+        <div>
+          <span>Avg. Pace</span>
+          <strong>
+            {formatPace(
+              activity.avg_pace_seconds
+                ? Number(
+                    activity.avg_pace_seconds
+                  )
+                : null
+            )}{" "}
+            /km
+          </strong>
+        </div>
+
+        <div>
+          <span>Elapsed Time</span>
+          <strong>
+            {formatElapsedTime(
+              activity.elapsed_time_seconds
+                ? Number(
+                    activity.elapsed_time_seconds
+                  )
+                : null
+            )}
+          </strong>
+        </div>
+
         {status === 0 ? (
           <VerifyForm
             id={String(activity.id)}
             jarak={Number(
               activity.jarak
             ).toFixed(2)}
+            avgPace={formatPace(
+              activity.avg_pace_seconds
+                ? Number(
+                    activity.avg_pace_seconds
+                  )
+                : null
+            )}
+            elapsedTime={formatElapsedTime(
+              activity.elapsed_time_seconds
+                ? Number(
+                    activity.elapsed_time_seconds
+                  )
+                : null
+            )}
           />
         ) : (
           <div className="verification-result">

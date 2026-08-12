@@ -1,135 +1,201 @@
-"use server";
-
-import { redirect } from "next/navigation";
-
-import {
-  requireAdminUser,
-  requireAdminAccess,
-} from "@/lib/auth";
-import { sql } from "@/lib/db";
-import {
-  clearAdminAuthenticated,
-  setAdminAuthenticated,
-} from "@/lib/session";
-
-export type AdminLoginState = {
-  error?: string;
-};
-
-export async function adminLoginAction(
-  _previousState: AdminLoginState,
-  formData: FormData
-): Promise<AdminLoginState> {
-  await requireAdminUser();
-
-  const rawPassword = formData.get("password");
-
-  if (typeof rawPassword !== "string") {
-    return {
-      error: "Password admin wajib diisi.",
-    };
-  }
-
-  const password = rawPassword.trim();
-  const adminPassword = process.env.ADMIN_PASSWORD;
-
-  if (!adminPassword) {
-    return {
-      error:
-        "ADMIN_PASSWORD belum dikonfigurasi.",
-    };
-  }
-
-  if (password !== adminPassword) {
-    return {
-      error: "Password admin salah.",
-    };
-  }
-
-  await setAdminAuthenticated();
-
-  redirect("/admin/activities");
-}
-
-export async function adminLogoutAction() {
-  await clearAdminAuthenticated();
-
-  redirect("/dashboard");
-}
-
 export type VerifyActivityState = {
   error?: string;
 };
+
+function parsePace(
+  value: string
+): number | null {
+  const match =
+    value.match(
+      /^(\d{1,2}):([0-5]\d)$/
+    );
+
+  if (!match) {
+    return null;
+  }
+
+  const minutes =
+    Number(match[1]);
+
+  const seconds =
+    Number(match[2]);
+
+  const totalSeconds =
+    minutes * 60 + seconds;
+
+  return totalSeconds > 0
+    ? totalSeconds
+    : null;
+}
+
+function parseElapsedTime(
+  value: string
+): number | null {
+  const match =
+    value.match(
+      /^(\d{1,2}):([0-5]\d):([0-5]\d)$/
+    );
+
+  if (!match) {
+    return null;
+  }
+
+  const hours =
+    Number(match[1]);
+
+  const minutes =
+    Number(match[2]);
+
+  const seconds =
+    Number(match[3]);
+
+  const totalSeconds =
+    hours * 3600 +
+    minutes * 60 +
+    seconds;
+
+  return totalSeconds > 0
+    ? totalSeconds
+    : null;
+}
 
 export async function verifyActivityAction(
   _previousState: VerifyActivityState,
   formData: FormData
 ): Promise<VerifyActivityState> {
-  const admin = await requireAdminAccess();
+  const admin =
+    await requireAdminAccess();
 
-  const rawId = formData.get("id");
-  const rawJarak = formData.get("jarak");
-  const rawFeedback = formData.get("feedback");
-  const rawDecision = formData.get("decision");
+  const rawId =
+    formData.get("id");
+
+  const rawJarak =
+    formData.get("jarak");
+
+  const rawAvgPace =
+    formData.get("avgPace");
+
+  const rawElapsedTime =
+    formData.get("elapsedTime");
+
+  const rawFeedback =
+    formData.get("feedback");
+
+  const rawDecision =
+    formData.get("decision");
 
   if (
     typeof rawId !== "string" ||
     typeof rawJarak !== "string" ||
+    typeof rawAvgPace !== "string" ||
+    typeof rawElapsedTime !== "string" ||
     typeof rawFeedback !== "string" ||
     typeof rawDecision !== "string"
   ) {
     return {
-      error: "Data verifikasi tidak lengkap.",
+      error:
+        "Data verifikasi tidak lengkap.",
     };
   }
 
   const id = Number(rawId);
 
-  if (!Number.isInteger(id) || id <= 0) {
+  if (
+    !Number.isInteger(id) ||
+    id <= 0
+  ) {
     return {
-      error: "ID aktivitas tidak valid.",
+      error:
+        "ID aktivitas tidak valid.",
     };
   }
 
   const jarakText =
-    rawJarak.trim().replace(",", ".");
+    rawJarak
+      .trim()
+      .replace(",", ".");
 
-  if (!/^\d+(\.\d{1,2})?$/.test(jarakText)) {
+  if (
+    !/^\d+(\.\d{1,2})?$/.test(
+      jarakText
+    )
+  ) {
     return {
       error:
         "Jarak harus berupa angka dengan maksimal 2 angka desimal.",
     };
   }
 
-  const jarak = Number(jarakText);
+  const jarak =
+    Number(jarakText);
 
-  if (!Number.isFinite(jarak) || jarak <= 0) {
+  if (
+    !Number.isFinite(jarak) ||
+    jarak <= 0
+  ) {
     return {
-      error: "Jarak harus lebih besar dari 0.",
+      error:
+        "Jarak harus lebih besar dari 0.",
     };
   }
 
-  const feedback = rawFeedback.trim();
+  const avgPaceSeconds =
+    parsePace(
+      rawAvgPace.trim()
+    );
+
+  if (
+    avgPaceSeconds === null
+  ) {
+    return {
+      error:
+        "Avg. Pace harus menggunakan format menit:detik.",
+    };
+  }
+
+  const elapsedTimeSeconds =
+    parseElapsedTime(
+      rawElapsedTime.trim()
+    );
+
+  if (
+    elapsedTimeSeconds === null
+  ) {
+    return {
+      error:
+        "Elapsed Time harus menggunakan format jam:menit:detik.",
+    };
+  }
+
+  const feedback =
+    rawFeedback.trim();
 
   if (
     rawDecision !== "approve" &&
     rawDecision !== "reject"
   ) {
     return {
-      error: "Keputusan verifikasi tidak valid.",
+      error:
+        "Keputusan verifikasi tidak valid.",
     };
   }
 
-  if (rawDecision === "reject" && !feedback) {
+  if (
+    rawDecision === "reject" &&
+    !feedback
+  ) {
     return {
       error:
         "Feedback wajib diisi jika aktivitas ditolak.",
     };
   }
 
-  if (feedback.length > 500) {
+  if (
+    feedback.length > 500
+  ) {
     return {
-      error: "Feedback maksimal 500 karakter.",
+      error:
+        "Feedback maksimal 500 karakter.",
     };
   }
 
@@ -142,13 +208,16 @@ export async function verifyActivityAction(
 
   if (rows.length === 0) {
     return {
-      error: "Aktivitas tidak ditemukan.",
+      error:
+        "Aktivitas tidak ditemukan.",
     };
   }
 
   const activity = rows[0];
 
-  if (Number(activity.status) !== 0) {
+  if (
+    Number(activity.status) !== 0
+  ) {
     return {
       error:
         "Aktivitas ini sudah pernah diverifikasi.",
@@ -156,14 +225,20 @@ export async function verifyActivityAction(
   }
 
   const status =
-    rawDecision === "approve" ? 1 : 2;
+    rawDecision === "approve"
+      ? 1
+      : 2;
 
   await sql`
     UPDATE run_activities
     SET
       jarak = ${jarak},
+      avg_pace_seconds = ${avgPaceSeconds},
+      elapsed_time_seconds = ${elapsedTimeSeconds},
       feedback = ${
-        feedback ? feedback : null
+        feedback
+          ? feedback
+          : null
       },
       status = ${status},
       verified_by = ${admin.nip},
@@ -172,5 +247,7 @@ export async function verifyActivityAction(
       AND status = 0
   `;
 
-  redirect("/admin/activities");
+  redirect(
+    "/admin/activities"
+  );
 }

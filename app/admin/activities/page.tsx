@@ -31,6 +31,8 @@ export default async function AdminActivitiesPage() {
       ra.jarak,
       ra.tgl_rekam,
       ra.status,
+      ra.avg_pace_seconds,
+      ra.elapsed_time_seconds,
       ra.feedback
     FROM run_activities ra
     JOIN users u
@@ -49,6 +51,19 @@ export default async function AdminActivitiesPage() {
     tanggal: String(activity.tanggal),
     jarak: Number(activity.jarak),
     status: Number(activity.status),
+    avgPaceSeconds:
+      activity.avg_pace_seconds
+        ? Number(
+            activity.avg_pace_seconds
+          )
+        : null,
+
+    elapsedTimeSeconds:
+      activity.elapsed_time_seconds
+        ? Number(
+            activity.elapsed_time_seconds
+          )
+        : null,
     feedback: activity.feedback
       ? String(activity.feedback)
       : null,
