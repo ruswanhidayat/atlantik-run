@@ -4684,3 +4684,297 @@ td {
     font-size: 11px;
   }
 }
+
+/* =========================================================
+   ATLANTIK RUN V2 — DASHBOARD CORRECTION 02
+   ========================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ---------------------------------------------------------
+   RANK GLOW — KEEP INSIDE CARD
+   --------------------------------------------------------- */
+
+.dashboard-v2 .dashboard-rank-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.dashboard-v2 .dashboard-rank-card::before {
+  content: "";
+
+  position: absolute;
+  z-index: 0;
+
+  right: -45px;
+  bottom: -70px;
+
+  width: 190px;
+  height: 190px;
+
+  border-radius: 50%;
+
+  filter: blur(48px);
+
+  opacity: 0.72;
+
+  pointer-events: none;
+}
+
+.dashboard-v2 .dashboard-rank-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-v2 .dashboard-rank-male::before {
+  background:
+    rgba(37, 99, 235, 0.42);
+}
+
+.dashboard-v2 .dashboard-rank-female::before {
+  background:
+    rgba(219, 39, 119, 0.42);
+}
+
+.dashboard-v2 .dashboard-rank-overall::before {
+  background:
+    rgba(234, 88, 12, 0.42);
+}
+
+/* ---------------------------------------------------------
+   TOOLTIP
+   --------------------------------------------------------- */
+
+.dashboard-v2 .dashboard-info-button {
+  position: relative;
+  z-index: 20;
+}
+
+.dashboard-v2 .dashboard-stat-tooltip {
+  z-index: 300;
+
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 240px;
+
+  padding: 12px 13px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.11);
+
+  border-radius: 12px;
+
+  background: #292330;
+
+  color: #ddd8e2;
+
+  box-shadow:
+    0 18px 44px
+    rgba(0, 0, 0, 0.5);
+
+  font-size: 11px;
+  font-weight: 400;
+
+  line-height: 1.55;
+}
+
+/*
+ * Tooltip perlu boleh keluar,
+ * tetapi glow tetap di dalam.
+ */
+
+.dashboard-v2 .dashboard-rank-header {
+  position: static;
+}
+
+.dashboard-v2 .dashboard-info-button {
+  overflow: visible;
+}
+
+.dashboard-v2 .dashboard-stat-tooltip {
+  position: fixed;
+
+  top: auto;
+  right: auto;
+
+  width: min(240px, calc(100vw - 32px));
+}
+
+/* ---------------------------------------------------------
+   DESKTOP TOPBAR
+   --------------------------------------------------------- */
+
+@media (min-width: 761px) {
+  .dashboard-v2 .run-topbar-actions {
+    display: flex;
+  }
+}
+
+/* ---------------------------------------------------------
+   MOBILE TOPBAR
+   --------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  /*
+   * Admin dan Logout dipindahkan ke bottom nav.
+   */
+
+  .dashboard-v2 .run-topbar-actions {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------
+   BOTTOM NAV — FIVE ITEMS
+   --------------------------------------------------------- */
+
+@media (max-width: 760px) {
+
+  .run-bottom-nav-five {
+    grid-template-columns:
+      repeat(5, minmax(0, 1fr));
+
+    min-height: 70px;
+
+    padding:
+      7px
+      8px;
+  }
+
+  .run-bottom-nav-five
+  .run-bottom-nav-item {
+    min-height: 54px;
+
+    gap: 4px;
+
+    padding:
+      5px
+      2px;
+
+    border: 0;
+
+    background: transparent;
+
+    color:
+      var(--run-muted);
+
+    font-family:
+      var(--font-open-sans),
+      sans-serif;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+      background 150ms ease,
+      color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .run-bottom-nav-five
+  .run-bottom-nav-item:hover,
+  .run-bottom-nav-five
+  .run-bottom-nav-item:focus-visible {
+    background:
+      rgba(255, 255, 255, 0.04);
+  }
+
+  .run-bottom-nav-five
+  .run-bottom-nav-item.is-active {
+    background:
+      rgba(139, 92, 246, 0.12);
+
+    color:
+      var(--run-purple-soft);
+  }
+
+  .run-bottom-nav-five
+  .run-nav-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .run-bottom-nav-five
+  .run-nav-icon svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  /* RECORD — CENTER ACTION */
+
+  .run-bottom-nav-five
+  .run-bottom-nav-primary {
+    color:
+      var(--run-text);
+  }
+
+  .run-bottom-nav-five
+  .run-nav-primary-icon {
+    width: 40px;
+    height: 40px;
+
+    margin-top: -18px;
+
+    border:
+      1px solid
+      rgba(255, 255, 255, 0.12);
+
+    border-radius: 50%;
+
+    background:
+      linear-gradient(
+        135deg,
+        #6d28d9,
+        #9f67ff
+      );
+
+    box-shadow:
+      0 8px 26px
+      rgba(124, 58, 237, 0.42);
+
+    font-size: 23px;
+  }
+
+  /* ADMIN */
+
+  .run-bottom-nav-five
+  .run-bottom-nav-item.is-disabled {
+    opacity: 0.32;
+
+    pointer-events: none;
+  }
+
+  /* LOGOUT */
+
+  .run-bottom-nav-form {
+    display: contents;
+  }
+
+  .run-bottom-nav-logout {
+    width: 100%;
+  }
+
+  .run-bottom-nav-five
+  .run-bottom-nav-logout {
+    color:
+      #f28b82;
+  }
+
+  .run-bottom-nav-five
+  .run-bottom-nav-logout:hover,
+  .run-bottom-nav-five
+  .run-bottom-nav-logout:focus-visible {
+    background:
+      rgba(248, 113, 113, 0.07);
+
+    color:
+      #fca5a5;
+  }
+}
