@@ -5623,3 +5623,32 @@ p {
     z-index: 80;
   }
 }
+
+@media (max-width: 760px) {
+
+  .dashboard-v2
+  .dashboard-stat-tooltip {
+    position: absolute !important;
+
+    top: calc(100% + 8px) !important;
+    right: -4px !important;
+    left: auto !important;
+
+    width: 155px;
+
+    padding: 10px 11px;
+
+    border-radius: 10px;
+
+    font-size: 9px;
+    line-height: 1.45;
+
+    white-space: normal;
+  }
+
+  .dashboard-v2
+  .dashboard-stat-tooltip::before {
+    right: 11px;
+    left: auto;
+  }
+}
