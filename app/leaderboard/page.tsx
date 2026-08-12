@@ -80,14 +80,11 @@ export default async function LeaderboardPage() {
       />
 
       <header className="run-topbar">
-        <Link
-          href="/dashboard"
-          className="run-brand"
-        >
-          <span className="run-brand-dot" />
-          <span>ATLANTIK RUN</span>
-          <small>2026</small>
-        </Link>
+        <div className="run-brand">
+            <span className="run-brand-dot" />
+            <span>ATLANTIK RUN</span>
+            <small>2026</small>
+        </div>
 
         <Link
           href="/dashboard#leaderboard"
