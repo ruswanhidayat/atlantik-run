@@ -9642,3 +9642,56 @@ th:nth-child(3) {
     text-decoration: none;
   }
 }
+
+.record-mobile-back {
+  display: none;
+}
+
+@media (max-width: 760px) {
+
+  /* tombol back kecil di header tidak perlu lagi */
+  .record-v2 .record-back-button {
+    display: none;
+  }
+
+  .record-mobile-back {
+    position: relative;
+    z-index: 2;
+
+    display: inline-flex;
+
+    width: fit-content;
+    min-height: 38px;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    margin:
+      4px
+      16px
+      22px;
+
+    padding:
+      0
+      12px;
+
+    border:
+      1px solid
+      rgba(159, 103, 255, 0.2);
+
+    border-radius: 11px;
+
+    background:
+      rgba(139, 92, 246, 0.07);
+
+    color:
+      var(--run-purple-soft);
+
+    font-size: 9px;
+    font-weight: 600;
+
+    text-decoration: none;
+  }
+}

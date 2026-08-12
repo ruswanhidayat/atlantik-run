@@ -214,13 +214,6 @@ export default async function AdminActivityDetailPage({
       </header>
 
       <div className="admin-verify-container">
-        <Link
-          href="/admin/activities"
-          className="admin-verify-mobile-back"
-        >
-          <span aria-hidden="true">←</span>
-          <span>Kembali ke Data</span>
-        </Link>
         <section className="admin-verify-heading">
           <div>
             <span className="dashboard-kicker">
@@ -248,6 +241,14 @@ export default async function AdminActivityDetailPage({
             {formatStatus(status)}
           </span>
         </section>
+
+        <Link
+          href="/admin/activities"
+          className="admin-verify-mobile-back"
+        >
+          <span aria-hidden="true">←</span>
+          <span>Kembali ke Data</span>
+        </Link>
 
         <div className="admin-verify-layout">
           {/* SUMMARY */}

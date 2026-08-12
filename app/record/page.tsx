@@ -250,6 +250,14 @@ export default async function RecordPage() {
         </div>
       </div>
 
+      <Link
+        href="/dashboard"
+        className="record-mobile-back"
+      >
+        <span aria-hidden="true">←</span>
+        <span>Kembali ke Dashboard</span>
+      </Link>
+
       <RecordBottomNav
         isAdmin={Boolean(
           user.isadmin
