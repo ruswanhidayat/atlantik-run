@@ -6,6 +6,7 @@ import { sql } from "@/lib/db";
 import {
   getGeneralStats,
   getPersonalStats,
+  getSubditGenderLeaderboard,
 } from "@/lib/dashboard";
 import {
   isSubmissionOpen,
@@ -41,6 +42,13 @@ function formatDistance(value: number) {
   });
 }
 
+function formatPercentage(value: number) {
+  return value.toLocaleString("id-ID", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+}
+
 export default async function DashboardPage() {
   const user = await requireUser();
 
@@ -48,6 +56,7 @@ export default async function DashboardPage() {
     activities,
     personalStats,
     generalStats,
+    subditLeaderboard,
   ] = await Promise.all([
     sql`
       SELECT DISTINCT ON (tanggal)
@@ -65,6 +74,8 @@ export default async function DashboardPage() {
     getPersonalStats(user.nip),
 
     getGeneralStats(),
+
+    getSubditGenderLeaderboard(),
   ]);
 
   const activityMap =
@@ -87,11 +98,18 @@ export default async function DashboardPage() {
       const activity =
         activityMap.get(date.value);
 
-      return (
-        !activity ||
-        activity.status === 2
-      );
+      return !activity || activity.status === 2;
     });
+
+  const maleSubditLeaderboard =
+    subditLeaderboard.filter(
+      (row) => row.gender === "M"
+    );
+
+  const femaleSubditLeaderboard =
+    subditLeaderboard.filter(
+      (row) => row.gender === "F"
+    );
 
   return (
     <main className="shell dashboard-shell">
@@ -102,9 +120,7 @@ export default async function DashboardPage() {
               ATLANTIK RUN 2026
             </span>
 
-            <h1>
-              Halo, {user.nama}
-            </h1>
+            <h1>Halo, {user.nama}</h1>
 
             <p>
               {user.subdit} ·{" "}
@@ -157,9 +173,7 @@ export default async function DashboardPage() {
 
           <div className="personal-stat-grid">
             <article className="personal-stat-card">
-              <span>
-                Total Jarak
-              </span>
+              <span>Total Jarak</span>
 
               <strong>
                 {formatDistance(
@@ -186,9 +200,7 @@ export default async function DashboardPage() {
             </article>
 
             <article className="personal-stat-card">
-              <span>
-                Overall Rank
-              </span>
+              <span>Overall Rank</span>
 
               <strong>
                 {personalStats.overallRank
@@ -202,9 +214,7 @@ export default async function DashboardPage() {
         <section className="activity-section">
           <div className="section-heading">
             <div>
-              <h2>
-                Aktivitas Saya
-              </h2>
+              <h2>Aktivitas Saya</h2>
 
               <p>
                 Status perekaman selama tiga hari kegiatan.
@@ -215,9 +225,7 @@ export default async function DashboardPage() {
           <div className="activity-grid">
             {RUN_DATES.map((date) => {
               const activity =
-                activityMap.get(
-                  date.value
-                );
+                activityMap.get(date.value);
 
               return (
                 <article
@@ -265,23 +273,17 @@ export default async function DashboardPage() {
 
           <div className="general-stat-grid">
             <article className="general-stat-card">
-              <span>
-                Total Pelari
-              </span>
+              <span>Total Pelari</span>
 
               <strong>
                 {generalStats.totalRunners}
               </strong>
 
-              <small>
-                peserta
-              </small>
+              <small>peserta</small>
             </article>
 
             <article className="general-stat-card">
-              <span>
-                Total Jarak
-              </span>
+              <span>Total Jarak</span>
 
               <strong>
                 {formatDistance(
@@ -289,10 +291,161 @@ export default async function DashboardPage() {
                 )}
               </strong>
 
-              <small>
-                km
-              </small>
+              <small>km</small>
             </article>
+          </div>
+        </section>
+
+        <section className="leaderboard-section">
+          <div className="section-heading">
+            <div>
+              <h2>
+                Leaderboard Subdit
+              </h2>
+
+              <p>
+                Peringkat berdasarkan akumulasi jarak
+                aktivitas Approved.
+              </p>
+            </div>
+          </div>
+
+          <div className="leaderboard-gender-grid">
+            <section className="leaderboard-card">
+              <div className="leaderboard-card-header">
+                <div>
+                  <span className="leaderboard-label">
+                    Kategori
+                  </span>
+
+                  <h3>Pria</h3>
+                </div>
+              </div>
+
+              <div className="leaderboard-table-wrap">
+                <table className="leaderboard-table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Subdit</th>
+                      <th>Jarak</th>
+                      <th>Partisipasi</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {maleSubditLeaderboard.map(
+                      (row) => (
+                        <tr
+                          key={`${row.subdit}-${row.gender}`}
+                        >
+                          <td>
+                            <strong>
+                              #{row.rank}
+                            </strong>
+                          </td>
+
+                          <td>
+                            <strong>
+                              {row.subdit}
+                            </strong>
+                          </td>
+
+                          <td>
+                            {formatDistance(
+                              row.totalDistance
+                            )}{" "}
+                            km
+                          </td>
+
+                          <td>
+                            <strong>
+                              {formatPercentage(
+                                row.participationRate
+                              )}
+                              %
+                            </strong>
+
+                            <small className="leaderboard-subtext">
+                              {row.activeRunners}/
+                              {row.totalUsers} pelari
+                            </small>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section className="leaderboard-card">
+              <div className="leaderboard-card-header">
+                <div>
+                  <span className="leaderboard-label">
+                    Kategori
+                  </span>
+
+                  <h3>Wanita</h3>
+                </div>
+              </div>
+
+              <div className="leaderboard-table-wrap">
+                <table className="leaderboard-table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Subdit</th>
+                      <th>Jarak</th>
+                      <th>Partisipasi</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {femaleSubditLeaderboard.map(
+                      (row) => (
+                        <tr
+                          key={`${row.subdit}-${row.gender}`}
+                        >
+                          <td>
+                            <strong>
+                              #{row.rank}
+                            </strong>
+                          </td>
+
+                          <td>
+                            <strong>
+                              {row.subdit}
+                            </strong>
+                          </td>
+
+                          <td>
+                            {formatDistance(
+                              row.totalDistance
+                            )}{" "}
+                            km
+                          </td>
+
+                          <td>
+                            <strong>
+                              {formatPercentage(
+                                row.participationRate
+                              )}
+                              %
+                            </strong>
+
+                            <small className="leaderboard-subtext">
+                              {row.activeRunners}/
+                              {row.totalUsers} pelari
+                            </small>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
           </div>
         </section>
       </section>
