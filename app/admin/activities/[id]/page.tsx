@@ -23,6 +23,89 @@ function formatStatus(status: number) {
   return "Rejected";
 }
 
+function getStatusClass(status: number) {
+  if (status === 0) {
+    return "status-pending";
+  }
+
+  if (status === 1) {
+    return "status-approved";
+  }
+
+  return "status-rejected";
+}
+
+function formatPace(seconds: number | null) {
+  if (!seconds) {
+    return "-";
+  }
+
+  const minutes =
+    Math.floor(seconds / 60);
+
+  const remainingSeconds =
+    seconds % 60;
+
+  return `${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(
+    remainingSeconds
+  ).padStart(2, "0")}`;
+}
+
+function formatElapsedTime(
+  seconds: number | null
+) {
+  if (!seconds) {
+    return "-";
+  }
+
+  const hours =
+    Math.floor(seconds / 3600);
+
+  const minutes =
+    Math.floor(
+      (seconds % 3600) / 60
+    );
+
+  const remainingSeconds =
+    seconds % 60;
+
+  return `${String(hours).padStart(
+    2,
+    "0"
+  )}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(
+    remainingSeconds
+  ).padStart(2, "0")}`;
+}
+
+function normalizeExternalUrl(
+  value: string | null
+) {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  if (
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("http://")
+  ) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+}
+
 export default async function AdminActivityDetailPage({
   params,
 }: PageProps) {
@@ -74,63 +157,66 @@ export default async function AdminActivityDetailPage({
   }
 
   const activity = rows[0];
-  const status = Number(activity.status);
 
-  function formatPace(
-    seconds: number | null
-  ) {
-    if (!seconds) {
-      return "-";
-    }
+  const status =
+    Number(activity.status);
 
-    const minutes =
-      Math.floor(seconds / 60);
+  const avgPace =
+    formatPace(
+      activity.avg_pace_seconds !== null
+        ? Number(
+            activity.avg_pace_seconds
+          )
+        : null
+    );
 
-    const remainingSeconds =
-      seconds % 60;
+  const elapsedTime =
+    formatElapsedTime(
+      activity.elapsed_time_seconds !== null
+        ? Number(
+            activity.elapsed_time_seconds
+          )
+        : null
+    );
 
-    return `${String(
-      minutes
-    ).padStart(2, "0")}:${String(
-      remainingSeconds
-    ).padStart(2, "0")}`;
-  }
-
-  function formatElapsedTime(
-    seconds: number | null
-  ) {
-    if (!seconds) {
-      return "-";
-    }
-
-    const hours =
-      Math.floor(
-        seconds / 3600
-      );
-
-    const minutes =
-      Math.floor(
-        (seconds % 3600) / 60
-      );
-
-    const remainingSeconds =
-      seconds % 60;
-
-    return `${String(
-      hours
-    ).padStart(2, "0")}:${String(
-      minutes
-    ).padStart(2, "0")}:${String(
-      remainingSeconds
-    ).padStart(2, "0")}`;
-  }
+  const evidenceUrl =
+    normalizeExternalUrl(
+      activity.tautan
+        ? String(activity.tautan)
+        : null
+    );
 
   return (
-    <main className="shell">
-      <section className="card verify-card">
-        <div className="page-heading">
+    <main className="run-app admin-verify-v2">
+      <div
+        className="run-app-glow run-app-glow-one"
+        aria-hidden="true"
+      />
+
+      <div
+        className="run-app-glow run-app-glow-two"
+        aria-hidden="true"
+      />
+
+      <header className="run-topbar">
+        <div className="run-brand">
+          <span className="run-brand-dot" />
+          <span>ATLANTIK RUN</span>
+          <small>ADMIN</small>
+        </div>
+
+        <Link
+          href="/admin/activities"
+          className="run-admin-link"
+        >
+          ← Kembali
+        </Link>
+      </header>
+
+      <div className="admin-verify-container">
+        <section className="admin-verify-heading">
           <div>
-            <span className="eyebrow">
+            <span className="dashboard-kicker">
               ADMIN VERIFICATION
             </span>
 
@@ -139,145 +225,248 @@ export default async function AdminActivityDetailPage({
             </h1>
 
             <p>
-              {String(activity.subdit)} ·{" "}
+              {String(activity.subdit)}
+              <span>·</span>
               {activity.gender === "M"
                 ? "Pria"
                 : "Wanita"}
             </p>
           </div>
 
-          <Link
-            href="/admin/activities"
-            className="text-link"
+          <span
+            className={`status-badge ${getStatusClass(
+              status
+            )}`}
           >
-            Kembali
-          </Link>
-        </div>
+            {formatStatus(status)}
+          </span>
+        </section>
 
-        <div className="verification-summary">
-          <div>
-            <span>NIP</span>
-            <strong>
-              {String(activity.nip).trim()}
-            </strong>
-          </div>
+        <div className="admin-verify-layout">
+          {/* SUMMARY */}
+          <section className="admin-verify-summary-panel">
+            <div className="admin-verify-section-heading">
+              <span className="dashboard-section-kicker">
+                DATA PELARI
+              </span>
 
-          <div>
-            <span>Tanggal</span>
-            <strong>
-              {String(activity.tanggal)}
-            </strong>
-          </div>
+              <h2>
+                Ringkasan Aktivitas
+              </h2>
+            </div>
 
-          <div>
-            <span>Jarak Dilaporkan</span>
-            <strong>
-              {Number(
-                activity.jarak
-              ).toFixed(2)}{" "}
-              km
-            </strong>
-          </div>
+            <div className="admin-verify-summary-grid">
+              <article>
+                <span>NIP</span>
 
-          <div>
-            <span>Status</span>
-            <strong>
-              {formatStatus(status)}
-            </strong>
-          </div>
-        </div>
+                <strong>
+                  {String(
+                    activity.nip
+                  ).trim()}
+                </strong>
+              </article>
 
-        <div className="evidence-box">
-          <span>Tautan Aktivitas</span>
+              <article>
+                <span>Tanggal</span>
 
-          <a
-            href={String(activity.tautan)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Buka Bukti Aktivitas
-          </a>
-        </div>
+                <strong>
+                  {String(
+                    activity.tanggal
+                  )}
+                </strong>
+              </article>
 
-        <div>
-          <span>Avg. Pace</span>
-          <strong>
-            {formatPace(
-              activity.avg_pace_seconds
-                ? Number(
-                    activity.avg_pace_seconds
-                  )
-                : null
-            )}{" "}
-            /km
-          </strong>
-        </div>
+              <article>
+                <span>Jarak Dilaporkan</span>
 
-        <div>
-          <span>Elapsed Time</span>
-          <strong>
-            {formatElapsedTime(
-              activity.elapsed_time_seconds
-                ? Number(
-                    activity.elapsed_time_seconds
-                  )
-                : null
-            )}
-          </strong>
-        </div>
+                <strong>
+                  {Number(
+                    activity.jarak
+                  ).toFixed(2)}{" "}
+                  km
+                </strong>
+              </article>
 
-        {status === 0 ? (
-          <VerifyForm
-            id={String(activity.id)}
-            jarak={Number(
-              activity.jarak
-            ).toFixed(2)}
-            avgPace={formatPace(
-              activity.avg_pace_seconds
-                ? Number(
-                    activity.avg_pace_seconds
-                  )
-                : null
-            )}
-            elapsedTime={formatElapsedTime(
-              activity.elapsed_time_seconds
-                ? Number(
-                    activity.elapsed_time_seconds
-                  )
-                : null
-            )}
-          />
-        ) : (
-          <div className="verification-result">
-            <h2>
-              Aktivitas sudah diverifikasi
-            </h2>
+              <article>
+                <span>Avg. Pace</span>
 
-            <p>
-              Status:{" "}
-              <strong>
-                {formatStatus(status)}
-              </strong>
-            </p>
+                <strong>
+                  {avgPace} /km
+                </strong>
+              </article>
 
-            {activity.feedback ? (
-              <p>
-                Feedback:{" "}
-                {String(activity.feedback)}
-              </p>
+              <article>
+                <span>Elapsed Time</span>
+
+                <strong>
+                  {elapsedTime}
+                </strong>
+              </article>
+
+              <article>
+                <span>Status</span>
+
+                <strong>
+                  {formatStatus(status)}
+                </strong>
+              </article>
+            </div>
+
+            <div className="admin-evidence-card">
+              <div>
+                <span>
+                  TAUTAN AKTIVITAS
+                </span>
+
+                <strong>
+                  Bukti Aktivitas
+                </strong>
+              </div>
+
+              {evidenceUrl ? (
+                <a
+                  href={evidenceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="admin-evidence-link"
+                >
+                  <span>
+                    Buka Bukti
+                  </span>
+
+                  <span aria-hidden="true">
+                    ↗
+                  </span>
+                </a>
+              ) : (
+                <span className="admin-evidence-empty">
+                  Tidak tersedia
+                </span>
+              )}
+            </div>
+
+            {status !== 0 ? (
+              <div
+                className={`admin-verification-result ${
+                  status === 1
+                    ? "is-approved"
+                    : "is-rejected"
+                }`}
+              >
+                <span className="dashboard-section-kicker">
+                  HASIL VERIFIKASI
+                </span>
+
+                <h2>
+                  Aktivitas sudah diverifikasi
+                </h2>
+
+                <div className="admin-verification-result-list">
+                  <div>
+                    <span>Status</span>
+
+                    <strong>
+                      {formatStatus(
+                        status
+                      )}
+                    </strong>
+                  </div>
+
+                  {activity.feedback ? (
+                    <div>
+                      <span>
+                        Feedback
+                      </span>
+
+                      <strong>
+                        {String(
+                          activity.feedback
+                        )}
+                      </strong>
+                    </div>
+                  ) : null}
+
+                  {activity.verifier_name ? (
+                    <div>
+                      <span>
+                        Diverifikasi oleh
+                      </span>
+
+                      <strong>
+                        {String(
+                          activity.verifier_name
+                        )}
+                      </strong>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
             ) : null}
+          </section>
 
-            {activity.verifier_name ? (
-              <p>
-                Diverifikasi oleh:{" "}
-                {String(
-                  activity.verifier_name
-                )}
-              </p>
-            ) : null}
-          </div>
-        )}
-      </section>
+          {/* VERIFY FORM */}
+          <aside className="admin-verify-action-panel">
+            {status === 0 ? (
+              <>
+                <div className="admin-verify-section-heading">
+                  <span className="dashboard-section-kicker">
+                    VERIFIKASI
+                  </span>
+
+                  <h2>
+                    Periksa dan putuskan
+                  </h2>
+
+                  <p>
+                    Sesuaikan data dengan bukti
+                    aktivitas sebelum disetujui atau
+                    ditolak.
+                  </p>
+                </div>
+
+                <VerifyForm
+                  id={String(
+                    activity.id
+                  )}
+                  jarak={Number(
+                    activity.jarak
+                  ).toFixed(2)}
+                  avgPace={avgPace}
+                  elapsedTime={
+                    elapsedTime
+                  }
+                />
+              </>
+            ) : (
+              <div className="admin-verify-complete">
+                <span
+                  className="admin-verify-complete-icon"
+                  aria-hidden="true"
+                >
+                  ✓
+                </span>
+
+                <strong>
+                  Verifikasi selesai
+                </strong>
+
+                <p>
+                  Aktivitas ini sudah memiliki
+                  keputusan dan tidak perlu
+                  diverifikasi kembali.
+                </p>
+
+                <Link
+                  href="/admin/activities"
+                  className="admin-verify-back-button"
+                >
+                  Kembali ke Data
+                </Link>
+              </div>
+            )}
+          </aside>
+        </div>
+      </div>
     </main>
   );
 }

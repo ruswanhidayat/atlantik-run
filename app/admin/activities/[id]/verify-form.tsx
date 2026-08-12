@@ -31,9 +31,7 @@ function sanitizeTimeInput(
 
   let index = 0;
 
-  for (
-    const length of groups
-  ) {
+  for (const length of groups) {
     if (
       index >= digits.length
     ) {
@@ -81,7 +79,7 @@ export default function VerifyForm({
   return (
     <form
       action={formAction}
-      className="verify-form"
+      className="admin-verify-form"
       autoComplete="off"
     >
       <input
@@ -90,12 +88,16 @@ export default function VerifyForm({
         value={id}
       />
 
-      <div className="field">
-        <label htmlFor="jarak">
-          Jarak Terverifikasi
-        </label>
+      <div className="admin-verify-field">
+        <div className="admin-verify-field-heading">
+          <label htmlFor="jarak">
+            Jarak Terverifikasi
+          </label>
 
-        <div className="input-suffix">
+          <span>01</span>
+        </div>
+
+        <div className="admin-verify-input-suffix">
           <input
             id="jarak"
             name="jarak"
@@ -105,16 +107,20 @@ export default function VerifyForm({
             required
           />
 
-          <span>km</span>
+          <span>KM</span>
         </div>
       </div>
 
-      <div className="field">
-        <label htmlFor="avgPace">
-          Avg. Pace
-        </label>
+      <div className="admin-verify-field">
+        <div className="admin-verify-field-heading">
+          <label htmlFor="avgPace">
+            Avg. Pace
+          </label>
 
-        <div className="input-suffix">
+          <span>02</span>
+        </div>
+
+        <div className="admin-verify-input-suffix">
           <input
             id="avgPace"
             name="avgPace"
@@ -133,18 +139,27 @@ export default function VerifyForm({
             required
           />
 
-          <span>/km</span>
+          <span>/KM</span>
         </div>
+
+        <small>
+          Format MM:SS
+        </small>
       </div>
 
-      <div className="field">
-        <label htmlFor="elapsedTime">
-          Elapsed Time
-        </label>
+      <div className="admin-verify-field">
+        <div className="admin-verify-field-heading">
+          <label htmlFor="elapsedTime">
+            Elapsed Time
+          </label>
+
+          <span>03</span>
+        </div>
 
         <input
           id="elapsedTime"
           name="elapsedTime"
+          className="admin-verify-input"
           type="text"
           inputMode="numeric"
           value={elapsedValue}
@@ -159,12 +174,20 @@ export default function VerifyForm({
           maxLength={8}
           required
         />
+
+        <small>
+          Format HH:MM:SS
+        </small>
       </div>
 
-      <div className="field">
-        <label htmlFor="feedback">
-          Feedback
-        </label>
+      <div className="admin-verify-field">
+        <div className="admin-verify-field-heading">
+          <label htmlFor="feedback">
+            Feedback
+          </label>
+
+          <span>04</span>
+        </div>
 
         <textarea
           id="feedback"
@@ -173,33 +196,61 @@ export default function VerifyForm({
           maxLength={500}
           placeholder="Wajib diisi jika aktivitas ditolak"
         />
+
+        <small>
+          Opsional untuk Approved, wajib jika
+          aktivitas ditolak.
+        </small>
       </div>
 
       {state.error ? (
-        <p className="form-error">
-          {state.error}
-        </p>
+        <div
+          className="admin-verify-error"
+          role="alert"
+        >
+          <span aria-hidden="true">
+            !
+          </span>
+
+          <p>
+            {state.error}
+          </p>
+        </div>
       ) : null}
 
-      <div className="verify-actions">
+      <div className="admin-verify-actions">
         <button
           type="submit"
           name="decision"
           value="approve"
-          className="approve-button"
+          className="admin-verify-approve"
           disabled={pending}
         >
-          Setujui
+          <span>
+            {pending
+              ? "Memproses..."
+              : "Setujui"}
+          </span>
+
+          <span aria-hidden="true">
+            ✓
+          </span>
         </button>
 
         <button
           type="submit"
           name="decision"
           value="reject"
-          className="reject-button"
+          className="admin-verify-reject"
           disabled={pending}
         >
-          Tolak
+          <span>
+            Tolak
+          </span>
+
+          <span aria-hidden="true">
+            ×
+          </span>
         </button>
       </div>
     </form>
