@@ -18,6 +18,10 @@ type ActivityStatus = {
   tanggal: string;
   status: number;
   feedback: string | null;
+  jarak: number | null;
+  avgPaceSeconds: number | null;
+  elapsedTimeSeconds: number | null;
+  tautan: string | null;
 };
 
 function getStatusLabel(status?: number) {
@@ -50,6 +54,34 @@ function formatPercentage(value: number) {
   });
 }
 
+function formatPace(seconds: number | null) {
+  if (!seconds) {
+    return "-";
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(
+    remainingSeconds
+  ).padStart(2, "0")}`;
+}
+
+function formatElapsedTime(seconds: number | null) {
+  if (!seconds) {
+    return "-";
+  }
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+
 export default async function DashboardPage() {
   const user = await requireUser();
 
@@ -64,7 +96,11 @@ export default async function DashboardPage() {
       SELECT DISTINCT ON (tanggal)
         tanggal::text AS tanggal,
         status,
-        feedback
+        feedback,
+        jarak,
+        avg_pace_seconds,
+        elapsed_time_seconds,
+        tautan
       FROM run_activities
       WHERE nip = ${user.nip}
       ORDER BY
@@ -82,38 +118,49 @@ export default async function DashboardPage() {
     getIndividualLeaderboard(),
   ]);
 
-  const activityMap =
-    new Map<string, ActivityStatus>(
-      activities.map((activity) => [
-        String(activity.tanggal),
-        {
-          tanggal: String(activity.tanggal),
-          status: Number(activity.status),
-          feedback: activity.feedback
-            ? String(activity.feedback)
+  const activityMap = new Map<string, ActivityStatus>(
+    activities.map((activity) => [
+      String(activity.tanggal),
+      {
+        tanggal: String(activity.tanggal),
+        status: Number(activity.status),
+        feedback: activity.feedback
+          ? String(activity.feedback)
+          : null,
+        jarak:
+          activity.jarak !== null
+            ? Number(activity.jarak)
             : null,
-        },
-      ])
-    );
+        avgPaceSeconds:
+          activity.avg_pace_seconds !== null
+            ? Number(activity.avg_pace_seconds)
+            : null,
+        elapsedTimeSeconds:
+          activity.elapsed_time_seconds !== null
+            ? Number(activity.elapsed_time_seconds)
+            : null,
+        tautan: activity.tautan
+          ? String(activity.tautan)
+          : null,
+      },
+    ])
+  );
 
   const canRecord =
     isSubmissionOpen() &&
     RUN_DATES.some((date) => {
-      const activity =
-        activityMap.get(date.value);
+      const activity = activityMap.get(date.value);
 
       return !activity || activity.status === 2;
     });
 
-  const maleSubditLeaderboard =
-    subditLeaderboard.filter(
-      (row) => row.gender === "M"
-    );
+  const maleSubditLeaderboard = subditLeaderboard.filter(
+    (row) => row.gender === "M"
+  );
 
-  const femaleSubditLeaderboard =
-    subditLeaderboard.filter(
-      (row) => row.gender === "F"
-    );
+  const femaleSubditLeaderboard = subditLeaderboard.filter(
+    (row) => row.gender === "F"
+  );
 
   const maleIndividualLeaderboard =
     individualLeaderboard.filter(
@@ -165,7 +212,6 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* RECAP SAYA */}
         <section className="personal-recap">
           <div className="section-heading">
             <div>
@@ -226,55 +272,120 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* AKTIVITAS SAYA */}
         <section className="activity-section">
           <div className="section-heading">
             <div>
               <h2>Aktivitas Saya</h2>
 
               <p>
-                Status perekaman selama tiga hari kegiatan.
+                Status dan detail perekaman selama tiga hari kegiatan.
               </p>
             </div>
           </div>
 
           <div className="activity-grid">
             {RUN_DATES.map((date) => {
-              const activity =
-                activityMap.get(date.value);
+              const activity = activityMap.get(date.value);
 
               return (
                 <article
                   key={date.value}
-                  className="activity-item"
+                  className="activity-item activity-item-detail"
                 >
-                  <span className="activity-date">
-                    {date.label}
-                  </span>
+                  <div className="activity-item-header">
+                    <span className="activity-date">
+                      {date.label}
+                    </span>
 
-                  <span
-                    className={`status-badge ${getStatusClass(
-                      activity?.status
-                    )}`}
-                  >
-                    {getStatusLabel(
-                      activity?.status
-                    )}
-                  </span>
+                    <span
+                      className={`status-badge ${getStatusClass(
+                        activity?.status
+                      )}`}
+                    >
+                      {getStatusLabel(
+                        activity?.status
+                      )}
+                    </span>
+                  </div>
 
-                  {activity?.status === 2 &&
-                  activity.feedback ? (
-                    <p className="activity-feedback">
-                      {activity.feedback}
+                  {activity ? (
+                    <>
+                      <div className="activity-detail-grid">
+                        <div>
+                          <span>Jarak</span>
+                          <strong>
+                            {activity.jarak !== null
+                              ? `${formatDistance(
+                                  activity.jarak
+                                )} km`
+                              : "-"}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Avg. Pace</span>
+                          <strong>
+                            {formatPace(
+                              activity.avgPaceSeconds
+                            )}{" "}
+                            /km
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>
+                            Elapsed Time
+                          </span>
+
+                          <strong>
+                            {formatElapsedTime(
+                              activity.elapsedTimeSeconds
+                            )}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Bukti</span>
+
+                          {activity.tautan ? (
+                            <a
+                              href={activity.tautan}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="activity-proof-link"
+                            >
+                              Lihat Aktivitas
+                            </a>
+                          ) : (
+                            <strong>-</strong>
+                          )}
+                        </div>
+                      </div>
+
+                      {activity.status === 2 &&
+                      activity.feedback ? (
+                        <div className="activity-feedback-box">
+                          <span>
+                            Feedback Admin
+                          </span>
+
+                          <p>
+                            {activity.feedback}
+                          </p>
+                        </div>
+                      ) : null}
+                    </>
+                  ) : (
+                    <p className="activity-empty-text">
+                      Belum ada aktivitas yang direkam.
                     </p>
-                  ) : null}
+                  )}
                 </article>
               );
             })}
           </div>
         </section>
 
-        {/* STATISTIK UMUM */}
         <section className="general-stats-section">
           <div className="section-heading">
             <div>
@@ -313,7 +424,6 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* LEADERBOARD SUBDIT */}
         <section className="leaderboard-section">
           <div className="section-heading">
             <div>
@@ -329,7 +439,6 @@ export default async function DashboardPage() {
           </div>
 
           <div className="leaderboard-gender-grid">
-            {/* SUBDIT PRIA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
@@ -409,7 +518,6 @@ export default async function DashboardPage() {
               </div>
             </section>
 
-            {/* SUBDIT WANITA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
@@ -491,7 +599,6 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* LEADERBOARD INDIVIDUAL */}
         <section className="leaderboard-section">
           <div className="section-heading">
             <div>
@@ -507,7 +614,6 @@ export default async function DashboardPage() {
           </div>
 
           <div className="leaderboard-gender-grid">
-            {/* INDIVIDUAL PRIA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
@@ -580,7 +686,6 @@ export default async function DashboardPage() {
               </div>
             </section>
 
-            {/* INDIVIDUAL WANITA */}
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
                 <div>
