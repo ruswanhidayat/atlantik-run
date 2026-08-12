@@ -54,3 +54,25 @@ export async function requireUser(): Promise<AuthUser> {
 
   return user;
 }
+
+export async function requireAdminUser(): Promise<AuthUser> {
+  const user = await requireUser();
+
+  if (!user.isadmin) {
+    redirect("/dashboard");
+  }
+
+  return user;
+}
+
+export async function requireAdminAccess(): Promise<AuthUser> {
+  const user = await requireAdminUser();
+
+  const session = await getSession();
+
+  if (!session?.adminAuthenticated) {
+    redirect("/admin/login");
+  }
+
+  return user;
+}

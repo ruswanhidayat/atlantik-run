@@ -109,14 +109,25 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              className="secondary-button"
-            >
-              Keluar
-            </button>
-          </form>
+          <div className="dashboard-actions">
+            {user.isadmin ? (
+              <Link
+                href="/admin/login"
+                className="primary-link"
+              >
+                Panel Admin
+              </Link>
+            ) : null}
+
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                className="secondary-button"
+              >
+                Keluar
+              </button>
+            </form>
+          </div>
         </div>
 
         <section className="activity-section">

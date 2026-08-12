@@ -13,14 +13,22 @@ const encodedSecret = new TextEncoder().encode(secret);
 
 export type SessionPayload = {
   nip: string;
+  adminAuthenticated?: boolean;
 };
 
-export async function createSession(nip: string) {
-  const token = await new SignJWT({ nip })
+async function signSession(payload: SessionPayload) {
+  return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(encodedSecret);
+}
+
+export async function createSession(nip: string) {
+  const token = await signSession({
+    nip,
+    adminAuthenticated: false,
+  });
 
   const cookieStore = await cookies();
 
@@ -51,10 +59,58 @@ export async function getSession(): Promise<SessionPayload | null> {
 
     return {
       nip: payload.nip,
+      adminAuthenticated:
+        payload.adminAuthenticated === true,
     };
   } catch {
     return null;
   }
+}
+
+export async function setAdminAuthenticated() {
+  const session = await getSession();
+
+  if (!session) {
+    return;
+  }
+
+  const token = await signSession({
+    nip: session.nip,
+    adminAuthenticated: true,
+  });
+
+  const cookieStore = await cookies();
+
+  cookieStore.set(SESSION_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
+}
+
+export async function clearAdminAuthenticated() {
+  const session = await getSession();
+
+  if (!session) {
+    return;
+  }
+
+  const token = await signSession({
+    nip: session.nip,
+    adminAuthenticated: false,
+  });
+
+  const cookieStore = await cookies();
+
+  cookieStore.set(SESSION_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
 }
 
 export async function deleteSession() {
