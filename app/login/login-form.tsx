@@ -16,7 +16,11 @@ export default function LoginForm() {
   );
 
   return (
-    <form action={formAction} className="login-form">
+    <form
+      action={formAction}
+      className="login-form"
+      autoComplete="off"
+    >
       <div className="field">
         <label htmlFor="nip">NIP</label>
 
@@ -27,7 +31,7 @@ export default function LoginForm() {
           inputMode="numeric"
           maxLength={9}
           placeholder="Masukkan NIP 9 digit"
-          autoComplete="username"
+          autoComplete="off"
           required
         />
       </div>

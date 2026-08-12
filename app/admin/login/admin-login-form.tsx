@@ -20,6 +20,7 @@ export default function AdminLoginForm() {
     <form
       action={formAction}
       className="login-form"
+      autoComplete="off"
     >
       <div className="field">
         <label htmlFor="password">
@@ -31,7 +32,7 @@ export default function AdminLoginForm() {
           name="password"
           type="password"
           placeholder="Masukkan password admin"
-          autoComplete="current-password"
+          autoComplete="new-password"
           required
         />
       </div>
