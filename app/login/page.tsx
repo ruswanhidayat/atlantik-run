@@ -7,89 +7,95 @@ function RunnerIcon() {
   return (
     <svg
       className="login-runner-svg"
-      viewBox="0 0 160 160"
+      viewBox="0 0 180 180"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <circle
-        cx="106"
-        cy="30"
-        r="15"
-        stroke="currentColor"
-        strokeWidth="8"
-      />
+      <g className="runner-body-group">
+        <circle
+          className="runner-head"
+          cx="112"
+          cy="31"
+          r="14"
+          stroke="currentColor"
+          strokeWidth="8"
+        />
 
-      <path
-        d="M82 52L62 45L45 53"
-        stroke="currentColor"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+        <path
+          className="runner-torso"
+          d="M94 54L75 82"
+          stroke="currentColor"
+          strokeWidth="9"
+          strokeLinecap="round"
+        />
 
-      <path
-        d="M82 52L96 67L113 84"
-        stroke="currentColor"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+        <g className="runner-arm runner-arm-back">
+          <path
+            d="M91 59L67 56L48 70"
+            stroke="currentColor"
+            strokeWidth="8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
 
-      <path
-        d="M82 52L68 73L53 92"
-        stroke="currentColor"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+        <g className="runner-arm runner-arm-front">
+          <path
+            d="M91 59L111 70L129 88"
+            stroke="currentColor"
+            strokeWidth="8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
 
-      <path
-        d="M53 92L77 109L60 130"
-        stroke="currentColor"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+        <g className="runner-leg runner-leg-back">
+          <path
+            d="M75 82L56 107L36 119"
+            stroke="currentColor"
+            strokeWidth="9"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
 
-      <path
-        d="M77 109L96 124L118 133"
-        stroke="currentColor"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+        <g className="runner-leg runner-leg-front">
+          <path
+            d="M75 82L96 105L128 116"
+            stroke="currentColor"
+            strokeWidth="9"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+      </g>
 
-      <path
-        d="M113 84L130 77"
-        stroke="currentColor"
-        strokeWidth="8"
-        strokeLinecap="round"
-      />
+      <g className="runner-speed-group">
+        <path
+          className="runner-speed-line runner-speed-line-1"
+          d="M12 56H44"
+          stroke="currentColor"
+          strokeWidth="6"
+          strokeLinecap="round"
+        />
 
-      <path
-        className="runner-speed-line runner-speed-line-1"
-        d="M18 50H43"
-        stroke="currentColor"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
+        <path
+          className="runner-speed-line runner-speed-line-2"
+          d="M4 82H37"
+          stroke="currentColor"
+          strokeWidth="6"
+          strokeLinecap="round"
+        />
 
-      <path
-        className="runner-speed-line runner-speed-line-2"
-        d="M10 75H35"
-        stroke="currentColor"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
-
-      <path
-        className="runner-speed-line runner-speed-line-3"
-        d="M18 101H45"
-        stroke="currentColor"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
+        <path
+          className="runner-speed-line runner-speed-line-3"
+          d="M13 108H48"
+          stroke="currentColor"
+          strokeWidth="6"
+          strokeLinecap="round"
+        />
+      </g>
     </svg>
   );
 }

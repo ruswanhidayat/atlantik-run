@@ -1205,15 +1205,22 @@ p {
   box-shadow: 0 0 18px rgba(169, 134, 255, 0.8);
 }
 
+/* =========================================================
+   RUNNER ANIMATION
+   ========================================================= */
+
 .runner-motion {
   position: absolute;
   left: -8px;
-  bottom: 26px;
-  width: 132px;
+  bottom: 20px;
+  width: 138px;
   color: var(--run-text);
   will-change: transform, opacity;
-  animation: runner-sprint 2.35s
-    cubic-bezier(0.3, 0.02, 0.15, 1) 0.42s both;
+
+  animation:
+    runner-sprint 2.55s
+      cubic-bezier(0.35, 0.03, 0.12, 1)
+      0.45s both;
 }
 
 .login-runner-svg {
@@ -1221,86 +1228,256 @@ p {
   width: 100%;
   height: auto;
   overflow: visible;
+
   filter:
-    drop-shadow(0 0 8px rgba(139, 92, 246, 0.2))
-    drop-shadow(0 14px 20px rgba(0, 0, 0, 0.24));
-  transform-origin: 50% 80%;
-  animation: runner-body 220ms ease-in-out 0.5s 7 alternate;
+    drop-shadow(
+      0 0 10px rgba(139, 92, 246, 0.28)
+    )
+    drop-shadow(
+      0 16px 20px rgba(0, 0, 0, 0.25)
+    );
+}
+
+/* ---------------------------------------------------------
+   BODY
+   --------------------------------------------------------- */
+
+.runner-body-group {
+  transform-origin: 84px 82px;
+
+  animation:
+    runner-body-bounce 180ms ease-in-out
+      0.7s 8 alternate;
+}
+
+.runner-head {
+  transform-origin: 112px 31px;
+
+  animation:
+    runner-head-bob 180ms ease-in-out
+      0.7s 8 alternate;
+}
+
+/* ---------------------------------------------------------
+   ARMS
+   --------------------------------------------------------- */
+
+.runner-arm {
+  transform-box: fill-box;
+  transform-origin: 88% 20%;
+}
+
+.runner-arm-front {
+  animation:
+    runner-arm-front-run 180ms ease-in-out
+      0.68s 8 alternate;
+}
+
+.runner-arm-back {
+  animation:
+    runner-arm-back-run 180ms ease-in-out
+      0.68s 8 alternate;
+}
+
+/* ---------------------------------------------------------
+   LEGS
+   --------------------------------------------------------- */
+
+.runner-leg {
+  transform-box: fill-box;
+  transform-origin: 70% 8%;
+}
+
+.runner-leg-front {
+  animation:
+    runner-leg-front-run 180ms ease-in-out
+      0.68s 8 alternate;
+}
+
+.runner-leg-back {
+  animation:
+    runner-leg-back-run 180ms ease-in-out
+      0.68s 8 alternate;
+}
+
+/* ---------------------------------------------------------
+   SPEED LINES
+   --------------------------------------------------------- */
+
+.runner-speed-group {
+  color: var(--run-purple-bright);
 }
 
 .runner-speed-line {
-  color: var(--run-purple-bright);
   opacity: 0;
-  animation: runner-speed 260ms ease-in-out 0.65s 6 alternate;
+
+  animation:
+    runner-speed-line-run 180ms ease-in-out
+      0.72s 8 alternate;
 }
 
 .runner-speed-line-2 {
-  animation-delay: 0.72s;
+  animation-delay: 0.76s;
 }
 
 .runner-speed-line-3 {
-  animation-delay: 0.78s;
+  animation-delay: 0.8s;
 }
+
+/* =========================================================
+   MOVEMENT ACROSS SCREEN
+   ========================================================= */
 
 @keyframes runner-sprint {
   0% {
-    transform: translateX(0);
+    transform:
+      translateX(0)
+      translateY(0);
     opacity: 1;
   }
 
-  12% {
-    transform: translateX(0);
+  10% {
+    transform:
+      translateX(0)
+      translateY(0);
   }
 
-  55% {
-    transform: translateX(
-      calc(100vw - 132px)
-    );
+  16% {
+    transform:
+      translateX(5px)
+      translateY(-2px);
+  }
+
+  52% {
+    transform:
+      translateX(calc(100vw - 110px))
+      translateY(-3px);
     opacity: 1;
   }
 
-  56% {
-    transform: translateX(
-      calc(100vw - 132px)
-    );
+  53% {
+    transform:
+      translateX(calc(100vw - 110px))
+      translateY(-3px);
     opacity: 0;
   }
 
-  57% {
-    transform: translateX(-180px);
+  54% {
+    transform:
+      translateX(-180px)
+      translateY(0);
     opacity: 0;
   }
 
-  70% {
-    transform: translateX(-180px);
+  64% {
+    transform:
+      translateX(-180px)
+      translateY(0);
     opacity: 1;
+  }
+
+  83% {
+    transform:
+      translateX(14px)
+      translateY(-1px);
+    opacity: 1;
+  }
+
+  91% {
+    transform:
+      translateX(-4px)
+      translateY(0);
   }
 
   100% {
-    transform: translateX(0);
+    transform:
+      translateX(0)
+      translateY(0);
     opacity: 1;
   }
 }
 
-@keyframes runner-body {
+/* =========================================================
+   RUNNING CYCLE
+   ========================================================= */
+
+@keyframes runner-body-bounce {
   from {
-    transform: rotate(-2deg) translateY(0);
+    transform:
+      translateY(1px)
+      rotate(-1deg);
   }
 
   to {
-    transform: rotate(3deg) translateY(-5px);
+    transform:
+      translateY(-5px)
+      rotate(3deg);
   }
 }
 
-@keyframes runner-speed {
+@keyframes runner-head-bob {
   from {
-    opacity: 0.12;
-    transform: translateX(6px);
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+
+  to {
+    transform:
+      translateY(-3px)
+      rotate(3deg);
+  }
+}
+
+@keyframes runner-arm-front-run {
+  from {
+    transform: rotate(-26deg);
+  }
+
+  to {
+    transform: rotate(38deg);
+  }
+}
+
+@keyframes runner-arm-back-run {
+  from {
+    transform: rotate(34deg);
+  }
+
+  to {
+    transform: rotate(-30deg);
+  }
+}
+
+@keyframes runner-leg-front-run {
+  from {
+    transform: rotate(-28deg);
+  }
+
+  to {
+    transform: rotate(30deg);
+  }
+}
+
+@keyframes runner-leg-back-run {
+  from {
+    transform: rotate(32deg);
+  }
+
+  to {
+    transform: rotate(-24deg);
+  }
+}
+
+@keyframes runner-speed-line-run {
+  from {
+    opacity: 0.1;
+    transform: translateX(8px);
   }
 
   to {
     opacity: 0.85;
-    transform: translateX(-8px);
+    transform: translateX(-10px);
   }
 }
 
@@ -1625,48 +1802,8 @@ p {
 
   .runner-motion {
     left: -4px;
-    bottom: 10px;
-    width: 92px;
-  }
-
-  @keyframes runner-sprint {
-    0% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-
-    12% {
-      transform: translateX(0);
-    }
-
-    55% {
-      transform: translateX(
-        calc(100vw - 70px)
-      );
-      opacity: 1;
-    }
-
-    56% {
-      transform: translateX(
-        calc(100vw - 70px)
-      );
-      opacity: 0;
-    }
-
-    57% {
-      transform: translateX(-120px);
-      opacity: 0;
-    }
-
-    70% {
-      transform: translateX(-120px);
-      opacity: 1;
-    }
-
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
+    bottom: 6px;
+    width: 102px;
   }
 
   .login-panel {
