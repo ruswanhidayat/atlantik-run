@@ -19,37 +19,75 @@ export default function AdminLoginForm() {
   return (
     <form
       action={formAction}
-      className="login-form"
+      className="admin-login-form"
       autoComplete="off"
     >
-      <div className="field">
-        <label htmlFor="password">
-          Password Admin
-        </label>
+      <div className="admin-login-field">
+        <div className="admin-login-field-heading">
+          <label htmlFor="password">
+            Password Admin
+          </label>
 
-        <input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="Masukkan password admin"
-          autoComplete="new-password"
-          required
-        />
+          <span>01</span>
+        </div>
+
+        <div className="admin-login-input-wrap">
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Masukkan password admin"
+            autoComplete="new-password"
+            required
+          />
+
+          <span
+            className="admin-login-input-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <rect
+                x="5"
+                y="10"
+                width="14"
+                height="10"
+                rx="2"
+              />
+
+              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+            </svg>
+          </span>
+        </div>
       </div>
 
       {state.error ? (
-        <p className="form-error">
-          {state.error}
-        </p>
+        <div
+          className="admin-login-error"
+          role="alert"
+        >
+          <span aria-hidden="true">!</span>
+
+          <p>{state.error}</p>
+        </div>
       ) : null}
 
       <button
         type="submit"
+        className="admin-login-submit"
         disabled={pending}
       >
-        {pending
-          ? "Memeriksa..."
-          : "Masuk Panel Admin"}
+        <span>
+          {pending
+            ? "Memeriksa..."
+            : "Masuk Panel Admin"}
+        </span>
+
+        <span
+          className="admin-login-submit-arrow"
+          aria-hidden="true"
+        >
+          →
+        </span>
       </button>
     </form>
   );
