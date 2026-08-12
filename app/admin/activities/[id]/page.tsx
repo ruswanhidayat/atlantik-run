@@ -214,6 +214,13 @@ export default async function AdminActivityDetailPage({
       </header>
 
       <div className="admin-verify-container">
+        <Link
+          href="/admin/activities"
+          className="admin-verify-mobile-back"
+        >
+          <span aria-hidden="true">←</span>
+          <span>Kembali ke Data</span>
+        </Link>
         <section className="admin-verify-heading">
           <div>
             <span className="dashboard-kicker">

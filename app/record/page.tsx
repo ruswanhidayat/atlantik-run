@@ -50,14 +50,11 @@ export default async function RecordPage() {
 
       {/* TOP BAR */}
       <header className="run-topbar">
-        <Link
-          href="/dashboard"
-          className="run-brand"
-        >
+        <div className="run-brand">
           <span className="run-brand-dot" />
           <span>ATLANTIK RUN</span>
           <small>2026</small>
-        </Link>
+        </div>
 
         <Link
           href="/dashboard"
