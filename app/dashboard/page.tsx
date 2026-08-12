@@ -266,16 +266,20 @@ export default async function DashboardPage() {
     );
 
   const maleIndividualLeaderboard =
-    individualLeaderboard.filter(
-      (row) =>
-        row.gender === "M"
-    );
+    individualLeaderboard
+      .filter(
+        (row) =>
+          row.gender === "M"
+      )
+      .slice(0, 5);
 
   const femaleIndividualLeaderboard =
-    individualLeaderboard.filter(
-      (row) =>
-        row.gender === "F"
-    );
+    individualLeaderboard
+      .filter(
+        (row) =>
+          row.gender === "F"
+      )
+      .slice(0, 5);
 
   const genderRankClass =
     user.gender === "M"
@@ -940,7 +944,7 @@ export default async function DashboardPage() {
 
         {/* INDIVIDUAL */}
         <section className="leaderboard-section dashboard-content-section">
-          <div className="section-heading">
+          <div className="section-heading dashboard-individual-heading">
             <div>
               <span className="dashboard-section-kicker">
                 PERINGKAT PELARI
@@ -951,12 +955,19 @@ export default async function DashboardPage() {
               </h2>
 
               <p>
-                Peringkat individu
-                berdasarkan total
-                jarak aktivitas
+                Menampilkan Top 5 per kategori
+                berdasarkan total jarak aktivitas
                 Approved.
               </p>
             </div>
+
+            <Link
+              href="/leaderboard"
+              className="dashboard-leaderboard-all-link"
+            >
+              <span>Lihat Semua Peringkat</span>
+              <span aria-hidden="true">→</span>
+            </Link>
           </div>
 
           <div className="leaderboard-gender-grid">
