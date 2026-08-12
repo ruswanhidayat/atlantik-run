@@ -20,14 +20,15 @@ export default function DashboardBottomNav({
     useState<ActiveSection>("home");
 
   useEffect(() => {
-    const leaderboard =
-      document.getElementById("leaderboard");
-
-    if (!leaderboard) {
-      return;
-    }
-
     function updateActiveSection() {
+      const leaderboard =
+        document.getElementById("leaderboard");
+
+      if (!leaderboard) {
+        setActiveSection("home");
+        return;
+      }
+
       const leaderboardTop =
         leaderboard.getBoundingClientRect().top;
 
@@ -100,7 +101,6 @@ export default function DashboardBottomNav({
       }`}
       aria-label="Navigasi utama"
     >
-      {/* HOME */}
       <button
         type="button"
         className={`run-bottom-nav-item ${
@@ -124,7 +124,6 @@ export default function DashboardBottomNav({
         <span>Home</span>
       </button>
 
-      {/* RANK */}
       <button
         type="button"
         className={`run-bottom-nav-item ${
@@ -148,7 +147,6 @@ export default function DashboardBottomNav({
         <span>Rank</span>
       </button>
 
-      {/* RECORD */}
       {canRecord ? (
         <Link
           href="/record"
@@ -176,7 +174,6 @@ export default function DashboardBottomNav({
         </span>
       )}
 
-      {/* ADMIN */}
       {isAdmin ? (
         <Link
           href="/admin/login"
@@ -196,7 +193,6 @@ export default function DashboardBottomNav({
         </Link>
       ) : null}
 
-      {/* LOGOUT */}
       <form
         action={logoutAction}
         className="run-bottom-nav-form"
