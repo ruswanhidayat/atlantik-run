@@ -1,6 +1,90 @@
+"use server";
+
+import { redirect } from "next/navigation";
+
+import {
+  requireAdminAccess,
+  requireAdminUser,
+} from "@/lib/auth";
+import { sql } from "@/lib/db";
+import {
+  clearAdminAuthenticated,
+  setAdminAuthenticated,
+} from "@/lib/session";
+
+
+/* ============================================================
+   ADMIN LOGIN
+============================================================ */
+
+export type AdminLoginState = {
+  error?: string;
+};
+
+export async function adminLoginAction(
+  _previousState: AdminLoginState,
+  formData: FormData
+): Promise<AdminLoginState> {
+  await requireAdminUser();
+
+  const rawPassword = formData.get("password");
+
+  if (typeof rawPassword !== "string") {
+    return {
+      error: "Password admin wajib diisi.",
+    };
+  }
+
+  const password = rawPassword.trim();
+
+  const adminPassword =
+    process.env.ADMIN_PASSWORD;
+
+  if (!adminPassword) {
+    return {
+      error:
+        "ADMIN_PASSWORD belum dikonfigurasi.",
+    };
+  }
+
+  if (password !== adminPassword) {
+    return {
+      error: "Password admin salah.",
+    };
+  }
+
+  await setAdminAuthenticated();
+
+  redirect("/admin/activities");
+}
+
+
+/* ============================================================
+   ADMIN LOGOUT
+============================================================ */
+
+export async function adminLogoutAction() {
+  await clearAdminAuthenticated();
+
+  redirect("/dashboard");
+}
+
+
+/* ============================================================
+   VERIFICATION
+============================================================ */
+
 export type VerifyActivityState = {
   error?: string;
 };
+
+
+/* ------------------------------------------------------------
+   Convert pace:
+   12:58
+   →
+   778 seconds
+------------------------------------------------------------- */
 
 function parsePace(
   value: string
@@ -27,6 +111,14 @@ function parsePace(
     ? totalSeconds
     : null;
 }
+
+
+/* ------------------------------------------------------------
+   Convert elapsed time:
+   01:08:04
+   →
+   seconds
+------------------------------------------------------------- */
 
 function parseElapsedTime(
   value: string
@@ -59,6 +151,11 @@ function parseElapsedTime(
     : null;
 }
 
+
+/* ============================================================
+   VERIFY ACTIVITY
+============================================================ */
+
 export async function verifyActivityAction(
   _previousState: VerifyActivityState,
   formData: FormData
@@ -84,6 +181,11 @@ export async function verifyActivityAction(
   const rawDecision =
     formData.get("decision");
 
+
+  /* ----------------------------------------------------------
+     Required fields
+  ----------------------------------------------------------- */
+
   if (
     typeof rawId !== "string" ||
     typeof rawJarak !== "string" ||
@@ -98,6 +200,11 @@ export async function verifyActivityAction(
     };
   }
 
+
+  /* ----------------------------------------------------------
+     Validate ID
+  ----------------------------------------------------------- */
+
   const id = Number(rawId);
 
   if (
@@ -109,6 +216,11 @@ export async function verifyActivityAction(
         "ID aktivitas tidak valid.",
     };
   }
+
+
+  /* ----------------------------------------------------------
+     Validate distance
+  ----------------------------------------------------------- */
 
   const jarakText =
     rawJarak
@@ -139,6 +251,11 @@ export async function verifyActivityAction(
     };
   }
 
+
+  /* ----------------------------------------------------------
+     Validate avg pace
+  ----------------------------------------------------------- */
+
   const avgPaceSeconds =
     parsePace(
       rawAvgPace.trim()
@@ -149,9 +266,14 @@ export async function verifyActivityAction(
   ) {
     return {
       error:
-        "Avg. Pace harus menggunakan format menit:detik.",
+        "Avg. Pace harus menggunakan format menit:detik, contoh 12:58.",
     };
   }
+
+
+  /* ----------------------------------------------------------
+     Validate elapsed time
+  ----------------------------------------------------------- */
 
   const elapsedTimeSeconds =
     parseElapsedTime(
@@ -163,12 +285,14 @@ export async function verifyActivityAction(
   ) {
     return {
       error:
-        "Elapsed Time harus menggunakan format jam:menit:detik.",
+        "Elapsed Time harus menggunakan format jam:menit:detik, contoh 01:08:04.",
     };
   }
 
-  const feedback =
-    rawFeedback.trim();
+
+  /* ----------------------------------------------------------
+     Validate decision
+  ----------------------------------------------------------- */
 
   if (
     rawDecision !== "approve" &&
@@ -179,6 +303,14 @@ export async function verifyActivityAction(
         "Keputusan verifikasi tidak valid.",
     };
   }
+
+
+  /* ----------------------------------------------------------
+     Validate feedback
+  ----------------------------------------------------------- */
+
+  const feedback =
+    rawFeedback.trim();
 
   if (
     rawDecision === "reject" &&
@@ -199,8 +331,15 @@ export async function verifyActivityAction(
     };
   }
 
+
+  /* ----------------------------------------------------------
+     Check activity
+  ----------------------------------------------------------- */
+
   const rows = await sql`
-    SELECT id, status
+    SELECT
+      id,
+      status
     FROM run_activities
     WHERE id = ${id}
     LIMIT 1
@@ -213,7 +352,8 @@ export async function verifyActivityAction(
     };
   }
 
-  const activity = rows[0];
+  const activity =
+    rows[0];
 
   if (
     Number(activity.status) !== 0
@@ -224,10 +364,20 @@ export async function verifyActivityAction(
     };
   }
 
+
+  /* ----------------------------------------------------------
+     Final status
+  ----------------------------------------------------------- */
+
   const status =
     rawDecision === "approve"
       ? 1
       : 2;
+
+
+  /* ----------------------------------------------------------
+     Update activity
+  ----------------------------------------------------------- */
 
   await sql`
     UPDATE run_activities
@@ -247,7 +397,5 @@ export async function verifyActivityAction(
       AND status = 0
   `;
 
-  redirect(
-    "/admin/activities"
-  );
+  redirect("/admin/activities");
 }
