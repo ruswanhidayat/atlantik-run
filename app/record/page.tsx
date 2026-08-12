@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import RecordForm from "./record-form";
+
 import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import {
@@ -33,59 +34,255 @@ export default async function RecordPage() {
   const submissionOpen = isSubmissionOpen();
 
   return (
-    <main className="shell">
-      <section className="card record-card">
-        <div className="page-heading">
-          <div>
-            <span className="eyebrow">
-              ATLANTIK RUN 2026
+    <main className="run-app record-v2">
+      <div
+        className="run-app-glow run-app-glow-one"
+        aria-hidden="true"
+      />
+
+      <div
+        className="run-app-glow run-app-glow-two"
+        aria-hidden="true"
+      />
+
+      {/* TOP BAR */}
+      <header className="run-topbar">
+        <Link
+          href="/dashboard"
+          className="run-brand"
+        >
+          <span className="run-brand-dot" />
+          <span>ATLANTIK RUN</span>
+          <small>2026</small>
+        </Link>
+
+        <Link
+          href="/dashboard"
+          className="record-back-button"
+        >
+          <span aria-hidden="true">←</span>
+          <span>Kembali</span>
+        </Link>
+      </header>
+
+      <div className="record-container">
+        {/* INTRO */}
+        <section className="record-intro">
+          <div className="record-intro-copy">
+            <span className="dashboard-kicker">
+              LAPOR AKTIVITAS
             </span>
 
-            <h1>Rekam Aktivitas</h1>
+            <h1>Rekam Lari</h1>
 
             <p>
-              Laporkan aktivitas lari yang telah
-              kamu selesaikan.
+              Catat aktivitas larimu dan bantu
+              Subdit-mu bergerak menuju peringkat
+              teratas.
             </p>
           </div>
 
-          <Link
-            href="/dashboard"
-            className="text-link"
-          >
-            Kembali
-          </Link>
+          <div className="record-user">
+            <span className="record-user-label">
+              PELARI
+            </span>
+
+            <strong>{user.nama}</strong>
+
+            <span>{user.subdit}</span>
+          </div>
+        </section>
+
+        {/* CONTENT */}
+        <div className="record-layout">
+          <section className="record-form-panel">
+            <div className="record-panel-heading">
+              <div>
+                <span className="dashboard-section-kicker">
+                  AKTIVITAS BARU
+                </span>
+
+                <h2>Detail Lari</h2>
+              </div>
+
+              <span className="record-required-note">
+                Semua kolom wajib diisi
+              </span>
+            </div>
+
+            {!submissionOpen ? (
+              <div className="record-state-card">
+                <span
+                  className="record-state-icon"
+                  aria-hidden="true"
+                >
+                  ×
+                </span>
+
+                <div>
+                  <strong>
+                    Perekaman telah ditutup.
+                  </strong>
+
+                  <p>
+                    Batas akhir perekaman adalah
+                    20 Agustus 2026 pukul 23.59 WIB.
+                  </p>
+                </div>
+              </div>
+            ) : availableDates.length === 0 ? (
+              <div className="record-state-card">
+                <span
+                  className="record-state-icon"
+                  aria-hidden="true"
+                >
+                  ✓
+                </span>
+
+                <div>
+                  <strong>
+                    Semua aktivitas sudah direkam.
+                  </strong>
+
+                  <p>
+                    Seluruh tanggal ATLANTIK RUN
+                    sudah memiliki aktivitas Pending
+                    atau Approved.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <RecordForm
+                availableDates={availableDates}
+              />
+            )}
+          </section>
+
+          {/* INFO SIDE */}
+          <aside className="record-guide">
+            <div className="record-guide-heading">
+              <span className="dashboard-section-kicker">
+                SEBELUM MENGIRIM
+              </span>
+
+              <h2>Pastikan datanya benar.</h2>
+            </div>
+
+            <div className="record-guide-list">
+              <article>
+                <span className="record-guide-number">
+                  01
+                </span>
+
+                <div>
+                  <strong>Pilih tanggal lari</strong>
+
+                  <p>
+                    Hanya tanggal yang belum memiliki
+                    aktivitas Pending atau Approved
+                    yang dapat dipilih.
+                  </p>
+                </div>
+              </article>
+
+              <article>
+                <span className="record-guide-number">
+                  02
+                </span>
+
+                <div>
+                  <strong>
+                    Sesuaikan dengan bukti
+                  </strong>
+
+                  <p>
+                    Jarak, pace, dan elapsed time
+                    harus sesuai dengan aktivitas
+                    pada tautan yang dilampirkan.
+                  </p>
+                </div>
+              </article>
+
+              <article>
+                <span className="record-guide-number">
+                  03
+                </span>
+
+                <div>
+                  <strong>
+                    Tunggu verifikasi
+                  </strong>
+
+                  <p>
+                    Aktivitas yang dikirim akan
+                    diperiksa admin sebelum masuk
+                    ke perhitungan leaderboard.
+                  </p>
+                </div>
+              </article>
+            </div>
+
+            <div className="record-guide-accent">
+              <span>15—17 AUG 2026</span>
+
+              <p>
+                Every kilometer
+                <br />
+                moves the team.
+              </p>
+            </div>
+          </aside>
         </div>
+      </div>
 
-        {!submissionOpen ? (
-          <div className="empty-state">
-            <strong>
-              Perekaman telah ditutup.
-            </strong>
+      {/* MOBILE BOTTOM NAV */}
+      <nav
+        className="run-bottom-nav"
+        aria-label="Navigasi utama"
+      >
+        <Link
+          href="/dashboard"
+          className="run-bottom-nav-item"
+        >
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M3 10.8 12 3l9 7.8v9.4a.8.8 0 0 1-.8.8h-5.4v-6.2H9.2V21H3.8a.8.8 0 0 1-.8-.8Z" />
+            </svg>
+          </span>
 
-            <p>
-              Batas akhir perekaman adalah
-              20 Agustus 2026 pukul 23.59 WIB.
-            </p>
-          </div>
-        ) : availableDates.length === 0 ? (
-          <div className="empty-state">
-            <strong>
-              Tidak ada tanggal yang dapat direkam.
-            </strong>
+          <span>Home</span>
+        </Link>
 
-            <p>
-              Seluruh tanggal ATLANTIK RUN sudah
-              memiliki aktivitas Pending atau
-              Approved.
-            </p>
-          </div>
-        ) : (
-          <RecordForm
-            availableDates={availableDates}
-          />
-        )}
-      </section>
+        <span className="run-bottom-nav-item run-bottom-nav-primary is-active">
+          <span
+            className="run-nav-primary-icon"
+            aria-hidden="true"
+          >
+            ＋
+          </span>
+
+          <span>Lapor</span>
+        </span>
+
+        <Link
+          href="/dashboard#leaderboard"
+          className="run-bottom-nav-item"
+        >
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M6 20V10M12 20V4M18 20v-7" />
+            </svg>
+          </span>
+
+          <span>Rank</span>
+        </Link>
+      </nav>
     </main>
   );
 }

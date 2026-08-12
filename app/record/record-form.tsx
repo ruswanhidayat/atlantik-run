@@ -103,9 +103,11 @@ export default function RecordForm({
       setTanggal(state.values.tanggal);
       setJarak(state.values.jarak);
       setAvgPace(state.values.avgPace);
+
       setElapsedTime(
         state.values.elapsedTime
       );
+
       setTautan(state.values.tautan);
     }
   }, [state]);
@@ -115,7 +117,10 @@ export default function RecordForm({
   ) {
     let value = event.target.value;
 
-    value = value.replace(/[^0-9.,]/g, "");
+    value = value.replace(
+      /[^0-9.,]/g,
+      ""
+    );
 
     const separatorIndex =
       value.search(/[.,]/);
@@ -166,47 +171,66 @@ export default function RecordForm({
   return (
     <form
       action={formAction}
-      className="record-form"
+      className="record-form-v2"
       autoComplete="off"
     >
-      <div className="field">
-        <label htmlFor="tanggal">
-          Tanggal Aktivitas
-        </label>
+      {/* DATE */}
+      <div className="record-field record-field-full">
+        <div className="record-field-heading">
+          <label htmlFor="tanggal">
+            Tanggal Aktivitas
+          </label>
 
-        <select
-          id="tanggal"
-          name="tanggal"
-          value={tanggal}
-          onChange={(event) =>
-            setTanggal(
-              event.target.value
-            )
-          }
-          autoComplete="off"
-          required
-        >
-          <option value="" disabled>
-            Pilih tanggal
-          </option>
+          <span>01</span>
+        </div>
 
-          {availableDates.map((date) => (
-            <option
-              key={date.value}
-              value={date.value}
-            >
-              {date.label}
+        <div className="record-select-wrap">
+          <select
+            id="tanggal"
+            name="tanggal"
+            value={tanggal}
+            onChange={(event) =>
+              setTanggal(
+                event.target.value
+              )
+            }
+            autoComplete="off"
+            required
+          >
+            <option value="" disabled>
+              Pilih tanggal aktivitas
             </option>
-          ))}
-        </select>
+
+            {availableDates.map((date) => (
+              <option
+                key={date.value}
+                value={date.value}
+              >
+                {date.label}
+              </option>
+            ))}
+          </select>
+
+          <span
+            className="record-select-arrow"
+            aria-hidden="true"
+          >
+            ↓
+          </span>
+        </div>
       </div>
 
-      <div className="field">
-        <label htmlFor="jarak">
-          Jarak
-        </label>
+      {/* DISTANCE */}
+      <div className="record-field record-field-full">
+        <div className="record-field-heading">
+          <label htmlFor="jarak">
+            Jarak
+          </label>
 
-        <div className="input-suffix">
+          <span>02</span>
+        </div>
+
+        <div className="record-input-suffix">
           <input
             id="jarak"
             name="jarak"
@@ -219,71 +243,90 @@ export default function RecordForm({
             required
           />
 
-          <span>km</span>
+          <span>KM</span>
         </div>
       </div>
 
-      <div className="field">
-        <label htmlFor="avgPace">
-          Avg. Pace
-        </label>
+      {/* METRICS */}
+      <div className="record-field-row">
+        <div className="record-field">
+          <div className="record-field-heading">
+            <label htmlFor="avgPace">
+              Avg. Pace
+            </label>
 
-        <div className="input-suffix">
+            <span>03</span>
+          </div>
+
+          <div className="record-input-suffix">
+            <input
+              id="avgPace"
+              name="avgPace"
+              type="text"
+              inputMode="numeric"
+              value={avgPace}
+              onChange={
+                handleAvgPaceChange
+              }
+              placeholder="12:58"
+              maxLength={5}
+              autoComplete="off"
+              required
+            />
+
+            <span>/KM</span>
+          </div>
+
+          <small className="record-field-help">
+            Format MM:SS
+          </small>
+        </div>
+
+        <div className="record-field">
+          <div className="record-field-heading">
+            <label htmlFor="elapsedTime">
+              Elapsed Time
+            </label>
+
+            <span>04</span>
+          </div>
+
           <input
-            id="avgPace"
-            name="avgPace"
+            id="elapsedTime"
+            name="elapsedTime"
+            className="record-input"
             type="text"
             inputMode="numeric"
-            value={avgPace}
-            onChange={handleAvgPaceChange}
-            placeholder="12:58"
-            maxLength={5}
+            value={elapsedTime}
+            onChange={
+              handleElapsedTimeChange
+            }
+            placeholder="01:08:04"
+            maxLength={8}
             autoComplete="off"
             required
           />
 
-          <span>/km</span>
+          <small className="record-field-help">
+            Format HH:MM:SS
+          </small>
         </div>
-
-        <small>
-          Format menit:detik, contoh 12:58.
-        </small>
       </div>
 
-      <div className="field">
-        <label htmlFor="elapsedTime">
-          Elapsed Time
-        </label>
+      {/* LINK */}
+      <div className="record-field record-field-full">
+        <div className="record-field-heading">
+          <label htmlFor="tautan">
+            Tautan Aktivitas
+          </label>
 
-        <input
-          id="elapsedTime"
-          name="elapsedTime"
-          type="text"
-          inputMode="numeric"
-          value={elapsedTime}
-          onChange={
-            handleElapsedTimeChange
-          }
-          placeholder="01:08:04"
-          maxLength={8}
-          autoComplete="off"
-          required
-        />
-
-        <small>
-          Format jam:menit:detik,
-          contoh 01:08:04.
-        </small>
-      </div>
-
-      <div className="field">
-        <label htmlFor="tautan">
-          Tautan Aktivitas
-        </label>
+          <span>05</span>
+        </div>
 
         <input
           id="tautan"
           name="tautan"
+          className="record-input"
           type="text"
           value={tautan}
           onChange={(event) =>
@@ -296,22 +339,48 @@ export default function RecordForm({
           autoComplete="off"
           required
         />
+
+        <small className="record-field-help">
+          Pastikan tautan dapat dibuka oleh admin.
+        </small>
       </div>
 
+      {/* ERROR */}
       {state.error ? (
-        <p className="form-error">
-          {state.error}
-        </p>
+        <div
+          className="record-form-error"
+          role="alert"
+        >
+          <span aria-hidden="true">!</span>
+
+          <p>{state.error}</p>
+        </div>
       ) : null}
 
+      {/* SUBMIT */}
       <button
         type="submit"
+        className="record-submit"
         disabled={pending}
       >
-        {pending
-          ? "Merekam..."
-          : "Rekam Aktivitas"}
+        <span>
+          {pending
+            ? "Merekam..."
+            : "Kirim Aktivitas"}
+        </span>
+
+        <span
+          className="record-submit-arrow"
+          aria-hidden="true"
+        >
+          →
+        </span>
       </button>
+
+      <p className="record-submit-note">
+        Aktivitas akan berstatus Pending sampai
+        selesai diverifikasi admin.
+      </p>
     </form>
   );
 }
