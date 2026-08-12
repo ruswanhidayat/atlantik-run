@@ -1,37 +1,24 @@
 import Link from "next/link";
 
-import {
-  adminLogoutAction,
-} from "@/app/actions/admin";
+import { adminLogoutAction } from "@/app/actions/admin";
 import { requireAdminAccess } from "@/lib/auth";
 import { sql } from "@/lib/db";
 
-function getStatusLabel(status: number) {
-  if (status === 0) {
-    return "Pending";
-  }
-
-  if (status === 1) {
-    return "Approved";
-  }
-
-  return "Rejected";
-}
-
-function getStatusClass(status: number) {
-  if (status === 0) {
-    return "status-pending";
-  }
-
-  if (status === 1) {
-    return "status-approved";
-  }
-
-  return "status-rejected";
-}
+import ActivitiesTable from "./activities-table";
 
 export default async function AdminActivitiesPage() {
   const admin = await requireAdminAccess();
+
+  const statsRows = await sql`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE status = 0)::int AS pending,
+      COUNT(*) FILTER (WHERE status = 1)::int AS approved,
+      COUNT(*) FILTER (WHERE status = 2)::int AS rejected
+    FROM run_activities
+  `;
+
+  const stats = statsRows[0];
 
   const activities = await sql`
     SELECT
@@ -52,6 +39,20 @@ export default async function AdminActivitiesPage() {
       CASE WHEN ra.status = 0 THEN 0 ELSE 1 END,
       ra.tgl_rekam DESC
   `;
+
+  const normalizedActivities = activities.map((activity) => ({
+    id: String(activity.id),
+    nip: String(activity.nip).trim(),
+    nama: String(activity.nama),
+    subdit: String(activity.subdit),
+    gender: String(activity.gender),
+    tanggal: String(activity.tanggal),
+    jarak: Number(activity.jarak),
+    status: Number(activity.status),
+    feedback: activity.feedback
+      ? String(activity.feedback)
+      : null,
+  }));
 
   return (
     <main className="admin-shell">
@@ -88,100 +89,31 @@ export default async function AdminActivitiesPage() {
           </div>
         </div>
 
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nama</th>
-                <th>Subdit</th>
-                <th>Gender</th>
-                <th>Tanggal</th>
-                <th>Jarak</th>
-                <th>Status</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
+        <section className="admin-stats">
+          <article className="admin-stat-card">
+            <span>Total Data Masuk</span>
+            <strong>{Number(stats.total)}</strong>
+          </article>
 
-            <tbody>
-              {activities.map((activity) => {
-                const status =
-                  Number(activity.status);
+          <article className="admin-stat-card">
+            <span>Pending</span>
+            <strong>{Number(stats.pending)}</strong>
+          </article>
 
-                return (
-                  <tr key={String(activity.id)}>
-                    <td>
-                      {String(activity.id)}
-                    </td>
+          <article className="admin-stat-card">
+            <span>Approved</span>
+            <strong>{Number(stats.approved)}</strong>
+          </article>
 
-                    <td>
-                      <strong>
-                        {String(activity.nama)}
-                      </strong>
+          <article className="admin-stat-card">
+            <span>Rejected</span>
+            <strong>{Number(stats.rejected)}</strong>
+          </article>
+        </section>
 
-                      <small className="table-subtext">
-                        {String(activity.nip).trim()}
-                      </small>
-                    </td>
-
-                    <td>
-                      {String(activity.subdit)}
-                    </td>
-
-                    <td>
-                      {activity.gender === "M"
-                        ? "Pria"
-                        : "Wanita"}
-                    </td>
-
-                    <td>
-                      {String(activity.tanggal)}
-                    </td>
-
-                    <td>
-                      {Number(
-                        activity.jarak
-                      ).toFixed(2)}{" "}
-                      km
-                    </td>
-
-                    <td>
-                      <span
-                        className={`status-badge ${getStatusClass(
-                          status
-                        )}`}
-                      >
-                        {getStatusLabel(status)}
-                      </span>
-                    </td>
-
-                    <td>
-                      <Link
-                        href={`/admin/activities/${activity.id}`}
-                        className="table-action-link"
-                      >
-                        {status === 0
-                          ? "Verifikasi"
-                          : "Lihat"}
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {activities.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="table-empty"
-                  >
-                    Belum ada data perekaman.
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
-        </div>
+        <ActivitiesTable
+          activities={normalizedActivities}
+        />
       </section>
     </main>
   );
