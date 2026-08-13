@@ -4,6 +4,10 @@ import Link from "next/link";
 import RunBottomNav from "@/app/components/run-bottom-nav";
 import { requireUser } from "@/lib/auth";
 
+import {
+  isSubmissionOpenForUser,
+} from "@/lib/run-config";
+
 const guideSteps = [
   {
     number: "01",
@@ -70,6 +74,11 @@ const guideSteps = [
 
 export default async function InfoPage() {
   const user = await requireUser();
+
+  const submissionOpen =
+  isSubmissionOpenForUser(
+    user.nip
+  );
 
   return (
     <main className="run-app run-info-page">
@@ -179,18 +188,27 @@ export default async function InfoPage() {
             halaman perekaman.
           </p>
 
-          <Link
-            href="/record"
-            className="run-info-record-link"
-          >
-            Rekam Aktivitas
-            <span aria-hidden="true">→</span>
-          </Link>
+          {submissionOpen ? (
+            <Link
+              href="/record"
+              className="run-info-record-link"
+            >
+              Rekam Aktivitas
+              <span aria-hidden="true">
+                →
+              </span>
+            </Link>
+          ) : (
+            <span className="run-info-record-link is-disabled">
+              Pelaporan Ditutup
+            </span>
+          )}
         </div>
       </div>
 
       <RunBottomNav
         active="info"
+        canRecord={submissionOpen}
         isAdmin={Boolean(user.isadmin)}
       />
     </main>

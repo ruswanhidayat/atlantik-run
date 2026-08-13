@@ -15,7 +15,7 @@ import {
 
 import {
   isCompetitionLive,
-  isSubmissionOpen,
+  isSubmissionOpenForUser,
   RUN_DATES,
 } from "@/lib/run-config";
 
@@ -249,7 +249,9 @@ export default async function DashboardPage() {
     );
 
   const canRecord =
-    isSubmissionOpen() &&
+    isSubmissionOpenForUser(
+      user.nip
+    ) &&
     RUN_DATES.some(
       (date) => {
         const activity =
@@ -407,7 +409,17 @@ export default async function DashboardPage() {
                 ＋
               </span>
             </Link>
-          ) : null}
+          ) : (
+            <span className="dashboard-record-desktop is-disabled">
+              <span>
+                Rekam Aktivitas
+              </span>
+
+              <span aria-hidden="true">
+                ＋
+              </span>
+            </span>
+          )}
         </section>
 
         {/* RECAP */}

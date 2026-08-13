@@ -19,6 +19,11 @@ export const RECORDING_START =
 export const SUBMISSION_DEADLINE =
   "2026-08-18T21:00:00+07:00";
 
+// TEMPORARY — simulasi kondisi pelaporan sudah ditutup.
+// Setelah testing selesai, ubah menjadi null.
+const RECORD_CLOSED_TEST_NIP: string | null =
+  "921102040";
+
 export type RunDate = (typeof RUN_DATES)[number]["value"];
 
 export function isValidRunDate(
@@ -29,6 +34,20 @@ export function isValidRunDate(
 
 export function isSubmissionOpen() {
   return new Date().getTime() <= new Date(SUBMISSION_DEADLINE).getTime();
+}
+
+export function isSubmissionOpenForUser(
+  nip: string
+) {
+  const isClosedTestUser =
+    RECORD_CLOSED_TEST_NIP !== null &&
+    nip.trim() === RECORD_CLOSED_TEST_NIP;
+
+  if (isClosedTestUser) {
+    return false;
+  }
+
+  return isSubmissionOpen();
 }
 
 export function isRecordingStarted() {

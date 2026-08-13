@@ -7,7 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import {
   RECORDING_START,
-  isSubmissionOpen,
+  isSubmissionOpenForUser,
   RUN_DATES,
 } from "@/lib/run-config";
 
@@ -35,7 +35,9 @@ export default async function RecordPage() {
   );
 
   const submissionOpen =
-    isSubmissionOpen();
+    isSubmissionOpenForUser(
+      user.nip
+    );
 
   return (
     <main className="run-app record-v2">
@@ -278,6 +280,7 @@ export default async function RecordPage() {
       </div>
 
       <RecordBottomNav
+        canRecord={submissionOpen}
         isAdmin={Boolean(
           user.isadmin
         )}

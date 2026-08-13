@@ -7,7 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { getIndividualLeaderboard } from "@/lib/dashboard";
 import {
-  isSubmissionOpen,
+  isSubmissionOpenForUser,
   RUN_DATES,
 } from "@/lib/run-config";
 
@@ -56,7 +56,9 @@ export default async function LeaderboardPage() {
   );
 
   const canRecord =
-    isSubmissionOpen() &&
+    isSubmissionOpenForUser(
+      user.nip
+    ) &&
     RUN_DATES.some((date) => {
       const status =
         activityMap.get(date.value);

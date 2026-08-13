@@ -6992,3 +6992,25 @@ html {
     0 0 0 3px
     rgba(139, 92, 246, 0.08);
 }
+
+/* =========================================================
+   RECORD — CLOSED STATE
+   ========================================================= */
+
+.dashboard-record-desktop.is-disabled,
+.run-info-record-link.is-disabled {
+  opacity: 0.38;
+
+  cursor: not-allowed;
+
+  filter: grayscale(0.45);
+
+  box-shadow: none;
+
+  pointer-events: none;
+}
+
+.dashboard-record-desktop.is-disabled {
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--run-muted);
+}
