@@ -19,6 +19,7 @@ type AvailableDate = {
 
 type RecordFormProps = {
   availableDates: AvailableDate[];
+  recordingStart: string;
 };
 
 const initialState: RecordRunState =
@@ -301,6 +302,7 @@ function formatElapsedFromSeconds(
 
 export default function RecordForm({
   availableDates,
+  recordingStart,
 }: RecordFormProps) {
   const [
     state,
@@ -510,6 +512,45 @@ export default function RecordForm({
       elapsedTime,
     ]);
 
+  const [recordingStarted, setRecordingStarted] =
+    useState(
+      () =>
+        Date.now() >=
+        new Date(recordingStart).getTime()
+    );
+
+  const [
+    showRecordingNotice,
+    setShowRecordingNotice,
+  ] = useState(
+    () =>
+      Date.now() <
+      new Date(recordingStart).getTime()
+  );
+
+  useEffect(() => {
+    const startTime =
+      new Date(recordingStart).getTime();
+
+    function updateRecordingStatus() {
+      setRecordingStarted(
+        Date.now() >= startTime
+      );
+    }
+
+    updateRecordingStatus();
+
+    const interval =
+      window.setInterval(
+        updateRecordingStatus,
+        1000
+      );
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [recordingStart]);
+
   function handleJarakChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
@@ -603,11 +644,62 @@ export default function RecordForm({
   }
 
   return (
-    <form
-      action={formAction}
-      className="record-form-v2"
-      autoComplete="off"
-    >
+    <>
+      {showRecordingNotice ? (
+        <div
+          className="record-start-modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="record-start-modal-title"
+        >
+          <div className="record-start-modal">
+            <span
+              className="record-start-modal-icon"
+              aria-hidden="true"
+            >
+              ⏱
+            </span>
+
+            <div>
+              <span className="dashboard-section-kicker">
+                ATLANTIK RUN
+              </span>
+
+              <h3 id="record-start-modal-title">
+                Belum waktu perekaman
+              </h3>
+
+              <p>
+                Perekaman aktivitas mulai dapat
+                dikirim pada 15 Agustus 2026
+                pukul 05.00 WIB.
+              </p>
+
+              <p className="record-start-modal-note">
+                Kamu tetap dapat mencoba dan
+                mempelajari form perekaman
+                sebelum perlombaan dimulai.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="record-start-modal-button"
+              onClick={() =>
+                setShowRecordingNotice(false)
+              }
+            >
+              Mengerti
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      <form
+        action={formAction}
+        className="record-form-v2"
+        autoComplete="off"
+      >
       {/* DATE */}
       <div className="record-field record-field-full">
         <div className="record-field-heading">
@@ -918,12 +1010,17 @@ export default function RecordForm({
       <button
         type="submit"
         className="record-submit"
-        disabled={pending}
+        disabled={
+          pending ||
+          !recordingStarted
+        }
       >
         <span>
           {pending
             ? "Merekam..."
-            : "Kirim Aktivitas"}
+            : recordingStarted
+              ? "Kirim Aktivitas"
+              : "Perekaman Belum Dibuka"}
         </span>
 
         <span
@@ -935,11 +1032,10 @@ export default function RecordForm({
       </button>
 
       <p className="record-submit-note">
-        Aktivitas akan
-        berstatus Pending sampai
-        selesai diverifikasi
-        admin.
+        {recordingStarted
+          ? "Aktivitas akan berstatus Pending sampai selesai diverifikasi admin."
+          : "Tombol akan aktif mulai 15 Agustus 2026 pukul 05.00 WIB."}
       </p>
     </form>
-  );
-}
+  </>
+);

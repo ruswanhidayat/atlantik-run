@@ -6,6 +6,7 @@ import RecordForm from "./record-form";
 import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import {
+  RECORDING_START,
   isSubmissionOpen,
   RUN_DATES,
 } from "@/lib/run-config";
@@ -138,12 +139,12 @@ export default async function RecordPage() {
 
                 <div>
                   <strong>
-                    Perekaman telah ditutup.
+                    Pelaporan telah ditutup.
                   </strong>
 
                   <p>
-                    Batas akhir perekaman adalah
-                    20 Agustus 2026 pukul 23.59 WIB.
+                    Batas akhir pelaporan ATLANTIK RUN adalah
+                    18 Agustus 2026 pukul 21.00 WIB.
                   </p>
                 </div>
               </div>
@@ -170,9 +171,8 @@ export default async function RecordPage() {
               </div>
             ) : (
               <RecordForm
-                availableDates={
-                  availableDates
-                }
+                availableDates={availableDates}
+                recordingStart={RECORDING_START}
               />
             )}
           </section>
@@ -197,14 +197,12 @@ export default async function RecordPage() {
 
                 <div>
                   <strong>
-                    Pilih tanggal lari
+                    Periode perlombaan
                   </strong>
 
                   <p>
-                    Hanya tanggal yang belum
-                    memiliki aktivitas Pending
-                    atau Approved yang dapat
-                    dipilih.
+                    Aktivitas ATLANTIK RUN dilakukan pada
+                    15–17 Agustus 2026 pukul 05.00–20.00 WIB.
                   </p>
                 </div>
               </article>
@@ -216,13 +214,13 @@ export default async function RecordPage() {
 
                 <div>
                   <strong>
-                    Sesuaikan dengan bukti
+                    Sesuaikan dengan Strava
                   </strong>
 
                   <p>
-                    Jarak, pace, dan elapsed time
-                    harus sesuai dengan aktivitas
-                    pada tautan yang dilampirkan.
+                    Tanggal, waktu mulai, jarak, pace,
+                    elapsed time, dan tautan harus sesuai
+                    dengan aktivitas Strava yang dilaporkan.
                   </p>
                 </div>
               </article>
@@ -234,13 +232,31 @@ export default async function RecordPage() {
 
                 <div>
                   <strong>
+                    Batas akhir pelaporan
+                  </strong>
+
+                  <p>
+                    Aktivitas tanggal 15–17 Agustus masih
+                    dapat dilaporkan sampai 18 Agustus 2026
+                    pukul 21.00 WIB.
+                  </p>
+                </div>
+              </article>
+
+              <article>
+                <span className="record-guide-number">
+                  04
+                </span>
+
+                <div>
+                  <strong>
                     Tunggu verifikasi
                   </strong>
 
                   <p>
-                    Aktivitas yang dikirim akan
-                    diperiksa admin sebelum masuk
-                    ke perhitungan leaderboard.
+                    Aktivitas yang dikirim akan diperiksa
+                    admin sebelum masuk ke perhitungan
+                    leaderboard.
                   </p>
                 </div>
               </article>
