@@ -6902,15 +6902,21 @@ html {
 .record-time-input {
   width: 100%;
   padding-right: 48px;
+
+  color-scheme: dark;
 }
 
-
-/* Hide native time icon */
+/*
+ * Native time-picker indicator tetap dipertahankan
+ * sebagai area klik, tetapi dibuat tidak terlihat.
+ * Custom clock icon yang tampil secara visual.
+ */
 .record-time-input::-webkit-calendar-picker-indicator {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
 
-  width: 100%;
+  width: 48px;
   height: 100%;
 
   margin: 0;
@@ -6919,18 +6925,6 @@ html {
 
   cursor: pointer;
 }
-/* .record-time-input::-webkit-calendar-picker-indicator {
-  display: none;
-  -webkit-appearance: none;
-  appearance: none;
-} */
-
-/* .record-time-input::-webkit-inner-spin-button,
-.record-time-input::-webkit-clear-button {
-  display: none;
-  -webkit-appearance: none;
-} */
-
 
 /* Custom clock icon */
 
@@ -6960,24 +6954,4 @@ html {
   stroke-width: 1.7;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-
-/* Firefox / browser yang mendukung appearance */
-
-.record-time-input {
-  color-scheme: dark;
-}
-
-.record-time-input::-webkit-calendar-picker-indicator {
-  opacity: 0.8;
-  filter:
-    invert(63%)
-    sepia(39%)
-    saturate(1036%)
-    hue-rotate(214deg)
-    brightness(103%)
-    contrast(101%);
-
-  cursor: pointer;
 }
