@@ -14,6 +14,7 @@ import {
 } from "@/lib/dashboard";
 
 import {
+  isCompetitionLive,
   isSubmissionOpen,
   RUN_DATES,
 } from "@/lib/run-config";
@@ -139,6 +140,16 @@ function normalizeExternalUrl(
 export default async function DashboardPage() {
   const user =
     await requireUser();
+
+  // TEMPORARY:
+  // NIP ini dipakai untuk preview indikator sebelum periode lomba.
+  // Hapus pengecualian ini setelah testing selesai.
+  const isLiveTestUser =
+    user.nip === "921102040";
+
+  const showCompetitionLive =
+    isLiveTestUser ||
+    isCompetitionLive();
 
   const [
     activities,
@@ -368,6 +379,19 @@ export default async function DashboardPage() {
                   : "Wanita"}
               </span>
             </p>
+
+            {showCompetitionLive ? (
+              <div className="run-live-indicator">
+                <span
+                  className="run-live-indicator-dot"
+                  aria-hidden="true"
+                />
+
+                <span>
+                  ATLANTIK RUN Sedang Berlangsung
+                </span>
+              </div>
+            ) : null}
           </div>
 
           {canRecord ? (
