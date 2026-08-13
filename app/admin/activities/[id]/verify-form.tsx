@@ -15,6 +15,9 @@ type VerifyFormProps = {
   jarak: string;
   avgPace: string;
   elapsedTime: string;
+  distanceWarning: boolean;
+  paceWarning: boolean;
+  timeWarning: boolean;
 };
 
 const initialState:
@@ -56,6 +59,9 @@ export default function VerifyForm({
   jarak,
   avgPace,
   elapsedTime,
+  distanceWarning,
+  paceWarning,
+  timeWarning,
 }: VerifyFormProps) {
   const [
     state,
@@ -109,6 +115,12 @@ export default function VerifyForm({
 
           <span>KM</span>
         </div>
+
+        {distanceWarning ? (
+          <small className="admin-verify-field-warning">
+            ⚠ Jarak dilaporkan kurang dari 1 km.
+          </small>
+        ) : null}
       </div>
 
       <div className="admin-verify-field">
@@ -145,6 +157,13 @@ export default function VerifyForm({
         <small>
           Format MM:SS
         </small>
+
+        {paceWarning ? (
+          <small className="admin-verify-field-warning">
+            ⚠ Pace lebih cepat dari batas
+            05:00/km.
+          </small>
+        ) : null}
       </div>
 
       <div className="admin-verify-field">
@@ -181,6 +200,21 @@ export default function VerifyForm({
       </div>
 
       <div className="admin-verify-field">
+        {timeWarning ? (
+          <div className="admin-verify-field-warning-box">
+            <strong>
+              ⚠ Waktu aktivitas di luar periode
+              05.00–20.00 WIB
+            </strong>
+
+            <span>
+              Periksa waktu mulai dan waktu selesai
+              pada ringkasan aktivitas serta bukti
+              Strava.
+            </span>
+          </div>
+        ) : null}
+        
         <div className="admin-verify-field-heading">
           <label htmlFor="feedback">
             Feedback

@@ -83,6 +83,70 @@ function formatElapsedTime(
   ).padStart(2, "0")}`;
 }
 
+function formatStartTime(
+  value: string | null
+) {
+  if (!value) {
+    return "-";
+  }
+
+  return value.slice(0, 5);
+}
+
+function getFinishTimeSeconds(
+  startTime: string,
+  elapsedSeconds: number
+) {
+  const match = startTime.match(
+    /^([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?$/
+  );
+
+  if (!match) {
+    return null;
+  }
+
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  const seconds = Number(match[3] ?? 0);
+
+  return (
+    hours * 3600 +
+    minutes * 60 +
+    seconds +
+    elapsedSeconds
+  );
+}
+
+function formatClockSeconds(
+  totalSeconds: number | null
+) {
+  if (totalSeconds === null) {
+    return "-";
+  }
+
+  const hours =
+    Math.floor(totalSeconds / 3600) % 24;
+
+  const minutes =
+    Math.floor(
+      (totalSeconds % 3600) / 60
+    );
+
+  const seconds =
+    totalSeconds % 60;
+
+  return `${String(hours).padStart(
+    2,
+    "0"
+  )}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(
+    2,
+    "0"
+  )}`;
+}
+
 function normalizeExternalUrl(
   value: string | null
 ) {
@@ -137,6 +201,7 @@ export default async function AdminActivityDetailPage({
       ra.feedback,
       ra.verified_by,
       ra.verified_at,
+      ra.waktu_mulai::text AS waktu_mulai,
       ra.avg_pace_seconds,
       ra.elapsed_time_seconds,
       verifier.nama AS verifier_name
@@ -178,6 +243,54 @@ export default async function AdminActivityDetailPage({
           )
         : null
     );
+  
+  const waktuMulai =
+    formatStartTime(
+      activity.waktu_mulai
+        ? String(activity.waktu_mulai)
+        : null
+    );
+
+  const elapsedSeconds =
+    Number(
+      activity.elapsed_time_seconds
+    );
+
+  const finishTimeSeconds =
+    getFinishTimeSeconds(
+      String(activity.waktu_mulai),
+      elapsedSeconds
+    );
+
+  const waktuSelesai =
+    formatClockSeconds(
+      finishTimeSeconds
+    );
+
+  const distanceWarning =
+    Number(activity.jarak) < 1;
+
+  const paceWarning =
+    Number(
+      activity.avg_pace_seconds
+    ) < 300;
+
+  const timeWarning =
+    finishTimeSeconds !== null &&
+    (
+      getFinishTimeSeconds(
+        String(activity.waktu_mulai),
+        0
+      )! <
+        5 * 3600 ||
+      finishTimeSeconds >
+        20 * 3600
+    );
+
+  const hasWarning =
+    distanceWarning ||
+    paceWarning ||
+    timeWarning;
 
   const evidenceUrl =
     normalizeExternalUrl(
@@ -286,7 +399,13 @@ export default async function AdminActivityDetailPage({
                 </strong>
               </article>
 
-              <article>
+              <article
+                className={
+                  distanceWarning
+                    ? "admin-verify-summary-warning"
+                    : undefined
+                }
+              >
                 <span>Jarak Dilaporkan</span>
 
                 <strong>
@@ -295,14 +414,32 @@ export default async function AdminActivityDetailPage({
                   ).toFixed(2)}{" "}
                   km
                 </strong>
+
+                {distanceWarning ? (
+                  <small className="admin-verify-warning-text">
+                    ⚠ Di bawah batas minimum 1 km
+                  </small>
+                ) : null}
               </article>
 
-              <article>
+              <article
+                className={
+                  paceWarning
+                    ? "admin-verify-summary-warning"
+                    : undefined
+                }
+              >
                 <span>Avg. Pace</span>
 
                 <strong>
                   {avgPace} /km
                 </strong>
+
+                {paceWarning ? (
+                  <small className="admin-verify-warning-text">
+                    ⚠ Lebih cepat dari batas 05:00/km
+                  </small>
+                ) : null}
               </article>
 
               <article>
@@ -310,6 +447,40 @@ export default async function AdminActivityDetailPage({
 
                 <strong>
                   {elapsedTime}
+                </strong>
+              </article>
+
+              <article
+                className={
+                  timeWarning
+                    ? "admin-verify-summary-warning"
+                    : undefined
+                }
+              >
+                <span>Waktu Mulai</span>
+
+                <strong>
+                  {waktuMulai}
+                </strong>
+
+                {timeWarning ? (
+                  <small className="admin-verify-warning-text">
+                    ⚠ Periksa periode aktivitas
+                  </small>
+                ) : null}
+              </article>
+
+              <article
+                className={
+                  timeWarning
+                    ? "admin-verify-summary-warning"
+                    : undefined
+                }
+              >
+                <span>Waktu Selesai</span>
+
+                <strong>
+                  {waktuSelesai}
                 </strong>
               </article>
 
@@ -321,6 +492,21 @@ export default async function AdminActivityDetailPage({
                 </strong>
               </article>
             </div>
+
+            {hasWarning ? (
+              <div className="admin-verify-warning-box">
+                <strong>
+                  ⚠ Data memerlukan perhatian
+                </strong>
+
+                <p>
+                  Terdapat data yang berada di luar
+                  ketentuan ATLANTIK RUN. Periksa
+                  kembali bukti aktivitas Strava
+                  sebelum memberikan keputusan.
+                </p>
+              </div>
+            ) : null}
 
             <div className="admin-evidence-card">
               <div>
@@ -435,15 +621,20 @@ export default async function AdminActivityDetailPage({
                 </div>
 
                 <VerifyForm
-                  id={String(
-                    activity.id
-                  )}
+                  id={String(activity.id)}
                   jarak={Number(
                     activity.jarak
                   ).toFixed(2)}
                   avgPace={avgPace}
-                  elapsedTime={
-                    elapsedTime
+                  elapsedTime={elapsedTime}
+                  distanceWarning={
+                    distanceWarning
+                  }
+                  paceWarning={
+                    paceWarning
+                  }
+                  timeWarning={
+                    timeWarning
                   }
                 />
               </>
