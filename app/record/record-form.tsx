@@ -1037,5 +1037,6 @@ export default function RecordForm({
           : "Tombol akan aktif mulai 15 Agustus 2026 pukul 05.00 WIB."}
       </p>
     </form>
-  </>
-);
+    </>
+  );
+}
