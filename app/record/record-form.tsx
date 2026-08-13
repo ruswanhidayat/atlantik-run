@@ -770,30 +770,18 @@ export default function RecordForm({
           <span>02</span>
         </div>
 
-        <div className="record-time-wrap">
-          <input
-            id="waktuMulai"
-            name="waktuMulai"
-            className="record-input record-time-input"
-            type="time"
-            value={waktuMulai}
-            onChange={(event) =>
-              setWaktuMulai(event.target.value)
-            }
-            autoComplete="off"
-            required
-          />
-
-          <span
-            className="record-time-icon"
-            aria-hidden="true"
-          >
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="8" />
-              <path d="M12 7.5V12l3 2" />
-            </svg>
-          </span>
-        </div>
+        <input
+          id="waktuMulai"
+          name="waktuMulai"
+          className="record-input record-time-input"
+          type="time"
+          value={waktuMulai}
+          onChange={(event) =>
+            setWaktuMulai(event.target.value)
+          }
+          autoComplete="off"
+          required
+        />
 
         <small className="record-field-help">
           Gunakan waktu mulai
