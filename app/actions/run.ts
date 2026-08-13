@@ -137,14 +137,24 @@ export async function recordRunAction(
   const user =
     await requireUser();
 
-  if (!isRecordingStarted()) {
+  /* bypass testing, ganti ke false jika sudah */
+  const isRecordingTestUser =
+    user.nip === "921102040";
+
+  if (
+    !isRecordingTestUser &&
+    !isRecordingStarted()
+  ) {
     return {
       error:
         "Perekaman ATLANTIK RUN belum dibuka. Perekaman dimulai 15 Agustus 2026 pukul 05.00 WIB.",
     };
   }
 
-  if (!isSubmissionOpen()) {
+  if (
+    !isRecordingTestUser &&
+    !isSubmissionOpen()
+  ) {
     return {
       error:
         "Perekaman ATLANTIK RUN telah ditutup pada 18 Agustus 2026 pukul 21.00 WIB.",
