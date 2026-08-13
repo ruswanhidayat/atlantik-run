@@ -96,11 +96,12 @@ export default function DashboardBottomNav({
     <nav
       className={`run-bottom-nav run-bottom-nav-modern ${
         isAdmin
-          ? "run-bottom-nav-five"
-          : "run-bottom-nav-four"
+          ? "run-bottom-nav-six"
+          : "run-bottom-nav-five"
       }`}
       aria-label="Navigasi utama"
     >
+      {/* HOME */}
       <button
         type="button"
         className={`run-bottom-nav-item ${
@@ -124,6 +125,7 @@ export default function DashboardBottomNav({
         <span>Home</span>
       </button>
 
+      {/* RANK */}
       <button
         type="button"
         className={`run-bottom-nav-item ${
@@ -147,6 +149,7 @@ export default function DashboardBottomNav({
         <span>Rank</span>
       </button>
 
+      {/* RECORD — CENTER ACTION */}
       {canRecord ? (
         <Link
           href="/record"
@@ -174,6 +177,30 @@ export default function DashboardBottomNav({
         </span>
       )}
 
+      {/* INFO */}
+      <Link
+        href="/info"
+        className="run-bottom-nav-item"
+      >
+        <span
+          className="run-nav-icon"
+          aria-hidden="true"
+        >
+          <svg viewBox="0 0 24 24">
+            <circle
+              cx="12"
+              cy="12"
+              r="9"
+            />
+            <path d="M12 10v6" />
+            <path d="M12 7.3h.01" />
+          </svg>
+        </span>
+
+        <span>Info</span>
+      </Link>
+
+      {/* ADMIN */}
       {isAdmin ? (
         <Link
           href="/admin/login"
@@ -193,6 +220,7 @@ export default function DashboardBottomNav({
         </Link>
       ) : null}
 
+      {/* LOGOUT */}
       <form
         action={logoutAction}
         className="run-bottom-nav-form"
