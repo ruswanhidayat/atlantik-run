@@ -6533,3 +6533,110 @@ html {
     animation: none;
   }
 }
+
+/* =========================================================
+   RECORD — SOFT VALIDATION
+   ========================================================= */
+
+.record-soft-warning,
+.record-soft-info {
+  margin-top: 9px;
+  padding: 10px 12px;
+
+  border-radius: 11px;
+
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.record-soft-warning {
+  border:
+    1px solid
+    rgba(
+      245,
+      158,
+      11,
+      0.22
+    );
+
+  background:
+    rgba(
+      245,
+      158,
+      11,
+      0.07
+    );
+
+  color:
+    rgba(
+      253,
+      230,
+      138,
+      0.9
+    );
+}
+
+.record-soft-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  border:
+    1px solid
+    rgba(
+      139,
+      92,
+      246,
+      0.18
+    );
+
+  background:
+    rgba(
+      139,
+      92,
+      246,
+      0.055
+    );
+
+  color:
+    var(--run-muted);
+}
+
+.record-soft-info strong {
+  color:
+    var(--run-text);
+}
+
+.record-soft-info p {
+  width: 100%;
+
+  margin: 2px 0 0;
+}
+
+.record-soft-info.record-soft-warning {
+  border:
+    1px solid
+    rgba(
+      245,
+      158,
+      11,
+      0.22
+    );
+
+  background:
+    rgba(
+      245,
+      158,
+      11,
+      0.07
+    );
+
+  color:
+    rgba(
+      253,
+      230,
+      138,
+      0.9
+    );
+}

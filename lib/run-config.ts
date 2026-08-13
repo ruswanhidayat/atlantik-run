@@ -13,8 +13,11 @@ export const RUN_DATES = [
   },
 ] as const;
 
+export const RECORDING_START =
+  "2026-08-15T05:00:00+07:00";
+
 export const SUBMISSION_DEADLINE =
-  "2026-08-20T23:59:59+07:00";
+  "2026-08-18T21:00:00+07:00";
 
 export type RunDate = (typeof RUN_DATES)[number]["value"];
 
@@ -26,6 +29,33 @@ export function isValidRunDate(
 
 export function isSubmissionOpen() {
   return new Date().getTime() <= new Date(SUBMISSION_DEADLINE).getTime();
+}
+
+export function isRecordingStarted() {
+  return (
+    new Date().getTime() >=
+    new Date(RECORDING_START).getTime()
+  );
+}
+
+export function isFinalReportingDay(
+  now = new Date()
+) {
+  const formatter =
+    new Intl.DateTimeFormat(
+      "en-CA",
+      {
+        timeZone: "Asia/Jakarta",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }
+    );
+
+  return (
+    formatter.format(now) ===
+    "2026-08-18"
+  );
 }
 
 export function isCompetitionLive(

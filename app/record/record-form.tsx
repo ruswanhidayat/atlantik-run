@@ -3,6 +3,7 @@
 import {
   useActionState,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -20,23 +21,51 @@ type RecordFormProps = {
   availableDates: AvailableDate[];
 };
 
-const initialState: RecordRunState = {};
+const initialState: RecordRunState =
+  {};
 
 function sanitizeTimeInput(
   value: string,
-  type: "pace" | "elapsed"
+  type:
+    | "pace"
+    | "elapsed"
 ) {
-  const digits = value.replace(/\D/g, "");
+  const digits =
+    value.replace(
+      /\D/g,
+      ""
+    );
 
-  if (type === "pace") {
-    const minutes = digits.slice(0, 2);
+  if (
+    type === "pace"
+  ) {
+    const minutes =
+      digits.slice(
+        0,
+        2
+      );
 
-    let seconds = digits.slice(2, 4);
+    let seconds =
+      digits.slice(
+        2,
+        4
+      );
 
-    if (seconds.length === 2) {
-      seconds = String(
-        Math.min(Number(seconds), 59)
-      ).padStart(2, "0");
+    if (
+      seconds.length === 2
+    ) {
+      seconds =
+        String(
+          Math.min(
+            Number(
+              seconds
+            ),
+            59
+          )
+        ).padStart(
+          2,
+          "0"
+        );
     }
 
     return seconds
@@ -44,98 +73,412 @@ function sanitizeTimeInput(
       : minutes;
   }
 
-  const hours = digits.slice(0, 2);
+  const hours =
+    digits.slice(
+      0,
+      2
+    );
 
-  let minutes = digits.slice(2, 4);
-  let seconds = digits.slice(4, 6);
+  let minutes =
+    digits.slice(
+      2,
+      4
+    );
 
-  if (minutes.length === 2) {
-    minutes = String(
-      Math.min(Number(minutes), 59)
-    ).padStart(2, "0");
+  let seconds =
+    digits.slice(
+      4,
+      6
+    );
+
+  if (
+    minutes.length === 2
+  ) {
+    minutes =
+      String(
+        Math.min(
+          Number(
+            minutes
+          ),
+          59
+        )
+      ).padStart(
+        2,
+        "0"
+      );
   }
 
-  if (seconds.length === 2) {
-    seconds = String(
-      Math.min(Number(seconds), 59)
-    ).padStart(2, "0");
+  if (
+    seconds.length === 2
+  ) {
+    seconds =
+      String(
+        Math.min(
+          Number(
+            seconds
+          ),
+          59
+        )
+      ).padStart(
+        2,
+        "0"
+      );
   }
 
-  const parts = [hours];
+  const parts =
+    [hours];
 
   if (minutes) {
-    parts.push(minutes);
+    parts.push(
+      minutes
+    );
   }
 
   if (seconds) {
-    parts.push(seconds);
+    parts.push(
+      seconds
+    );
   }
 
   return parts.join(":");
 }
 
+function parsePaceSeconds(
+  value: string
+) {
+  const match =
+    value.match(
+      /^(\d{1,2}):([0-5]\d)$/
+    );
+
+  if (!match) {
+    return null;
+  }
+
+  return (
+    Number(match[1]) *
+      60 +
+    Number(match[2])
+  );
+}
+
+function parseElapsedSeconds(
+  value: string
+) {
+  const match =
+    value.match(
+      /^(\d{1,2}):([0-5]\d):([0-5]\d)$/
+    );
+
+  if (!match) {
+    return null;
+  }
+
+  return (
+    Number(match[1]) *
+      3600 +
+    Number(match[2]) *
+      60 +
+    Number(match[3])
+  );
+}
+
+function parseStartTimeMinutes(
+  value: string
+) {
+  const match =
+    value.match(
+      /^([01]\d|2[0-3]):([0-5]\d)$/
+    );
+
+  if (!match) {
+    return null;
+  }
+
+  return (
+    Number(match[1]) *
+      60 +
+    Number(match[2])
+  );
+}
+
+function formatFinishTime(
+  totalSeconds: number
+) {
+  const normalized =
+    totalSeconds %
+    (24 * 3600);
+
+  const hours =
+    Math.floor(
+      normalized /
+        3600
+    );
+
+  const minutes =
+    Math.floor(
+      (normalized %
+        3600) /
+        60
+    );
+
+  const seconds =
+    normalized % 60;
+
+  return `${String(
+    hours
+  ).padStart(
+    2,
+    "0"
+  )}:${String(
+    minutes
+  ).padStart(
+    2,
+    "0"
+  )}:${String(
+    seconds
+  ).padStart(
+    2,
+    "0"
+  )}`;
+}
+
+function normalizeStravaInput(
+  value: string
+) {
+  const trimmed =
+    value.trim();
+
+  if (!trimmed) {
+    return "";
+  }
+
+  let normalized =
+    trimmed.replace(
+      /^https?:\/\//i,
+      ""
+    );
+
+  normalized =
+    normalized.replace(
+      /^www\./i,
+      ""
+    );
+
+  return `https://www.${normalized}`;
+}
+
 export default function RecordForm({
   availableDates,
 }: RecordFormProps) {
-  const [state, formAction, pending] =
+  const [
+    state,
+    formAction,
+    pending,
+  ] =
     useActionState(
       recordRunAction,
       initialState
     );
 
-  const [tanggal, setTanggal] =
+  const [
+    tanggal,
+    setTanggal,
+  ] =
     useState("");
 
-  const [jarak, setJarak] =
+  const [
+    waktuMulai,
+    setWaktuMulai,
+  ] =
     useState("");
 
-  const [avgPace, setAvgPace] =
+  const [
+    jarak,
+    setJarak,
+  ] =
     useState("");
 
-  const [elapsedTime, setElapsedTime] =
+  const [
+    avgPace,
+    setAvgPace,
+  ] =
     useState("");
 
-  const [tautan, setTautan] =
+  const [
+    elapsedTime,
+    setElapsedTime,
+  ] =
+    useState("");
+
+  const [
+    tautan,
+    setTautan,
+  ] =
     useState("");
 
   useEffect(() => {
-    if (state.values) {
-      setTanggal(state.values.tanggal);
-      setJarak(state.values.jarak);
-      setAvgPace(state.values.avgPace);
-
-      setElapsedTime(
-        state.values.elapsedTime
+    if (
+      state.values
+    ) {
+      setTanggal(
+        state.values.tanggal
       );
 
-      setTautan(state.values.tautan);
+      setWaktuMulai(
+        state.values
+          .waktuMulai
+      );
+
+      setJarak(
+        state.values.jarak
+      );
+
+      setAvgPace(
+        state.values.avgPace
+      );
+
+      setElapsedTime(
+        state.values
+          .elapsedTime
+      );
+
+      setTautan(
+        state.values.tautan
+      );
     }
   }, [state]);
+
+  const distanceWarning =
+    useMemo(() => {
+      if (!jarak) {
+        return false;
+      }
+
+      const value =
+        Number(
+          jarak.replace(
+            ",",
+            "."
+          )
+        );
+
+      return (
+        Number.isFinite(
+          value
+        ) &&
+        value > 0 &&
+        value < 1
+      );
+    }, [jarak]);
+
+  const paceWarning =
+    useMemo(() => {
+      const seconds =
+        parsePaceSeconds(
+          avgPace
+        );
+
+      return (
+        seconds !== null &&
+        seconds < 300
+      );
+    }, [avgPace]);
+
+  const timeInfo =
+    useMemo(() => {
+      const startMinutes =
+        parseStartTimeMinutes(
+          waktuMulai
+        );
+
+      const elapsedSeconds =
+        parseElapsedSeconds(
+          elapsedTime
+        );
+
+      if (
+        startMinutes ===
+          null ||
+        elapsedSeconds ===
+          null
+      ) {
+        return null;
+      }
+
+      const startSeconds =
+        startMinutes *
+        60;
+
+      const finishSeconds =
+        startSeconds +
+        elapsedSeconds;
+
+      return {
+        finishTime:
+          formatFinishTime(
+            finishSeconds
+          ),
+
+        warning:
+          startSeconds <
+            5 *
+              3600 ||
+          finishSeconds >
+            20 *
+              3600,
+      };
+    }, [
+      waktuMulai,
+      elapsedTime,
+    ]);
 
   function handleJarakChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
-    let value = event.target.value;
+    let value =
+      event.target.value;
 
-    value = value.replace(
-      /[^0-9.,]/g,
-      ""
-    );
+    value =
+      value.replace(
+        /[^0-9.,]/g,
+        ""
+      );
 
     const separatorIndex =
-      value.search(/[.,]/);
+      value.search(
+        /[.,]/
+      );
 
-    if (separatorIndex !== -1) {
+    if (
+      separatorIndex !==
+      -1
+    ) {
       const beforeDecimal =
-        value.slice(0, separatorIndex);
+        value.slice(
+          0,
+          separatorIndex
+        );
 
       const separator =
-        value[separatorIndex];
+        value[
+          separatorIndex
+        ];
 
-      const afterDecimal = value
-        .slice(separatorIndex + 1)
-        .replace(/[.,]/g, "")
-        .slice(0, 2);
+      const afterDecimal =
+        value
+          .slice(
+            separatorIndex +
+              1
+          )
+          .replace(
+            /[.,]/g,
+            ""
+          )
+          .slice(
+            0,
+            2
+          );
 
       value =
         beforeDecimal +
@@ -168,6 +511,18 @@ export default function RecordForm({
     );
   }
 
+  function handleStravaBlur() {
+    if (!tautan.trim()) {
+      return;
+    }
+
+    setTautan(
+      normalizeStravaInput(
+        tautan
+      )
+    );
+  }
+
   return (
     <form
       action={formAction}
@@ -189,26 +544,39 @@ export default function RecordForm({
             id="tanggal"
             name="tanggal"
             value={tanggal}
-            onChange={(event) =>
+            onChange={(
+              event
+            ) =>
               setTanggal(
-                event.target.value
+                event.target
+                  .value
               )
             }
             autoComplete="off"
             required
           >
-            <option value="" disabled>
-              Pilih tanggal aktivitas
+            <option
+              value=""
+              disabled
+            >
+              Pilih tanggal
+              aktivitas
             </option>
 
-            {availableDates.map((date) => (
-              <option
-                key={date.value}
-                value={date.value}
-              >
-                {date.label}
-              </option>
-            ))}
+            {availableDates.map(
+              (date) => (
+                <option
+                  key={
+                    date.value
+                  }
+                  value={
+                    date.value
+                  }
+                >
+                  {date.label}
+                </option>
+              )
+            )}
           </select>
 
           <span
@@ -220,6 +588,76 @@ export default function RecordForm({
         </div>
       </div>
 
+      {/* START TIME */}
+      <div className="record-field record-field-full">
+        <div className="record-field-heading">
+          <label htmlFor="waktuMulai">
+            Waktu Mulai
+            Aktivitas
+          </label>
+
+          <span>02</span>
+        </div>
+
+        <input
+          id="waktuMulai"
+          name="waktuMulai"
+          className="record-input"
+          type="time"
+          value={waktuMulai}
+          onChange={(
+            event
+          ) =>
+            setWaktuMulai(
+              event.target
+                .value
+            )
+          }
+          autoComplete="off"
+          required
+        />
+
+        <small className="record-field-help">
+          Gunakan waktu mulai
+          sesuai aktivitas
+          Strava.
+        </small>
+
+        {timeInfo ? (
+          <div
+            className={`record-soft-info ${
+              timeInfo.warning
+                ? "record-soft-warning"
+                : ""
+            }`}
+          >
+            <span>
+              Perkiraan waktu
+              selesai
+            </span>
+
+            <strong>
+              {
+                timeInfo.finishTime
+              }
+            </strong>
+
+            {timeInfo.warning ? (
+              <p>
+                Aktivitas berada
+                di luar periode
+                perlombaan
+                05.00–20.00 WIB.
+                Data tetap dapat
+                dikirim dan akan
+                diverifikasi
+                panitia.
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+
       {/* DISTANCE */}
       <div className="record-field record-field-full">
         <div className="record-field-heading">
@@ -227,7 +665,7 @@ export default function RecordForm({
             Jarak
           </label>
 
-          <span>02</span>
+          <span>03</span>
         </div>
 
         <div className="record-input-suffix">
@@ -237,7 +675,9 @@ export default function RecordForm({
             type="text"
             inputMode="decimal"
             value={jarak}
-            onChange={handleJarakChange}
+            onChange={
+              handleJarakChange
+            }
             placeholder="Contoh: 5,25"
             autoComplete="off"
             required
@@ -245,6 +685,20 @@ export default function RecordForm({
 
           <span>KM</span>
         </div>
+
+        {distanceWarning ? (
+          <div className="record-soft-warning">
+            <span>
+              ⚠ Jarak minimum
+              yang diperhitungkan
+              adalah 1 km. Data
+              tetap dapat dikirim
+              dan akan
+              diverifikasi
+              panitia.
+            </span>
+          </div>
+        ) : null}
       </div>
 
       {/* METRICS */}
@@ -255,7 +709,7 @@ export default function RecordForm({
               Avg. Pace
             </label>
 
-            <span>03</span>
+            <span>04</span>
           </div>
 
           <div className="record-input-suffix">
@@ -280,6 +734,20 @@ export default function RecordForm({
           <small className="record-field-help">
             Format MM:SS
           </small>
+
+          {paceWarning ? (
+            <div className="record-soft-warning">
+              <span>
+                ⚠ Pace lebih
+                cepat dari batas
+                05:00/km. Data
+                tetap dapat
+                dikirim dan akan
+                diverifikasi
+                panitia.
+              </span>
+            </div>
+          ) : null}
         </div>
 
         <div className="record-field">
@@ -288,7 +756,7 @@ export default function RecordForm({
               Elapsed Time
             </label>
 
-            <span>04</span>
+            <span>05</span>
           </div>
 
           <input
@@ -318,9 +786,10 @@ export default function RecordForm({
         <div className="record-field-heading">
           <label htmlFor="tautan">
             Tautan Aktivitas
+            Strava
           </label>
 
-          <span>05</span>
+          <span>06</span>
         </div>
 
         <input
@@ -329,19 +798,27 @@ export default function RecordForm({
           className="record-input"
           type="text"
           value={tautan}
-          onChange={(event) =>
+          onChange={(
+            event
+          ) =>
             setTautan(
-              event.target.value
+              event.target
+                .value
             )
           }
+          onBlur={
+            handleStravaBlur
+          }
           maxLength={500}
-          placeholder="Tempel tautan bukti aktivitas"
+          placeholder="www.strava.com/activities/..."
           autoComplete="off"
           required
         />
 
         <small className="record-field-help">
-          Pastikan tautan dapat dibuka oleh admin.
+          Gunakan tautan
+          aktivitas dari
+          www.strava.com.
         </small>
       </div>
 
@@ -351,9 +828,15 @@ export default function RecordForm({
           className="record-form-error"
           role="alert"
         >
-          <span aria-hidden="true">!</span>
+          <span
+            aria-hidden="true"
+          >
+            !
+          </span>
 
-          <p>{state.error}</p>
+          <p>
+            {state.error}
+          </p>
         </div>
       ) : null}
 
@@ -378,8 +861,10 @@ export default function RecordForm({
       </button>
 
       <p className="record-submit-note">
-        Aktivitas akan berstatus Pending sampai
-        selesai diverifikasi admin.
+        Aktivitas akan
+        berstatus Pending sampai
+        selesai diverifikasi
+        admin.
       </p>
     </form>
   );
