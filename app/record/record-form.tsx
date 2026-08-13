@@ -268,6 +268,37 @@ function normalizeStravaInput(
   return `https://www.${normalized}`;
 }
 
+function formatElapsedFromSeconds(
+  totalSeconds: number
+) {
+  const roundedSeconds =
+    Math.round(totalSeconds);
+
+  const hours =
+    Math.floor(
+      roundedSeconds / 3600
+    );
+
+  const minutes =
+    Math.floor(
+      (roundedSeconds % 3600) / 60
+    );
+
+  const seconds =
+    roundedSeconds % 60;
+
+  return `${String(hours).padStart(
+    2,
+    "0"
+  )}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(
+    2,
+    "0"
+  )}`;
+}
+
 export default function RecordForm({
   availableDates,
 }: RecordFormProps) {
@@ -312,6 +343,12 @@ export default function RecordForm({
     useState("");
 
   const [
+    elapsedTimeEdited,
+    setElapsedTimeEdited,
+  ] =
+    useState(false);
+
+  const [
     tautan,
     setTautan,
   ] =
@@ -348,6 +385,46 @@ export default function RecordForm({
       );
     }
   }, [state]);
+
+  useEffect(() => {
+    if (elapsedTimeEdited) {
+      return;
+    }
+
+    const distance =
+      Number(
+        jarak.replace(
+          ",",
+          "."
+        )
+      );
+
+    const paceSeconds =
+      parsePaceSeconds(
+        avgPace
+      );
+
+    if (
+      !Number.isFinite(distance) ||
+      distance <= 0 ||
+      paceSeconds === null
+    ) {
+      return;
+    }
+
+    const estimatedSeconds =
+      distance * paceSeconds;
+
+    setElapsedTime(
+      formatElapsedFromSeconds(
+        estimatedSeconds
+      )
+    );
+  }, [
+    jarak,
+    avgPace,
+    elapsedTimeEdited,
+  ]);
 
   const distanceWarning =
     useMemo(() => {
@@ -503,6 +580,8 @@ export default function RecordForm({
   function handleElapsedTimeChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
+    setElapsedTimeEdited(true);
+
     setElapsedTime(
       sanitizeTimeInput(
         event.target.value,
@@ -776,7 +855,8 @@ export default function RecordForm({
           />
 
           <small className="record-field-help">
-            Format HH:MM:SS
+            Format HH:MM:SS · Terisi otomatis dari
+            jarak × avg. pace dan tetap dapat diedit
           </small>
         </div>
       </div>

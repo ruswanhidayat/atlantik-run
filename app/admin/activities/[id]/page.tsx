@@ -442,14 +442,6 @@ export default async function AdminActivityDetailPage({
                 ) : null}
               </article>
 
-              <article>
-                <span>Elapsed Time</span>
-
-                <strong>
-                  {elapsedTime}
-                </strong>
-              </article>
-
               <article
                 className={
                   timeWarning
@@ -481,6 +473,14 @@ export default async function AdminActivityDetailPage({
 
                 <strong>
                   {waktuSelesai}
+                </strong>
+              </article>
+
+              <article>
+                <span>Elapsed Time</span>
+
+                <strong>
+                  {elapsedTime}
                 </strong>
               </article>
 
