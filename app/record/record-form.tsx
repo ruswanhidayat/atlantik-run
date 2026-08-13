@@ -781,84 +781,78 @@ export default function RecordForm({
       </div>
 
       {/* METRICS */}
-      <div className="record-field-row">
-        <div className="record-field">
-          <div className="record-field-heading">
-            <label htmlFor="avgPace">
-              Avg. Pace
-            </label>
+      <div className="record-metrics-group">
+        <div className="record-field-row record-field-row-metrics">
+          {/* AVG PACE */}
+          <div className="record-field">
+            <div className="record-field-heading">
+              <label htmlFor="avgPace">
+                Avg. Pace
+              </label>
 
-            <span>04</span>
+              <span>04</span>
+            </div>
+
+            <div className="record-input-suffix">
+              <input
+                id="avgPace"
+                name="avgPace"
+                type="text"
+                inputMode="numeric"
+                value={avgPace}
+                onChange={handleAvgPaceChange}
+                placeholder="12:58"
+                maxLength={5}
+                autoComplete="off"
+                required
+              />
+
+              <span>/KM</span>
+            </div>
+
+            <small className="record-field-help">
+              Format MM:SS
+            </small>
           </div>
 
-          <div className="record-input-suffix">
+          {/* ELAPSED TIME */}
+          <div className="record-field">
+            <div className="record-field-heading">
+              <label htmlFor="elapsedTime">
+                Elapsed Time
+              </label>
+
+              <span>05</span>
+            </div>
+
             <input
-              id="avgPace"
-              name="avgPace"
+              id="elapsedTime"
+              name="elapsedTime"
+              className="record-input"
               type="text"
               inputMode="numeric"
-              value={avgPace}
-              onChange={
-                handleAvgPaceChange
-              }
-              placeholder="12:58"
-              maxLength={5}
+              value={elapsedTime}
+              onChange={handleElapsedTimeChange}
+              placeholder="01:08:04"
+              maxLength={8}
               autoComplete="off"
               required
             />
 
-            <span>/KM</span>
+            <small className="record-field-help">
+              Format HH:MM:SS · Terisi otomatis dari jarak × avg. pace · Tetap dapat diedit
+            </small>
           </div>
-
-          <small className="record-field-help">
-            Format MM:SS
-          </small>
-
-          {paceWarning ? (
-            <div className="record-soft-warning">
-              <span>
-                ⚠ Pace lebih
-                cepat dari batas
-                05:00/km. Data
-                tetap dapat
-                dikirim dan akan
-                diverifikasi
-                panitia.
-              </span>
-            </div>
-          ) : null}
         </div>
 
-        <div className="record-field">
-          <div className="record-field-heading">
-            <label htmlFor="elapsedTime">
-              Elapsed Time
-            </label>
-
-            <span>05</span>
+        {paceWarning ? (
+          <div className="record-soft-warning record-metrics-warning">
+            <span>
+              ⚠ Pace lebih cepat dari batas 05:00/km.
+              Data tetap dapat dikirim dan akan diverifikasi panitia.
+            </span>
           </div>
-
-          <input
-            id="elapsedTime"
-            name="elapsedTime"
-            className="record-input"
-            type="text"
-            inputMode="numeric"
-            value={elapsedTime}
-            onChange={
-              handleElapsedTimeChange
-            }
-            placeholder="01:08:04"
-            maxLength={8}
-            autoComplete="off"
-            required
-          />
-
-          <small className="record-field-help">
-            Format HH:MM:SS · Terisi otomatis dari
-            jarak × avg. pace dan tetap dapat diedit
-          </small>
-        </div>
+        ) : null}
       </div>
 
       {/* LINK */}

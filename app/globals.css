@@ -6718,3 +6718,41 @@ html {
 
   opacity: 0.82;
 }
+
+/* =========================================================
+   RECORD — AVG PACE & ELAPSED TIME LAYOUT
+   ========================================================= */
+
+.record-metrics-group {
+  display: grid;
+  gap: 10px;
+}
+
+.record-field-row-metrics {
+  grid-template-columns:
+    minmax(0, 5fr)
+    minmax(0, 7fr);
+  align-items: start;
+}
+
+.record-field-row-metrics .record-field-help {
+  white-space: nowrap;
+}
+
+.record-metrics-warning {
+  width: 100%;
+  margin-top: 0;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 760px) {
+  .record-field-row-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .record-field-row-metrics .record-field-help {
+    white-space: normal;
+  }
+}
