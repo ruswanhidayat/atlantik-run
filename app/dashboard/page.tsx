@@ -310,6 +310,13 @@ export default async function DashboardPage() {
         </span>
 
         <div className="run-topbar-actions">
+          <Link
+            href="/info"
+            className="run-admin-link run-info-desktop-link"
+          >
+            Info
+          </Link>
+
           {user.isadmin ? (
             <Link
               href="/admin/login"

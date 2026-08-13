@@ -94,11 +94,7 @@ export default function DashboardBottomNav({
 
   return (
     <nav
-      className={`run-bottom-nav run-bottom-nav-modern ${
-        isAdmin
-          ? "run-bottom-nav-six"
-          : "run-bottom-nav-five"
-      }`}
+      className="run-bottom-nav run-bottom-nav-modern run-bottom-nav-five"
       aria-label="Navigasi utama"
     >
       {/* HOME */}
@@ -177,30 +173,7 @@ export default function DashboardBottomNav({
         </span>
       )}
 
-      {/* INFO */}
-      <Link
-        href="/info"
-        className="run-bottom-nav-item"
-      >
-        <span
-          className="run-nav-icon"
-          aria-hidden="true"
-        >
-          <svg viewBox="0 0 24 24">
-            <circle
-              cx="12"
-              cy="12"
-              r="9"
-            />
-            <path d="M12 10v6" />
-            <path d="M12 7.3h.01" />
-          </svg>
-        </span>
-
-        <span>Info</span>
-      </Link>
-
-      {/* ADMIN */}
+      {/* INFO UNTUK USER / ADMIN UNTUK ADMIN */}
       {isAdmin ? (
         <Link
           href="/admin/login"
@@ -218,7 +191,29 @@ export default function DashboardBottomNav({
 
           <span>Admin</span>
         </Link>
-      ) : null}
+      ) : (
+        <Link
+          href="/info"
+          className="run-bottom-nav-item"
+        >
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              />
+              <path d="M12 10v6" />
+              <path d="M12 7.3h.01" />
+            </svg>
+          </span>
+
+          <span>Info</span>
+        </Link>
+      )}
 
       {/* LOGOUT */}
       <form

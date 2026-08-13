@@ -6435,3 +6435,9 @@ html {
     border-radius: 16px;
   }
 }
+
+@media (max-width: 760px) {
+  .run-info-desktop-link {
+    display: none;
+  }
+}
