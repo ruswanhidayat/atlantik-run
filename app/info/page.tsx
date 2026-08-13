@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import RunBottomNav from "@/app/components/run-bottom-nav";
 import { requireUser } from "@/lib/auth";
 
 const guideSteps = [
@@ -26,12 +28,31 @@ const guideSteps = [
     title: "Atur Activity Tag menjadi RACE",
     description:
       "Setelah aktivitas selesai direkam, ubah Activity Tag pada aktivitas Strava menjadi RACE.",
+    images: [
+      {
+        src: "/image/strava/3-ganti-activity-tag.jpeg",
+        alt: "Cara mengganti Activity Tag di Strava",
+        caption: "Pilih bagian Activity Tag pada halaman Edit Activity.",
+      },
+      {
+        src: "/image/strava/4-pilih-race.jpeg",
+        alt: "Memilih Activity Tag Race di Strava",
+        caption: "Pilih RACE sebagai Activity Tag.",
+      },
+    ],
   },
   {
     number: "05",
     title: "Atur Visibility menjadi EVERYONE",
     description:
       "Pastikan visibility aktivitas diatur menjadi EVERYONE agar aktivitas dapat dilihat dan diverifikasi oleh panitia.",
+    images: [
+      {
+        src: "/image/strava/5-set-visibility-to-everyone.jpeg",
+        alt: "Mengatur Visibility aktivitas Strava menjadi Everyone",
+        caption: "Atur Activity Visibility menjadi EVERYONE.",
+      },
+    ],
   },
   {
     number: "06",
@@ -48,7 +69,7 @@ const guideSteps = [
 ];
 
 export default async function InfoPage() {
-  await requireUser();
+  const user = await requireUser();
 
   return (
     <main className="run-app run-info-page">
@@ -106,8 +127,8 @@ export default async function InfoPage() {
           </span>
 
           <p>
-            Pengaturan pada Strava sebaiknya dilakukan
-            sebelum link aktivitas dikirim melalui
+            Pastikan pengaturan aktivitas pada Strava
+            sudah sesuai sebelum link dikirim melalui
             halaman perekaman.
           </p>
         </div>
@@ -129,12 +150,30 @@ export default async function InfoPage() {
                 </div>
               </div>
 
-              <div className="run-info-image-placeholder">
-                <span>GAMBAR PANDUAN</span>
-                <small>
-                  Screenshot akan ditempatkan di sini
-                </small>
-              </div>
+              {step.images?.length ? (
+                <div className="run-info-guide-images">
+                  {step.images.map((image) => (
+                    <figure
+                      key={image.src}
+                      className="run-info-guide-figure"
+                    >
+                      <div className="run-info-guide-image">
+                        <Image
+                          src={image.src}
+                          alt={image.alt}
+                          width={720}
+                          height={1587}
+                          sizes="(max-width: 760px) 82vw, 360px"
+                        />
+                      </div>
+
+                      <figcaption>
+                        {image.caption}
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              ) : null}
             </article>
           ))}
         </section>
@@ -157,6 +196,11 @@ export default async function InfoPage() {
           </Link>
         </div>
       </div>
+
+      <RunBottomNav
+        active="info"
+        isAdmin={Boolean(user.isadmin)}
+      />
     </main>
   );
 }

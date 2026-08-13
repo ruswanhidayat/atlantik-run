@@ -6367,3 +6367,71 @@ html {
     width: calc(100% - 24px);
   }
 }
+
+/* =========================================================
+   INFO — STRAVA GUIDE IMAGES
+   ========================================================= */
+
+.run-info-guide-images {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+
+  padding: 0 24px 24px;
+}
+
+.run-info-guide-figure {
+  width: min(100%, 360px);
+
+  margin: 0;
+}
+
+.run-info-guide-image {
+  overflow: hidden;
+
+  border: 1px solid var(--run-border);
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.18);
+}
+
+.run-info-guide-image img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+}
+
+.run-info-guide-figure figcaption {
+  margin-top: 9px;
+
+  color: var(--run-muted);
+
+  font-size: 11px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .run-info-page {
+    padding-bottom: 110px;
+  }
+
+  .run-info-guide-images {
+    gap: 18px;
+
+    padding: 0 14px 18px;
+  }
+
+  .run-info-guide-figure {
+    width: min(100%, 330px);
+  }
+
+  .run-info-guide-image {
+    border-radius: 16px;
+  }
+}
