@@ -6456,12 +6456,12 @@ html {
   margin-top: 12px;
   padding: 7px 11px;
 
-  border: 1px solid rgba(126, 231, 135, 0.14);
+  border: 1px solid rgba(255, 92, 92, 0.18);
   border-radius: 999px;
 
-  background: rgba(126, 231, 135, 0.055);
+  background: rgba(255, 76, 76, 0.07);
 
-  color: rgba(210, 246, 215, 0.82);
+  color: rgba(255, 205, 205, 0.92);
 
   font-size: 10px;
   font-weight: 700;
@@ -6478,10 +6478,13 @@ html {
 
   border-radius: 50%;
 
-  background: #7ee787;
+  background: #ff5c5c;
 
   box-shadow:
-    0 0 0 3px rgba(126, 231, 135, 0.07);
+    0 0 0 3px rgba(255, 92, 92, 0.12);
+
+  animation:
+    run-live-dot-blink 1.4s ease-in-out infinite;
 }
 
 .run-live-indicator-dot::after {
@@ -6490,30 +6493,42 @@ html {
   position: absolute;
   inset: -4px;
 
-  border: 1px solid rgba(126, 231, 135, 0.3);
+  border: 1px solid rgba(255, 92, 92, 0.5);
   border-radius: 50%;
 
   animation:
-    run-live-pulse 2.4s ease-out infinite;
+    run-live-pulse 1.4s ease-out infinite;
+}
+
+@keyframes run-live-dot-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
 }
 
 @keyframes run-live-pulse {
   0% {
-    opacity: 0;
+    opacity: 0.8;
     transform: scale(0.75);
   }
 
-  30% {
-    opacity: 0.55;
+  70% {
+    opacity: 0.15;
   }
 
   100% {
     opacity: 0;
-    transform: scale(1.45);
+    transform: scale(1.65);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .run-live-indicator-dot,
   .run-live-indicator-dot::after {
     animation: none;
   }
