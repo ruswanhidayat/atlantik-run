@@ -89,14 +89,6 @@ export default async function InfoPage() {
           <span>ATLANTIK RUN</span>
           <small>2026</small>
         </span>
-
-        <Link
-          href="/dashboard"
-          className="run-info-back"
-        >
-          <span aria-hidden="true">←</span>
-          <span>Kembali</span>
-        </Link>
       </header>
 
       <div className="run-info-container">
