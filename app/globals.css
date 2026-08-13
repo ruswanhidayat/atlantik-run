@@ -6934,10 +6934,10 @@ html {
 
   padding: 0 17px;
 
-  border: 1px solid var(--run-border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
 
-  background: var(--run-surface);
+  background: rgba(255, 255, 255, 0.025);
 
   pointer-events: none;
 }
