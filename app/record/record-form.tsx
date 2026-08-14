@@ -12,6 +12,11 @@ import {
   type RecordRunState,
 } from "@/app/actions/run";
 
+import {
+  normalizeStravaInput,
+  validateStravaLink,
+} from "@/lib/strava";
+
 type AvailableDate = {
   value: string;
   label: string;
@@ -242,31 +247,6 @@ function formatFinishTime(
     2,
     "0"
   )}`;
-}
-
-function normalizeStravaInput(
-  value: string
-) {
-  const trimmed =
-    value.trim();
-
-  if (!trimmed) {
-    return "";
-  }
-
-  let normalized =
-    trimmed.replace(
-      /^https?:\/\//i,
-      ""
-    );
-
-  normalized =
-    normalized.replace(
-      /^www\./i,
-      ""
-    );
-
-  return `https://www.${normalized}`;
 }
 
 function formatElapsedFromSeconds(
@@ -642,6 +622,13 @@ export default function RecordForm({
       )
     );
   }
+
+  const stravaLinkStatus =
+    tautan.trim()
+      ? validateStravaLink(
+          tautan
+        )
+      : null;
 
   return (
     <>
@@ -1022,10 +1009,18 @@ export default function RecordForm({
         />
 
         <small className="record-field-help">
-          Gunakan tautan
-          aktivitas dari
-          www.strava.com.
+          Bisa menggunakan link aktivitas Strava,
+          misalnya strava.com/activities/..., atau
+          paste langsung teks share dari aplikasi Strava.
         </small>
+
+        {stravaLinkStatus === "invalid" ? (
+          <div className="record-soft-warning">
+            <span>
+              ⚠ Tautan belum dikenali sebagai link aktivitas Strava.
+            </span>
+          </div>
+        ) : null}
       </div>
 
       {/* ERROR */}

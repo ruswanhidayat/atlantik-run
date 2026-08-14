@@ -4,11 +4,17 @@ import { redirect } from "next/navigation";
 
 import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
+
 import {
   isRecordingStarted,
   isSubmissionOpen,
   isValidRunDate,
 } from "@/lib/run-config";
+
+import {
+  normalizeStravaInput,
+  validateStravaLink,
+} from "@/lib/strava";
 
 export type RecordRunState = {
   error?: string;
@@ -22,6 +28,7 @@ export type RecordRunState = {
     tautan: string;
   };
 };
+
 
 function parsePace(
   value: string
@@ -42,12 +49,14 @@ function parsePace(
     Number(match[2]);
 
   const totalSeconds =
-    minutes * 60 + seconds;
+    minutes * 60 +
+    seconds;
 
   return totalSeconds > 0
     ? totalSeconds
     : null;
 }
+
 
 function parseElapsedTime(
   value: string
@@ -80,6 +89,7 @@ function parseElapsedTime(
     : null;
 }
 
+
 function isValidStartTime(
   value: string
 ) {
@@ -88,59 +98,23 @@ function isValidStartTime(
   );
 }
 
-function normalizeStravaUrl(
-  value: string
-) {
-  let normalized =
-    value.trim();
-
-  if (!normalized) {
-    return "";
-  }
-
-  normalized =
-    normalized.replace(
-      /^https?:\/\//i,
-      ""
-    );
-
-  normalized =
-    normalized.replace(
-      /^www\./i,
-      ""
-    );
-
-  return `https://www.${normalized}`;
-}
-
-function isValidStravaUrl(
-  value: string
-) {
-  try {
-    const url =
-      new URL(value);
-
-    return (
-      url.protocol === "https:" &&
-      url.hostname ===
-        "www.strava.com"
-    );
-  } catch {
-    return false;
-  }
-}
 
 export async function recordRunAction(
   _previousState: RecordRunState,
   formData: FormData
 ): Promise<RecordRunState> {
+
   const user =
     await requireUser();
 
-  /* bypass testing, ganti ke false jika sudah */
+
+  /*
+   * bypass testing
+   * ganti ke false/null jika sudah
+   */
   const isRecordingTestUser =
-    // user.nip === "921102040";
     null;
+
 
   if (
     !isRecordingTestUser &&
@@ -152,6 +126,7 @@ export async function recordRunAction(
     };
   }
 
+
   if (
     !isRecordingTestUser &&
     !isSubmissionOpen()
@@ -161,6 +136,7 @@ export async function recordRunAction(
         "Perekaman ATLANTIK RUN telah ditutup pada 18 Agustus 2026 pukul 21.00 WIB.",
     };
   }
+
 
   const rawTautan =
     formData.get("tautan");
@@ -180,19 +156,14 @@ export async function recordRunAction(
   const rawElapsedTime =
     formData.get("elapsedTime");
 
+
   if (
-    typeof rawTautan !==
-      "string" ||
-    typeof rawJarak !==
-      "string" ||
-    typeof rawTanggal !==
-      "string" ||
-    typeof rawWaktuMulai !==
-      "string" ||
-    typeof rawAvgPace !==
-      "string" ||
-    typeof rawElapsedTime !==
-      "string"
+    typeof rawTautan !== "string" ||
+    typeof rawJarak !== "string" ||
+    typeof rawTanggal !== "string" ||
+    typeof rawWaktuMulai !== "string" ||
+    typeof rawAvgPace !== "string" ||
+    typeof rawElapsedTime !== "string"
   ) {
     return {
       error:
@@ -200,13 +171,22 @@ export async function recordRunAction(
     };
   }
 
+
   const tautan =
-    normalizeStravaUrl(
+    normalizeStravaInput(
       rawTautan
     );
 
+
+  const stravaStatus =
+    validateStravaLink(
+      rawTautan
+    );
+
+
   const jarakInput =
     rawJarak.trim();
+
 
   const jarakText =
     jarakInput.replace(
@@ -214,17 +194,22 @@ export async function recordRunAction(
       "."
     );
 
+
   const tanggal =
     rawTanggal.trim();
+
 
   const waktuMulai =
     rawWaktuMulai.trim();
 
+
   const avgPace =
     rawAvgPace.trim();
 
+
   const elapsedTime =
     rawElapsedTime.trim();
+
 
   const values = {
     tanggal,
@@ -235,7 +220,10 @@ export async function recordRunAction(
     tautan,
   };
 
-  if (!rawTautan.trim()) {
+
+  if (
+    !rawTautan.trim()
+  ) {
     return {
       error:
         "Tautan aktivitas wajib diisi.",
@@ -243,7 +231,10 @@ export async function recordRunAction(
     };
   }
 
-  if (tautan.length > 500) {
+
+  if (
+    tautan.length > 500
+  ) {
     return {
       error:
         "Tautan aktivitas maksimal 500 karakter.",
@@ -251,17 +242,27 @@ export async function recordRunAction(
     };
   }
 
+
   if (
-    !isValidStravaUrl(
-      tautan
-    )
+    stravaStatus === "invalid"
   ) {
     return {
       error:
-        "Tautan aktivitas harus menggunakan link Strava.",
+        "Tautan aktivitas tidak valid. Gunakan link aktivitas Strava.",
       values,
     };
   }
+
+
+  if (
+    stravaStatus === "share-link"
+  ) {
+    console.info(
+      "Menggunakan Strava share link:",
+      tautan
+    );
+  }
+
 
   if (
     !isValidRunDate(
@@ -275,6 +276,7 @@ export async function recordRunAction(
     };
   }
 
+
   if (
     !isValidStartTime(
       waktuMulai
@@ -286,6 +288,7 @@ export async function recordRunAction(
       values,
     };
   }
+
 
   if (
     !/^\d+(\.\d{1,2})?$/.test(
@@ -299,8 +302,10 @@ export async function recordRunAction(
     };
   }
 
+
   const jarak =
     Number(jarakText);
+
 
   if (
     !Number.isFinite(
@@ -315,14 +320,15 @@ export async function recordRunAction(
     };
   }
 
+
   const avgPaceSeconds =
     parsePace(
       avgPace
     );
 
+
   if (
-    avgPaceSeconds ===
-    null
+    avgPaceSeconds === null
   ) {
     return {
       error:
@@ -331,14 +337,15 @@ export async function recordRunAction(
     };
   }
 
+
   const elapsedTimeSeconds =
     parseElapsedTime(
       elapsedTime
     );
 
+
   if (
-    elapsedTimeSeconds ===
-    null
+    elapsedTimeSeconds === null
   ) {
     return {
       error:
@@ -346,6 +353,7 @@ export async function recordRunAction(
       values,
     };
   }
+
 
   const existing =
     await sql`
@@ -357,6 +365,7 @@ export async function recordRunAction(
       LIMIT 1
     `;
 
+
   if (
     existing.length > 0
   ) {
@@ -366,6 +375,7 @@ export async function recordRunAction(
       values,
     };
   }
+
 
   try {
     await sql`
@@ -391,10 +401,12 @@ export async function recordRunAction(
       )
     `;
   } catch (error) {
+
     console.error(
       "Gagal merekam aktivitas:",
       error
     );
+
 
     return {
       error:
@@ -402,6 +414,7 @@ export async function recordRunAction(
       values,
     };
   }
+
 
   redirect(
     "/dashboard?recorded=1"
