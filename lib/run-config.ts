@@ -22,6 +22,10 @@ export const SUBMISSION_DEADLINE =
 // TEMPORARY — simulasi kondisi pelaporan sudah ditutup.
 // Setelah testing selesai, ubah menjadi null.
 const RECORD_CLOSED_TEST_NIP: string | null =
+  // "921102040";
+  null;
+
+const LAST_REPORT_DAY_TEST_NIP: string | null =
   "921102040";
 
 export type RunDate = (typeof RUN_DATES)[number]["value"];
@@ -140,4 +144,31 @@ export function isCompetitionLive(
     currentMinutes >= startMinutes &&
     currentMinutes <= endMinutes
   );
+}
+
+export function isLastReportingDayForUser(
+  nip: string
+) {
+  const isTestUser =
+    LAST_REPORT_DAY_TEST_NIP !== null &&
+    nip.trim() === LAST_REPORT_DAY_TEST_NIP;
+
+  if (isTestUser) {
+    return true;
+  }
+
+  const now = new Date();
+
+  const jakartaDate =
+    new Intl.DateTimeFormat(
+      "en-CA",
+      {
+        timeZone: "Asia/Jakarta",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }
+    ).format(now);
+
+  return jakartaDate === "2026-08-18";
 }

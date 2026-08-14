@@ -15,9 +15,13 @@ import {
 
 import {
   isCompetitionLive,
+  isLastReportingDayForUser,
   isSubmissionOpenForUser,
   RUN_DATES,
 } from "@/lib/run-config";
+
+import LastReportingDayNotice
+  from "./last-reporting-day-notice";
 
 type ActivityStatus = {
   tanggal: string;
@@ -146,6 +150,11 @@ export default async function DashboardPage() {
   // Hapus pengecualian ini setelah testing selesai.
   const isLiveTestUser =
     user.nip === "921102040";
+  
+  const showLastReportingDayNotice =
+    isLastReportingDayForUser(
+      user.nip
+    );
 
   const showCompetitionLive =
     isLiveTestUser ||
@@ -312,6 +321,10 @@ export default async function DashboardPage() {
       <div
         className="run-app-glow run-app-glow-two"
         aria-hidden="true"
+      />
+
+      <LastReportingDayNotice
+        show={showLastReportingDayNotice}
       />
 
       {/* TOP BAR */}
