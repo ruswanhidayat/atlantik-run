@@ -26,7 +26,8 @@ const RECORD_CLOSED_TEST_NIP: string | null =
   null;
 
 const LAST_REPORT_DAY_TEST_NIP: string | null =
-  "921102040";
+  // "921102040";
+  null;
 
 export type RunDate = (typeof RUN_DATES)[number]["value"];
 

@@ -139,7 +139,8 @@ export async function recordRunAction(
 
   /* bypass testing, ganti ke false jika sudah */
   const isRecordingTestUser =
-    user.nip === "921102040";
+    // user.nip === "921102040";
+    null;
 
   if (
     !isRecordingTestUser &&

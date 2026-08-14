@@ -149,7 +149,8 @@ export default async function DashboardPage() {
   // NIP ini dipakai untuk preview indikator sebelum periode lomba.
   // Hapus pengecualian ini setelah testing selesai.
   const isLiveTestUser =
-    user.nip === "921102040";
+    // user.nip === "921102040";
+    false;
   
   const showLastReportingDayNotice =
     isLastReportingDayForUser(
