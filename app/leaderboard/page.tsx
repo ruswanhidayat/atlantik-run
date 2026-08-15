@@ -4,7 +4,7 @@ import RunBottomNav from "@/app/components/run-bottom-nav";
 import LeaderboardClient from "./leaderboard-client";
 
 import { requireUser } from "@/lib/auth";
-import { sql } from "@/lib/db";
+// import { sql } from "@/lib/db";
 import { getIndividualLeaderboard } from "@/lib/dashboard";
 import {
   getCurrentRunDateForUser,
@@ -13,22 +13,25 @@ import {
 export default async function LeaderboardPage() {
   const user = await requireUser();
 
-  const [leaderboard, activities] =
-    await Promise.all([
-      getIndividualLeaderboard(),
+  // const [leaderboard, activities] =
+  //   await Promise.all([
+  //     getIndividualLeaderboard(),
 
-      sql`
-        SELECT DISTINCT ON (tanggal)
-          tanggal::text AS tanggal,
-          status
-        FROM run_activities
-        WHERE nip = ${user.nip}
-        ORDER BY
-          tanggal,
-          tgl_rekam DESC,
-          id DESC
-      `,
-    ]);
+  //     sql`
+  //       SELECT DISTINCT ON (tanggal)
+  //         tanggal::text AS tanggal,
+  //         status
+  //       FROM run_activities
+  //       WHERE nip = ${user.nip}
+  //       ORDER BY
+  //         tanggal,
+  //         tgl_rekam DESC,
+  //         id DESC
+  //     `,
+  //   ]);
+  
+  const leaderboard =
+    await getIndividualLeaderboard();
 
   const normalizedLeaderboard =
     leaderboard.map((row) => ({
@@ -47,33 +50,38 @@ export default async function LeaderboardPage() {
       ),
     }));
 
-  const activityMap = new Map(
-    activities.map((activity) => [
-      String(activity.tanggal),
-      Number(activity.status),
-    ])
-  );
+  // const activityMap = new Map(
+  //   activities.map((activity) => [
+  //     String(activity.tanggal),
+  //     Number(activity.status),
+  //   ])
+  // );
 
   const currentRunDate =
     getCurrentRunDateForUser(
       user.nip
     );
 
-  const currentActivityStatus =
-    currentRunDate
-      ? activityMap.get(
-          currentRunDate
-        )
-      : undefined;
+  // const currentActivityStatus =
+  //   currentRunDate
+  //     ? activityMap.get(
+  //         currentRunDate
+  //       )
+  //     : undefined;
+
+  // const canRecord =
+  //   Boolean(
+  //     currentRunDate
+  //   ) &&
+  //   (
+  //     currentActivityStatus ===
+  //       undefined ||
+  //     currentActivityStatus === 2
+  //   );
 
   const canRecord =
     Boolean(
       currentRunDate
-    ) &&
-    (
-      currentActivityStatus ===
-        undefined ||
-      currentActivityStatus === 2
     );
 
   return (

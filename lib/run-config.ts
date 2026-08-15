@@ -22,18 +22,18 @@ export const SUBMISSION_DEADLINE =
 // TEMPORARY — simulasi kondisi pelaporan sudah ditutup.
 // Setelah testing selesai, ubah menjadi null.
 const ATLANTIK_TEST_NIP: string | null =
-  // "921102040";
-  null;
+  "921102040";
+  // null;
 
 const ATLANTIK_BYPASS_DATE: string | null =
-  null;
+  // null;
 // contoh testing:
-// "2026-08-16";
+"2026-08-15";
 
 const ATLANTIK_BYPASS_TIME: string | null =
-  null;
+  // null;
 // contoh testing:
-// "20:30";
+"20:30";
 
 const RECORD_CLOSED_TEST_NIP: string | null =
   // "921102040";

@@ -272,20 +272,25 @@ export default async function DashboardPage() {
       )
     );
 
-  const currentActivity =
-    currentRunDate
-      ? activityMap.get(
-          currentRunDate
-        )
-      : null;
+  // const currentActivity =
+  //   currentRunDate
+  //     ? activityMap.get(
+  //         currentRunDate
+  //       )
+  //     : null;
+
+  // const canRecord =
+  //   Boolean(
+  //     currentRunDate
+  //   ) &&
+  //   (
+  //     !currentActivity ||
+  //     currentActivity.status === 2
+  //   );
 
   const canRecord =
     Boolean(
       currentRunDate
-    ) &&
-    (
-      !currentActivity ||
-      currentActivity.status === 2
     );
 
   const maleSubditLeaderboard =
