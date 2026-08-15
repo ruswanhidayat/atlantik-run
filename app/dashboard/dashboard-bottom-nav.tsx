@@ -135,10 +135,10 @@ export default function DashboardBottomNav({
             ? "is-active"
             : ""
         }`}
-        onClick={() =>
+        onClick={() => {
           handleActivity();
           scrollToSection("rank");
-        }
+        }}
       >
         <span
           className="run-nav-icon"
