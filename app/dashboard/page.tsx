@@ -14,9 +14,9 @@ import {
 } from "@/lib/dashboard";
 
 import {
+  getAtlantikRuntime,
+  getCurrentRunDateForUser,
   isCompetitionLive,
-  isLastReportingDayForUser,
-  isSubmissionOpenForUser,
   RUN_DATES,
 } from "@/lib/run-config";
 
@@ -152,10 +152,24 @@ export default async function DashboardPage() {
     // user.nip === "921102040";
     false;
   
-  const showLastReportingDayNotice =
-    isLastReportingDayForUser(
+  // const showLastReportingDayNotice =
+  //   isLastReportingDayForUser(
+  //     user.nip
+  //   );
+  const runtime =
+    getAtlantikRuntime(
       user.nip
     );
+
+  const currentRunDate =
+    getCurrentRunDateForUser(
+      user.nip
+    );
+
+  const showLastReportingDayNotice =
+    Boolean(currentRunDate) &&
+    runtime.currentMinutes >= 20 * 60 &&
+    runtime.currentMinutes < 21 * 60;
 
   const showCompetitionLive =
     isLiveTestUser ||
@@ -258,22 +272,20 @@ export default async function DashboardPage() {
       )
     );
 
-  const canRecord =
-    isSubmissionOpenForUser(
-      user.nip
-    ) &&
-    RUN_DATES.some(
-      (date) => {
-        const activity =
-          activityMap.get(
-            date.value
-          );
+  const currentActivity =
+    currentRunDate
+      ? activityMap.get(
+          currentRunDate
+        )
+      : null;
 
-        return (
-          !activity ||
-          activity.status === 2
-        );
-      }
+  const canRecord =
+    Boolean(
+      currentRunDate
+    ) &&
+    (
+      !currentActivity ||
+      currentActivity.status === 2
     );
 
   const maleSubditLeaderboard =

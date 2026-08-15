@@ -39,18 +39,19 @@ export default function LastReportingDayNotice({
           </span>
 
           <h3 id="last-reporting-day-title">
-            Hari terakhir pelaporan
+            Pelaporan segera ditutup
           </h3>
 
           <p>
-            Hari ini merupakan hari terakhir
-            pelaporan aktivitas ATLANTIK RUN.
+            Waktu pelaporan aktivitas hari ini
+            tinggal kurang dari satu jam.
           </p>
 
           <p className="record-start-modal-note">
-            Pastikan seluruh aktivitas tanggal
-            15–17 Agustus 2026 sudah dilaporkan
-            sebelum pukul 21.00 WIB.
+            Pastikan aktivitas hari ini sudah
+            dilaporkan sebelum pukul 21.00 WIB.
+            Setelah waktu tersebut, pelaporan
+            untuk hari ini akan ditutup.
           </p>
         </div>
 
