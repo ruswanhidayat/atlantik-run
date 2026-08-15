@@ -137,7 +137,7 @@ export default function DashboardBottomNav({
         }`}
         onClick={() =>
           handleActivity();
-          scrollToSection("rank")
+          scrollToSection("rank");
         }
       >
         <span
