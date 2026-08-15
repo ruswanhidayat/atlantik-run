@@ -1,14 +1,13 @@
 import Link from "next/link";
 
-import LeaderboardBottomNav from "./leaderboard-bottom-nav";
+import RunBottomNav from "@/app/components/run-bottom-nav";
 import LeaderboardClient from "./leaderboard-client";
 
 import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { getIndividualLeaderboard } from "@/lib/dashboard";
 import {
-  isSubmissionOpenForUser,
-  RUN_DATES,
+  getCurrentRunDateForUser,
 } from "@/lib/run-config";
 
 export default async function LeaderboardPage() {
@@ -55,19 +54,27 @@ export default async function LeaderboardPage() {
     ])
   );
 
-  const canRecord =
-    isSubmissionOpenForUser(
+  const currentRunDate =
+    getCurrentRunDateForUser(
       user.nip
-    ) &&
-    RUN_DATES.some((date) => {
-      const status =
-        activityMap.get(date.value);
+    );
 
-      return (
-        status === undefined ||
-        status === 2
-      );
-    });
+  const currentActivityStatus =
+    currentRunDate
+      ? activityMap.get(
+          currentRunDate
+        )
+      : undefined;
+
+  const canRecord =
+    Boolean(
+      currentRunDate
+    ) &&
+    (
+      currentActivityStatus ===
+        undefined ||
+      currentActivityStatus === 2
+    );
 
   return (
     <main className="run-app full-leaderboard-v2">
@@ -120,7 +127,8 @@ export default async function LeaderboardPage() {
         />
       </div>
 
-      <LeaderboardBottomNav
+      <RunBottomNav
+        active="rank"
         canRecord={canRecord}
         isAdmin={Boolean(
           user.isadmin

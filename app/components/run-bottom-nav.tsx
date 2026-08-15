@@ -1,68 +1,279 @@
 "use client";
 
 import Link from "next/link";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 import { logoutAction } from "@/app/actions/auth";
 import { refreshSessionAction } from "@/app/actions/session";
 
+type ActiveMenu =
+  | "home"
+  | "rank"
+  | "record"
+  | "info";
+
+type DashboardSection =
+  | "home"
+  | "rank";
+
 type RunBottomNavProps = {
-  active?: "home" | "rank" | "record" | "info";
+  active?: ActiveMenu;
   canRecord?: boolean;
   isAdmin: boolean;
+  dashboardMode?: boolean;
 };
 
 export default function RunBottomNav({
   active,
   canRecord = true,
   isAdmin,
+  dashboardMode = false,
 }: RunBottomNavProps) {
+  const [
+    dashboardSection,
+    setDashboardSection,
+  ] =
+    useState<DashboardSection>(
+      active === "rank"
+        ? "rank"
+        : "home"
+    );
+
   const handleNavigation = () => {
     void refreshSessionAction();
   };
+
+  useEffect(() => {
+    if (!dashboardMode) {
+      return;
+    }
+
+    function updateActiveSection() {
+      const leaderboard =
+        document.getElementById(
+          "leaderboard"
+        );
+
+      if (!leaderboard) {
+        setDashboardSection(
+          "home"
+        );
+
+        return;
+      }
+
+      const leaderboardTop =
+        leaderboard
+          .getBoundingClientRect()
+          .top;
+
+      const triggerPoint =
+        window.innerHeight *
+        0.38;
+
+      if (
+        leaderboardTop <=
+        triggerPoint
+      ) {
+        setDashboardSection(
+          "rank"
+        );
+      } else {
+        setDashboardSection(
+          "home"
+        );
+      }
+    }
+
+    updateActiveSection();
+
+    window.addEventListener(
+      "scroll",
+      updateActiveSection,
+      {
+        passive: true,
+      }
+    );
+
+    window.addEventListener(
+      "resize",
+      updateActiveSection
+    );
+
+    return () => {
+      window.removeEventListener(
+        "scroll",
+        updateActiveSection
+      );
+
+      window.removeEventListener(
+        "resize",
+        updateActiveSection
+      );
+    };
+  }, [dashboardMode]);
+
+  function scrollToDashboardSection(
+    section: DashboardSection
+  ) {
+    handleNavigation();
+
+    const target =
+      section === "home"
+        ? document.getElementById(
+            "dashboard-top"
+          )
+        : document.getElementById(
+            "leaderboard"
+          );
+
+    if (!target) {
+      return;
+    }
+
+    setDashboardSection(
+      section
+    );
+
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
+  const homeActive =
+    dashboardMode
+      ? dashboardSection ===
+        "home"
+      : active === "home";
+
+  const rankActive =
+    dashboardMode
+      ? dashboardSection ===
+        "rank"
+      : active === "rank";
 
   return (
     <nav
       className="run-bottom-nav run-bottom-nav-modern run-bottom-nav-five"
       aria-label="Navigasi utama"
     >
-      <Link
-        href="/dashboard#dashboard-top"
-        onClick={handleNavigation}
-        className={`run-bottom-nav-item ${
-          active === "home" ? "is-active" : ""
-        }`}
-      >
-        <span className="run-nav-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24">
-            <path d="M3 10.8 12 3l9 7.8v9.4a.8.8 0 0 1-.8.8h-5.4v-6.2H9.2V21H3.8a.8.8 0 0 1-.8-.8Z" />
-          </svg>
-        </span>
+      {/* HOME */}
+      {dashboardMode ? (
+        <button
+          type="button"
+          className={`run-bottom-nav-item ${
+            homeActive
+              ? "is-active"
+              : ""
+          }`}
+          onClick={() =>
+            scrollToDashboardSection(
+              "home"
+            )
+          }
+        >
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M3 10.8 12 3l9 7.8v9.4a.8.8 0 0 1-.8.8h-5.4v-6.2H9.2V21H3.8a.8.8 0 0 1-.8-.8Z" />
+            </svg>
+          </span>
 
-        <span>Home</span>
-      </Link>
+          <span>Home</span>
+        </button>
+      ) : (
+        <Link
+          href="/dashboard#dashboard-top"
+          onClick={
+            handleNavigation
+          }
+          className={`run-bottom-nav-item ${
+            homeActive
+              ? "is-active"
+              : ""
+          }`}
+        >
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M3 10.8 12 3l9 7.8v9.4a.8.8 0 0 1-.8.8h-5.4v-6.2H9.2V21H3.8a.8.8 0 0 1-.8-.8Z" />
+            </svg>
+          </span>
 
-      <Link
-        href="/dashboard#leaderboard"
-        onClick={handleNavigation}
-        className={`run-bottom-nav-item ${
-          active === "rank" ? "is-active" : ""
-        }`}
-      >
-        <span className="run-nav-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24">
-            <path d="M6 20V10M12 20V4M18 20v-7" />
-          </svg>
-        </span>
+          <span>Home</span>
+        </Link>
+      )}
 
-        <span>Rank</span>
-      </Link>
+      {/* RANK */}
+      {dashboardMode ? (
+        <button
+          type="button"
+          className={`run-bottom-nav-item ${
+            rankActive
+              ? "is-active"
+              : ""
+          }`}
+          onClick={() =>
+            scrollToDashboardSection(
+              "rank"
+            )
+          }
+        >
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M6 20V10M12 20V4M18 20v-7" />
+            </svg>
+          </span>
 
+          <span>Rank</span>
+        </button>
+      ) : (
+        <Link
+          href="/dashboard#leaderboard"
+          onClick={
+            handleNavigation
+          }
+          className={`run-bottom-nav-item ${
+            rankActive
+              ? "is-active"
+              : ""
+          }`}
+        >
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M6 20V10M12 20V4M18 20v-7" />
+            </svg>
+          </span>
+
+          <span>Rank</span>
+        </Link>
+      )}
+
+      {/* RECORD */}
       {canRecord ? (
         <Link
           href="/record"
-          onClick={handleNavigation}
+          onClick={
+            handleNavigation
+          }
           className={`run-bottom-nav-item run-bottom-nav-primary ${
-            active === "record" ? "is-active" : ""
+            active === "record"
+              ? "is-active"
+              : ""
           }`}
         >
           <span
@@ -87,13 +298,19 @@ export default function RunBottomNav({
         </span>
       )}
 
+      {/* INFO / ADMIN */}
       {isAdmin ? (
         <Link
           href="/admin/login"
-          onClick={handleNavigation}
+          onClick={
+            handleNavigation
+          }
           className="run-bottom-nav-item"
         >
-          <span className="run-nav-icon" aria-hidden="true">
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
             <svg viewBox="0 0 24 24">
               <path d="M12 3 5 6v5c0 4.5 2.8 8.4 7 10 4.2-1.6 7-5.5 7-10V6Z" />
               <path d="M9.5 12.2 11.2 14l3.6-4" />
@@ -105,14 +322,26 @@ export default function RunBottomNav({
       ) : (
         <Link
           href="/info"
-          onClick={handleNavigation}
+          onClick={
+            handleNavigation
+          }
           className={`run-bottom-nav-item ${
-            active === "info" ? "is-active" : ""
+            active === "info"
+              ? "is-active"
+              : ""
           }`}
         >
-          <span className="run-nav-icon" aria-hidden="true">
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
             <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9" />
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              />
+
               <path d="M12 10v6" />
               <path d="M12 7.3h.01" />
             </svg>
@@ -122,6 +351,7 @@ export default function RunBottomNav({
         </Link>
       )}
 
+      {/* LOGOUT */}
       <form
         action={logoutAction}
         className="run-bottom-nav-form"
@@ -130,7 +360,10 @@ export default function RunBottomNav({
           type="submit"
           className="run-bottom-nav-item run-bottom-nav-logout"
         >
-          <span className="run-nav-icon" aria-hidden="true">
+          <span
+            className="run-nav-icon"
+            aria-hidden="true"
+          >
             <svg viewBox="0 0 24 24">
               <path d="M10 5H5.8a.8.8 0 0 0-.8.8v12.4a.8.8 0 0 0 .8.8H10" />
               <path d="m14 8 4 4-4 4" />

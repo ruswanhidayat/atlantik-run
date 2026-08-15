@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import RecordBottomNav from "./record-bottom-nav";
+import RunBottomNav from "@/app/components/run-bottom-nav";
 import RecordForm from "./record-form";
 
 import { requireUser } from "@/lib/auth";
@@ -297,7 +297,8 @@ export default async function RecordPage() {
         </div>
       </div>
 
-      <RecordBottomNav
+      <RunBottomNav
+        active="record"
         canRecord={Boolean(
           currentDate
         )}

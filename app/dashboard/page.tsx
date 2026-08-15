@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import DashboardBottomNav from "./dashboard-bottom-nav";
+import RunBottomNav from "@/app/components/run-bottom-nav";
 
 import { logoutAction } from "@/app/actions/auth";
 import { requireUser } from "@/lib/auth";
@@ -1221,7 +1221,8 @@ export default async function DashboardPage() {
         </section>
       </div>
 
-      <DashboardBottomNav
+      <RunBottomNav
+        dashboardMode
         canRecord={canRecord}
         isAdmin={Boolean(
           user.isadmin
