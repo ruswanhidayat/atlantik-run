@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { logoutAction } from "@/app/actions/auth";
+import { refreshSessionAction } from "@/app/actions/session";
 
 type RunBottomNavProps = {
   active?: "home" | "rank" | "record" | "info";
@@ -15,6 +16,10 @@ export default function RunBottomNav({
   canRecord = true,
   isAdmin,
 }: RunBottomNavProps) {
+  const handleNavigation = () => {
+    void refreshSessionAction();
+  };
+
   return (
     <nav
       className="run-bottom-nav run-bottom-nav-modern run-bottom-nav-five"
@@ -22,6 +27,7 @@ export default function RunBottomNav({
     >
       <Link
         href="/dashboard#dashboard-top"
+        onClick={handleNavigation}
         className={`run-bottom-nav-item ${
           active === "home" ? "is-active" : ""
         }`}
@@ -37,6 +43,7 @@ export default function RunBottomNav({
 
       <Link
         href="/dashboard#leaderboard"
+        onClick={handleNavigation}
         className={`run-bottom-nav-item ${
           active === "rank" ? "is-active" : ""
         }`}
@@ -53,6 +60,7 @@ export default function RunBottomNav({
       {canRecord ? (
         <Link
           href="/record"
+          onClick={handleNavigation}
           className={`run-bottom-nav-item run-bottom-nav-primary ${
             active === "record" ? "is-active" : ""
           }`}
@@ -82,6 +90,7 @@ export default function RunBottomNav({
       {isAdmin ? (
         <Link
           href="/admin/login"
+          onClick={handleNavigation}
           className="run-bottom-nav-item"
         >
           <span className="run-nav-icon" aria-hidden="true">
@@ -96,6 +105,7 @@ export default function RunBottomNav({
       ) : (
         <Link
           href="/info"
+          onClick={handleNavigation}
           className={`run-bottom-nav-item ${
             active === "info" ? "is-active" : ""
           }`}

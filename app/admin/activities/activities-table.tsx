@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+
+import { refreshSessionAction } from "@/app/actions/session";
 import {
   useEffect,
   useMemo,
@@ -60,6 +62,10 @@ export default function ActivitiesTable({
   const [gender, setGender] = useState("");
   const [tanggal, setTanggal] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  function handleActivityOpen() {
+    void refreshSessionAction();
+  }
 
   const subditOptions = useMemo(() => {
     return Array.from(
@@ -429,6 +435,7 @@ export default function ActivitiesTable({
                   <td>
                     <Link
                       href={`/admin/activities/${activity.id}`}
+                      onClick={handleActivityOpen}
                       className={
                         activity.status === 0
                           ? "admin-table-action admin-table-action-primary"

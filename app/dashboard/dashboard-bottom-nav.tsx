@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { logoutAction } from "@/app/actions/auth";
+import { refreshSessionAction } from "@/app/actions/session";
 
 type DashboardBottomNavProps = {
   canRecord: boolean;
@@ -18,6 +19,10 @@ export default function DashboardBottomNav({
 }: DashboardBottomNavProps) {
   const [activeSection, setActiveSection] =
     useState<ActiveSection>("home");
+
+  const handleActivity = () => {
+    void refreshSessionAction();
+  };
 
   useEffect(() => {
     function updateActiveSection() {
@@ -105,9 +110,10 @@ export default function DashboardBottomNav({
             ? "is-active"
             : ""
         }`}
-        onClick={() =>
-          scrollToSection("home")
-        }
+        onClick={() => {
+          handleActivity();
+          scrollToSection("home");
+        }}
       >
         <span
           className="run-nav-icon"
@@ -130,6 +136,7 @@ export default function DashboardBottomNav({
             : ""
         }`}
         onClick={() =>
+          handleActivity();
           scrollToSection("rank")
         }
       >
@@ -149,6 +156,7 @@ export default function DashboardBottomNav({
       {canRecord ? (
         <Link
           href="/record"
+          onClick={handleActivity}
           className="run-bottom-nav-item run-bottom-nav-primary"
         >
           <span
@@ -177,6 +185,7 @@ export default function DashboardBottomNav({
       {isAdmin ? (
         <Link
           href="/admin/login"
+          onClick={handleActivity}
           className="run-bottom-nav-item"
         >
           <span
@@ -194,6 +203,7 @@ export default function DashboardBottomNav({
       ) : (
         <Link
           href="/info"
+          onClick={handleActivity}
           className="run-bottom-nav-item"
         >
           <span
