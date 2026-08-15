@@ -6,8 +6,9 @@ import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 
 import {
+  getCurrentRunDateForUser,
+  isDailySubmissionOpenForUser,
   isRecordingStarted,
-  isSubmissionOpen,
   isValidRunDate,
 } from "@/lib/run-config";
 
@@ -109,15 +110,12 @@ export async function recordRunAction(
 
 
   /*
-   * bypass testing
-   * ganti ke false/null jika sudah
+   * Perekaman belum dimulai.
+   *
+   * Rule awal tetap dipertahankan:
+   * 15 Agustus 2026 pukul 05.00 WIB.
    */
-  const isRecordingTestUser =
-    null;
-
-
   if (
-    !isRecordingTestUser &&
     !isRecordingStarted()
   ) {
     return {
@@ -127,13 +125,49 @@ export async function recordRunAction(
   }
 
 
+  /*
+   * Tanggal efektif user.
+   *
+   * Untuk user testing, tanggal dapat berasal
+   * dari ATLANTIK_BYPASS_DATE di run-config.
+   *
+   * Untuk user biasa, selalu menggunakan
+   * tanggal WIB sebenarnya.
+   */
+  const currentRunDate =
+    getCurrentRunDateForUser(
+      user.nip
+    );
+
+
+  /*
+   * Perekaman hanya tersedia
+   * pada 15–17 Agustus 2026.
+   */
   if (
-    !isRecordingTestUser &&
-    !isSubmissionOpen()
+    !currentRunDate
   ) {
     return {
       error:
-        "Perekaman ATLANTIK RUN telah ditutup pada 18 Agustus 2026 pukul 21.00 WIB.",
+        "Perekaman ATLANTIK RUN hanya dapat dilakukan pada tanggal 15–17 Agustus 2026.",
+    };
+  }
+
+
+  /*
+   * Cutoff harian pukul 21.00 WIB.
+   *
+   * Berlaku hanya untuk submission baru user.
+   * Tidak mempengaruhi admin verify/update.
+   */
+  if (
+    !isDailySubmissionOpenForUser(
+      user.nip
+    )
+  ) {
+    return {
+      error:
+        "Perekaman aktivitas hari ini telah ditutup pada pukul 21.00 WIB.",
     };
   }
 
@@ -272,6 +306,29 @@ export async function recordRunAction(
     return {
       error:
         "Tanggal aktivitas tidak valid.",
+      values,
+    };
+  }
+
+
+  /*
+   * Aktivitas hanya boleh dilaporkan
+   * pada tanggal yang sama.
+   *
+   * Contoh:
+   * 15 Agustus → hanya 15 Agustus.
+   * 16 Agustus → hanya 16 Agustus.
+   * 17 Agustus → hanya 17 Agustus.
+   *
+   * Validasi dilakukan di server sehingga
+   * manipulasi tanggal dari browser tetap ditolak.
+   */
+  if (
+    tanggal !== currentRunDate
+  ) {
+    return {
+      error:
+        "Aktivitas hanya dapat direkam pada tanggal yang sama dengan hari pelaporan.",
       values,
     };
   }

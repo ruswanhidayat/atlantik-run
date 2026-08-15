@@ -6,8 +6,8 @@ import RecordForm from "./record-form";
 import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import {
-  RECORDING_START,
-  isSubmissionOpenForUser,
+  getAtlantikRuntime,
+  getCurrentRunDateForUser,
   RUN_DATES,
 } from "@/lib/run-config";
 
@@ -29,15 +29,31 @@ export default async function RecordPage() {
     )
   );
 
-  const availableDates = RUN_DATES.filter(
-    (date) =>
-      !blockedDates.has(date.value)
-  );
-
-  const submissionOpen =
-    isSubmissionOpenForUser(
+  const currentRunDate =
+    getCurrentRunDateForUser(
       user.nip
     );
+
+  const runtime =
+    getAtlantikRuntime(
+      user.nip
+    );
+
+  const currentDate =
+    currentRunDate
+      ? RUN_DATES.find(
+          (date) =>
+            date.value ===
+            currentRunDate
+        ) ?? null
+      : null;
+
+  const hasCurrentActivity =
+    currentRunDate
+      ? blockedDates.has(
+          currentRunDate
+        )
+      : false;
 
   return (
     <main className="run-app record-v2">
@@ -100,7 +116,6 @@ export default async function RecordPage() {
           </div>
         </section>
 
-        {/* TOMBOL DI SINI */}
         <div className="record-mobile-back-wrap">
           <Link
             href="/dashboard"
@@ -130,7 +145,7 @@ export default async function RecordPage() {
               </span>
             </div>
 
-            {!submissionOpen ? (
+            {!currentDate ? (
               <div className="record-state-card">
                 <span
                   className="record-state-icon"
@@ -141,16 +156,17 @@ export default async function RecordPage() {
 
                 <div>
                   <strong>
-                    Pelaporan telah ditutup.
+                    Perekaman tidak tersedia.
                   </strong>
 
                   <p>
-                    Batas akhir pelaporan ATLANTIK RUN adalah
-                    18 Agustus 2026 pukul 21.00 WIB.
+                    Perekaman ATLANTIK RUN hanya tersedia
+                    pada 15–17 Agustus 2026. Setiap hari,
+                    tombol Simpan aktif pukul 05.00–20.59 WIB.
                   </p>
                 </div>
               </div>
-            ) : availableDates.length === 0 ? (
+            ) : hasCurrentActivity ? (
               <div className="record-state-card">
                 <span
                   className="record-state-icon"
@@ -161,20 +177,21 @@ export default async function RecordPage() {
 
                 <div>
                   <strong>
-                    Semua aktivitas sudah direkam.
+                    Aktivitas hari ini sudah direkam.
                   </strong>
 
                   <p>
-                    Seluruh tanggal ATLANTIK RUN
-                    sudah memiliki aktivitas Pending
-                    atau Approved.
+                    Kamu sudah memiliki aktivitas Pending
+                    atau Approved untuk {currentDate.label}.
                   </p>
                 </div>
               </div>
             ) : (
               <RecordForm
-                availableDates={availableDates}
-                recordingStart={RECORDING_START}
+                currentDate={currentDate}
+                initialRuntimeDate={runtime.date}
+                initialRuntimeTime={runtime.time}
+                useBypassClock={runtime.hasTimeBypass}
               />
             )}
           </section>
@@ -234,13 +251,14 @@ export default async function RecordPage() {
 
                 <div>
                   <strong>
-                    Batas akhir pelaporan
+                    Batas pelaporan harian
                   </strong>
 
                   <p>
-                    Aktivitas tanggal 15–17 Agustus masih
-                    dapat dilaporkan sampai 18 Agustus 2026
-                    pukul 21.00 WIB.
+                    Aktivitas hanya dapat dilaporkan pada
+                    tanggal yang sama. Tombol Simpan aktif
+                    setiap hari pukul 05.00–20.59 WIB dan
+                    pelaporan ditutup pukul 21.00 WIB.
                   </p>
                 </div>
               </article>
@@ -280,7 +298,9 @@ export default async function RecordPage() {
       </div>
 
       <RecordBottomNav
-        canRecord={submissionOpen}
+        canRecord={Boolean(
+          currentDate
+        )}
         isAdmin={Boolean(
           user.isadmin
         )}

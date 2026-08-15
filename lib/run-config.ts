@@ -21,6 +21,19 @@ export const SUBMISSION_DEADLINE =
 
 // TEMPORARY — simulasi kondisi pelaporan sudah ditutup.
 // Setelah testing selesai, ubah menjadi null.
+const ATLANTIK_TEST_NIP: string | null =
+  "921102040";
+
+const ATLANTIK_BYPASS_DATE: string | null =
+  "2026-08-16";
+// contoh testing:
+// "2026-08-16";
+
+const ATLANTIK_BYPASS_TIME: string | null =
+  "20:30";
+// contoh testing:
+// "20:30";
+
 const RECORD_CLOSED_TEST_NIP: string | null =
   // "921102040";
   null;
@@ -30,6 +43,77 @@ const LAST_REPORT_DAY_TEST_NIP: string | null =
   null;
 
 export type RunDate = (typeof RUN_DATES)[number]["value"];
+
+export function getAtlantikRuntime(
+  nip?: string,
+  now = new Date()
+) {
+  const formatter =
+    new Intl.DateTimeFormat(
+      "en-CA",
+      {
+        timeZone: "Asia/Jakarta",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+      }
+    );
+
+  const parts =
+    formatter.formatToParts(now);
+
+  const getPart = (
+    type: Intl.DateTimeFormatPartTypes
+  ) =>
+    parts.find(
+      (part) => part.type === type
+    )?.value ?? "";
+
+  const realDate =
+    `${getPart("year")}-` +
+    `${getPart("month")}-` +
+    `${getPart("day")}`;
+
+  const realTime =
+    `${getPart("hour")}:` +
+    `${getPart("minute")}`;
+
+  const isTestUser =
+    ATLANTIK_TEST_NIP !== null &&
+    nip?.trim() === ATLANTIK_TEST_NIP;
+
+  const hasTimeBypass =
+    isTestUser &&
+    ATLANTIK_BYPASS_TIME !== null;
+
+  const date =
+    isTestUser &&
+    ATLANTIK_BYPASS_DATE !== null
+      ? ATLANTIK_BYPASS_DATE
+      : realDate;
+
+  const time =
+    hasTimeBypass
+      ? ATLANTIK_BYPASS_TIME
+      : realTime;
+
+  const [hour, minute] =
+    time.split(":").map(Number);
+
+  return {
+    isTestUser,
+    hasTimeBypass,
+    date,
+    time,
+    hour,
+    minute,
+    currentMinutes:
+      hour * 60 + minute,
+  };
+}
 
 export function isValidRunDate(
   value: string
@@ -172,4 +256,58 @@ export function isLastReportingDayForUser(
     ).format(now);
 
   return jakartaDate === "2026-08-18";
+}
+
+export function isCompetitionDate(
+  date: string
+) {
+  return RUN_DATES.some(
+    (item) =>
+      item.value === date
+  );
+}
+
+export function isDailySubmissionOpenForUser(
+  nip: string
+) {
+  const runtime =
+    getAtlantikRuntime(nip);
+
+  if (
+    !isCompetitionDate(
+      runtime.date
+    )
+  ) {
+    return false;
+  }
+
+  const openingMinutes =
+    5 * 60;
+
+  const cutoffMinutes =
+    21 * 60;
+
+  return (
+    runtime.currentMinutes >=
+      openingMinutes &&
+    runtime.currentMinutes <
+      cutoffMinutes
+  );
+}
+
+export function getCurrentRunDateForUser(
+  nip: string
+): RunDate | null {
+  const runtime =
+    getAtlantikRuntime(nip);
+
+  if (
+    !isValidRunDate(
+      runtime.date
+    )
+  ) {
+    return null;
+  }
+
+  return runtime.date;
 }

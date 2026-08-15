@@ -23,12 +23,151 @@ type AvailableDate = {
 };
 
 type RecordFormProps = {
-  availableDates: AvailableDate[];
-  recordingStart: string;
+  currentDate: AvailableDate;
+  initialRuntimeDate: string;
+  initialRuntimeTime: string;
+  useBypassClock: boolean;
 };
 
 const initialState: RecordRunState =
   {};
+
+const DAILY_OPEN_SECONDS = 5 * 60 * 60;
+const DAILY_WARNING_SECONDS = 20 * 60 * 60;
+const DAILY_CUTOFF_SECONDS = 21 * 60 * 60;
+const SECONDS_PER_DAY = 24 * 60 * 60;
+
+function parseRuntimeTime(
+  value: string
+) {
+  const match =
+    value.match(
+      /^([01]\d|2[0-3]):([0-5]\d)$/
+    );
+
+  if (!match) {
+    return 0;
+  }
+
+  return (
+    Number(match[1]) * 3600 +
+    Number(match[2]) * 60
+  );
+}
+
+function addDaysToDate(
+  value: string,
+  days: number
+) {
+  const date =
+    new Date(
+      `${value}T00:00:00Z`
+    );
+
+  date.setUTCDate(
+    date.getUTCDate() +
+      days
+  );
+
+  return date
+    .toISOString()
+    .slice(0, 10);
+}
+
+function getJakartaClock() {
+  const formatter =
+    new Intl.DateTimeFormat(
+      "en-CA",
+      {
+        timeZone: "Asia/Jakarta",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+      }
+    );
+
+  const parts =
+    formatter.formatToParts(
+      new Date()
+    );
+
+  const getPart = (
+    type: Intl.DateTimeFormatPartTypes
+  ) =>
+    parts.find(
+      (part) =>
+        part.type === type
+    )?.value ?? "";
+
+  const date =
+    `${getPart("year")}-` +
+    `${getPart("month")}-` +
+    `${getPart("day")}`;
+
+  const hour =
+    Number(
+      getPart("hour")
+    );
+
+  const minute =
+    Number(
+      getPart("minute")
+    );
+
+  const second =
+    Number(
+      getPart("second")
+    );
+
+  return {
+    date,
+    seconds:
+      hour * 3600 +
+      minute * 60 +
+      second,
+  };
+}
+
+function formatCountdown(
+  totalSeconds: number
+) {
+  const safeSeconds =
+    Math.max(
+      0,
+      Math.floor(
+        totalSeconds
+      )
+    );
+
+  const hours =
+    Math.floor(
+      safeSeconds / 3600
+    );
+
+  const minutes =
+    Math.floor(
+      (safeSeconds % 3600) /
+        60
+    );
+
+  const seconds =
+    safeSeconds % 60;
+
+  return `${String(hours).padStart(
+    2,
+    "0"
+  )}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(
+    2,
+    "0"
+  )}`;
+}
 
 function sanitizeTimeInput(
   value: string,
@@ -281,8 +420,10 @@ function formatElapsedFromSeconds(
 }
 
 export default function RecordForm({
-  availableDates,
-  recordingStart,
+  currentDate,
+  initialRuntimeDate,
+  initialRuntimeTime,
+  useBypassClock,
 }: RecordFormProps) {
   const [
     state,
@@ -293,12 +434,6 @@ export default function RecordForm({
       recordRunAction,
       initialState
     );
-
-  const [
-    tanggal,
-    setTanggal,
-  ] =
-    useState("");
 
   const [
     waktuMulai,
@@ -340,10 +475,6 @@ export default function RecordForm({
     if (
       state.values
     ) {
-      setTanggal(
-        state.values.tanggal
-      );
-
       setWaktuMulai(
         state.values
           .waktuMulai
@@ -492,44 +623,123 @@ export default function RecordForm({
       elapsedTime,
     ]);
 
-  const [recordingStarted, setRecordingStarted] =
-    useState(
-      () =>
-        Date.now() >=
-        new Date(recordingStart).getTime()
-    );
+  const [
+    runtimeClock,
+    setRuntimeClock,
+  ] = useState(() => ({
+    date: initialRuntimeDate,
+    seconds:
+      parseRuntimeTime(
+        initialRuntimeTime
+      ),
+  }));
 
   const [
     showRecordingNotice,
     setShowRecordingNotice,
   ] = useState(
     () =>
-      Date.now() <
-      new Date(recordingStart).getTime()
+      initialRuntimeDate ===
+        "2026-08-15" &&
+      parseRuntimeTime(
+        initialRuntimeTime
+      ) <
+        DAILY_OPEN_SECONDS
   );
 
   useEffect(() => {
-    const startTime =
-      new Date(recordingStart).getTime();
+    const startedAt =
+      Date.now();
 
-    function updateRecordingStatus() {
-      setRecordingStarted(
-        Date.now() >= startTime
+    const initialSeconds =
+      parseRuntimeTime(
+        initialRuntimeTime
       );
+
+    function updateRuntimeClock() {
+      if (
+        !useBypassClock
+      ) {
+        setRuntimeClock(
+          getJakartaClock()
+        );
+        return;
+      }
+
+      const elapsedSeconds =
+        Math.floor(
+          (
+            Date.now() -
+            startedAt
+          ) /
+            1000
+        );
+
+      const totalSeconds =
+        initialSeconds +
+        elapsedSeconds;
+
+      const dayOffset =
+        Math.floor(
+          totalSeconds /
+            SECONDS_PER_DAY
+        );
+
+      setRuntimeClock({
+        date:
+          addDaysToDate(
+            initialRuntimeDate,
+            dayOffset
+          ),
+        seconds:
+          totalSeconds %
+          SECONDS_PER_DAY,
+      });
     }
 
-    updateRecordingStatus();
+    updateRuntimeClock();
 
     const interval =
       window.setInterval(
-        updateRecordingStatus,
+        updateRuntimeClock,
         1000
       );
 
     return () => {
-      window.clearInterval(interval);
+      window.clearInterval(
+        interval
+      );
     };
-  }, [recordingStart]);
+  }, [
+    initialRuntimeDate,
+    initialRuntimeTime,
+    useBypassClock,
+  ]);
+
+  const isCurrentRunDate =
+    runtimeClock.date ===
+    currentDate.value;
+
+  const submissionOpen =
+    isCurrentRunDate &&
+    runtimeClock.seconds >=
+      DAILY_OPEN_SECONDS &&
+    runtimeClock.seconds <
+      DAILY_CUTOFF_SECONDS;
+
+  const showCutoffCountdown =
+    isCurrentRunDate &&
+    runtimeClock.seconds >=
+      DAILY_WARNING_SECONDS &&
+    runtimeClock.seconds <
+      DAILY_CUTOFF_SECONDS;
+
+  const cutoffRemainingSeconds =
+    Math.max(
+      0,
+      DAILY_CUTOFF_SECONDS -
+        runtimeClock.seconds
+    );
 
   function handleJarakChange(
     event: React.ChangeEvent<HTMLInputElement>
@@ -687,63 +897,48 @@ export default function RecordForm({
         className="record-form-v2"
         autoComplete="off"
       >
+      {showCutoffCountdown ? (
+        <div className="record-soft-warning record-cutoff-countdown">
+          <span>
+            ⏱ Pelaporan hari ini ditutup dalam{" "}
+            <strong>
+              {formatCountdown(
+                cutoffRemainingSeconds
+              )}
+            </strong>
+            . Batas submit pukul 21.00 WIB.
+          </span>
+        </div>
+      ) : null}
+
       {/* DATE */}
       <div className="record-field record-field-full">
         <div className="record-field-heading">
-          <label htmlFor="tanggal">
+          <label htmlFor="tanggal-display">
             Tanggal Aktivitas
           </label>
 
           <span>01</span>
         </div>
 
-        <div className="record-select-wrap">
-          <select
-            id="tanggal"
-            name="tanggal"
-            value={tanggal}
-            onChange={(
-              event
-            ) =>
-              setTanggal(
-                event.target
-                  .value
-              )
-            }
-            autoComplete="off"
-            required
-          >
-            <option
-              value=""
-              disabled
-            >
-              Pilih tanggal
-              aktivitas
-            </option>
+        <input
+          id="tanggal-display"
+          className="record-input"
+          type="text"
+          value={currentDate.label}
+          readOnly
+          aria-readonly="true"
+        />
 
-            {availableDates.map(
-              (date) => (
-                <option
-                  key={
-                    date.value
-                  }
-                  value={
-                    date.value
-                  }
-                >
-                  {date.label}
-                </option>
-              )
-            )}
-          </select>
+        <input
+          type="hidden"
+          name="tanggal"
+          value={currentDate.value}
+        />
 
-          <span
-            className="record-select-arrow"
-            aria-hidden="true"
-          >
-            ↓
-          </span>
-        </div>
+        <small className="record-field-help">
+          Aktivitas hanya dapat dilaporkan pada tanggal yang sama.
+        </small>
       </div>
 
       {/* START TIME */}
@@ -1047,15 +1242,21 @@ export default function RecordForm({
         className="record-submit"
         disabled={
           pending ||
-          !recordingStarted
+          !submissionOpen
         }
       >
         <span>
           {pending
             ? "Merekam..."
-            : recordingStarted
-              ? "Kirim Aktivitas"
-              : "Perekaman Belum Dibuka"}
+            : !isCurrentRunDate
+              ? "Pelaporan Hari Ini Ditutup"
+              : runtimeClock.seconds <
+                    DAILY_OPEN_SECONDS
+                ? "Perekaman Belum Dibuka"
+                : runtimeClock.seconds >=
+                      DAILY_CUTOFF_SECONDS
+                  ? "Pelaporan Ditutup"
+                  : "Kirim Aktivitas"}
         </span>
 
         <span
@@ -1067,9 +1268,15 @@ export default function RecordForm({
       </button>
 
       <p className="record-submit-note">
-        {recordingStarted
-          ? "Aktivitas akan berstatus Pending sampai selesai diverifikasi admin."
-          : "Tombol akan aktif mulai 15 Agustus 2026 pukul 05.00 WIB."}
+        {!isCurrentRunDate
+          ? "Tanggal pelaporan telah berganti. Buka kembali halaman Record untuk merekam aktivitas hari ini."
+          : runtimeClock.seconds <
+                DAILY_OPEN_SECONDS
+            ? "Tombol Simpan akan aktif pukul 05.00 WIB."
+            : runtimeClock.seconds >=
+                  DAILY_CUTOFF_SECONDS
+              ? "Pelaporan hari ini telah ditutup. Perekaman dibuka kembali pukul 05.00 WIB pada hari perlombaan berikutnya."
+              : "Aktivitas akan berstatus Pending sampai selesai diverifikasi admin."}
       </p>
     </form>
     </>
