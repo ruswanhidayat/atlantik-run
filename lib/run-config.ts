@@ -17,20 +17,21 @@ export const RECORDING_START =
   "2026-08-15T05:00:00+07:00";
 
 export const SUBMISSION_DEADLINE =
-  "2026-08-18T21:00:00+07:00";
+  "2026-08-17T21:00:00+07:00";
 
 // TEMPORARY — simulasi kondisi pelaporan sudah ditutup.
 // Setelah testing selesai, ubah menjadi null.
 const ATLANTIK_TEST_NIP: string | null =
-  "921102040";
+  // "921102040";
+  null;
 
 const ATLANTIK_BYPASS_DATE: string | null =
-  "2026-08-16";
+  null;
 // contoh testing:
 // "2026-08-16";
 
 const ATLANTIK_BYPASS_TIME: string | null =
-  "20:30";
+  null;
 // contoh testing:
 // "20:30";
 

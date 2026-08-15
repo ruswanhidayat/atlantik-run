@@ -78,11 +78,10 @@ export async function GET() {
      * karena data tersebut sudah selesai diverifikasi.
      */
     const deadlinePassed =
-      Date.now() >
+      Date.now() >=
       new Date(
         SUBMISSION_DEADLINE
       ).getTime();
-
 
     const finalized =
       deadlinePassed &&
