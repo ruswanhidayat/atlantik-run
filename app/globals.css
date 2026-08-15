@@ -7016,19 +7016,22 @@ html {
 }
 
 @media (max-width: 768px) {
-  .run-bottom-nav-primary.is-disabled {
-    opacity: 1;
+  /* Record disabled — jangan turunkan opacity seluruh nav item */
+  .run-bottom-nav-item.run-bottom-nav-primary.is-disabled {
+    opacity: 1 !important;
     background: transparent;
     border-color: transparent;
     box-shadow: none;
-    color: #8f879e;
 
+    color: #8f879e;
     cursor: not-allowed;
     pointer-events: none;
   }
 
-  .run-bottom-nav-primary.is-disabled .run-nav-primary-icon {
-    opacity: 1;
+  /* Yang dibuat muted hanya tombol + */
+  .run-bottom-nav-item.run-bottom-nav-primary.is-disabled
+    .run-nav-primary-icon {
+    opacity: 1 !important;
     background: #514767;
     color: #9d94ad;
     box-shadow: none;
