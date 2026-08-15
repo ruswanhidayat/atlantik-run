@@ -7017,20 +7017,20 @@ html {
 
 @media (max-width: 768px) {
   .run-bottom-nav-primary.is-disabled {
-    background: #665c7d;
-    border-color: #776c90;
-    color: #d0cadb;
-
     opacity: 1;
-    filter: none;
+    background: transparent;
+    border-color: transparent;
     box-shadow: none;
+    color: #8f879e;
 
     cursor: not-allowed;
     pointer-events: none;
   }
 
   .run-bottom-nav-primary.is-disabled .run-nav-primary-icon {
-    color: #d0cadb;
     opacity: 1;
+    background: #514767;
+    color: #9d94ad;
+    box-shadow: none;
   }
 }
