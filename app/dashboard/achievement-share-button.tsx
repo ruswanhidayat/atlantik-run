@@ -219,374 +219,506 @@ export default function AchievementShareButton({
 
   async function generateImage() {
     const canvas =
-      document.createElement(
+        document.createElement(
         "canvas"
-      );
+        );
 
     canvas.width =
-      STORY_WIDTH;
+        STORY_WIDTH;
 
     canvas.height =
-      STORY_HEIGHT;
+        STORY_HEIGHT;
 
     const ctx =
-      canvas.getContext(
+        canvas.getContext(
         "2d"
-      );
+        );
 
     if (!ctx) {
-      throw new Error(
+        throw new Error(
         "Canvas tidak tersedia."
-      );
+        );
     }
 
-    // await document.fonts.ready;
+    ctx.imageSmoothingEnabled =
+        true;
 
-    // const fonts =
-    //     getAchievementFonts();
+    ctx.imageSmoothingQuality =
+        "high";
 
-    const gradient =
-      ctx.createLinearGradient(
+    /*
+    * =========================
+    * LOAD ASSETS
+    * =========================
+    */
+
+    let background:
+        HTMLImageElement | null =
+        null;
+
+    let logo:
+        HTMLImageElement | null =
+        null;
+
+    let trophy:
+        HTMLImageElement | null =
+        null;
+
+    try {
+        background =
+        await loadImage(
+            "/image/achievement-bg.png"
+        );
+    } catch {
+        background = null;
+    }
+
+    try {
+        logo =
+        await loadImage(
+            "/image/logo-putih.png"
+        );
+    } catch {
+        logo = null;
+    }
+
+    try {
+        trophy =
+        await loadImage(
+            "/image/trophy.png"
+        );
+    } catch {
+        trophy = null;
+    }
+
+    /*
+    * =========================
+    * BACKGROUND
+    * =========================
+    */
+
+    if (background) {
+        ctx.drawImage(
+        background,
         0,
         0,
         STORY_WIDTH,
         STORY_HEIGHT
-      );
+        );
+    } else {
+        const gradient =
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            STORY_HEIGHT
+        );
 
-    gradient.addColorStop(
-      0,
-      "#090816"
+        gradient.addColorStop(
+        0,
+        "#090816"
+        );
+
+        gradient.addColorStop(
+        0.5,
+        "#160b35"
+        );
+
+        gradient.addColorStop(
+        1,
+        "#070611"
+        );
+
+        ctx.fillStyle =
+        gradient;
+
+        ctx.fillRect(
+        0,
+        0,
+        STORY_WIDTH,
+        STORY_HEIGHT
+        );
+    }
+
+    /*
+    * Sedikit vignette supaya data
+    * personal tetap terbaca di atas
+    * artwork.
+    */
+    const centerOverlay =
+        ctx.createLinearGradient(
+        0,
+        850,
+        0,
+        1680
+        );
+
+    centerOverlay.addColorStop(
+        0,
+        "rgba(7, 5, 20, 0)"
     );
 
-    gradient.addColorStop(
-      0.45,
-      "#120b2b"
+    centerOverlay.addColorStop(
+        0.55,
+        "rgba(7, 5, 20, 0.10)"
     );
 
-    gradient.addColorStop(
-      1,
-      "#070611"
+    centerOverlay.addColorStop(
+        1,
+        "rgba(7, 5, 20, 0.28)"
     );
 
     ctx.fillStyle =
-      gradient;
+        centerOverlay;
 
     ctx.fillRect(
-      0,
-      0,
-      STORY_WIDTH,
-      STORY_HEIGHT
+        0,
+        820,
+        STORY_WIDTH,
+        900
     );
 
-    const glow =
-      ctx.createRadialGradient(
-        STORY_WIDTH / 2,
-        660,
-        60,
-        STORY_WIDTH / 2,
-        660,
-        580
-      );
-
-    glow.addColorStop(
-      0,
-      "rgba(139, 92, 246, 0.30)"
-    );
-
-    glow.addColorStop(
-      0.5,
-      "rgba(109, 40, 217, 0.12)"
-    );
-
-    glow.addColorStop(
-      1,
-      "rgba(109, 40, 217, 0)"
-    );
-
-    ctx.fillStyle =
-      glow;
-
-    ctx.fillRect(
-      0,
-      100,
-      STORY_WIDTH,
-      1200
-    );
-
-    let logo: HTMLImageElement | null =
-      null;
-
-    let trophy: HTMLImageElement | null =
-      null;
-
-    try {
-      logo =
-        await loadImage(
-          "/image/logo-putih.png"
-        );
-    } catch {
-      logo = null;
-    }
-
-    try {
-      trophy =
-        await loadImage(
-          "/image/trophy.png"
-        );
-    } catch {
-      trophy = null;
-    }
-
-    if (logo) {
-      const logoWidth =
-        190;
-
-      const ratio =
-        logo.height /
-        logo.width;
-
-      const logoHeight =
-        logoWidth *
-        ratio;
-
-      ctx.drawImage(
-        logo,
-        STORY_WIDTH -
-          logoWidth -
-          80,
-        70,
-        logoWidth,
-        logoHeight
-      );
-    }
+    /*
+    * =========================
+    * BRANDING
+    * =========================
+    */
 
     ctx.save();
 
     ctx.fillStyle =
-    "#8b5cf6";
+        "#8b5cf6";
 
     ctx.font =
-    `400 58px "Rammetto One", "Open Sans", sans-serif`;
+        `400 58px "Rammetto One", "Open Sans", sans-serif`;
 
     ctx.textAlign =
-    "left";
+        "left";
 
     ctx.fillText(
-    "ATLANTIK",
-    80,
-    120
+        "ATLANTIK",
+        80,
+        120
     );
 
     ctx.fillText(
-    "RUN",
-    80,
-    175
+        "RUN",
+        80,
+        175
     );
 
     ctx.font =
-    `700 28px "Open Sans", sans-serif`;
+        `700 28px "Open Sans", sans-serif`;
 
     ctx.fillStyle =
-    "#ffffff";
+        "#ffffff";
 
     ctx.fillText(
-    "2026",
-    83,
-    218
+        "2026",
+        83,
+        218
     );
 
     ctx.restore();
 
+    /*
+    * Logo HUT RI dibuat lebih kecil
+    * daripada versi sebelumnya.
+    */
+    if (logo) {
+        const logoWidth =
+        145;
+
+        const ratio =
+        logo.height /
+        logo.width;
+
+        const logoHeight =
+        logoWidth *
+        ratio;
+
+        ctx.drawImage(
+        logo,
+        STORY_WIDTH -
+            logoWidth -
+            78,
+        72,
+        logoWidth,
+        logoHeight
+        );
+    }
+
+    /*
+    * =========================
+    * HEADLINE
+    * =========================
+    */
+
     drawCenteredText(
-      ctx,
-      "WE MADE IT TO",
-      340,
-      `700 42px "Open Sans", sans-serif`,
-      "#ffffff"
+        ctx,
+        "WE MADE IT TO",
+        330,
+        `700 40px "Open Sans", sans-serif`,
+        "#ffffff"
     );
 
     drawCenteredText(
-      ctx,
-      "THE FINISH LINE!",
-      415,
-      `800 72px "Rammetto One", "Open Sans", sans-serif`,
-      "#a855f7"
+        ctx,
+        "THE FINISH LINE!",
+        405,
+        `800 70px "Rammetto One", "Open Sans", sans-serif`,
+        "#a855f7"
     );
+
+    /*
+    * =========================
+    * TROPHY
+    * =========================
+    *
+    * Dibuat lebih besar dan
+    * diposisikan di pusat ribbon
+    * background.
+    */
 
     if (trophy) {
-      const maxWidth =
-        500;
+        const trophyWidth =
+        640;
 
-      const ratio =
+        const trophyRatio =
         trophy.height /
         trophy.width;
 
-      const drawWidth =
-        maxWidth;
+        const trophyHeight =
+        trophyWidth *
+        trophyRatio;
 
-      const drawHeight =
-        maxWidth *
-        ratio;
-
-      ctx.drawImage(
-        trophy,
+        const trophyX =
         STORY_WIDTH / 2 -
-          drawWidth / 2,
-        500,
-        drawWidth,
-        drawHeight
-      );
+        trophyWidth / 2;
+
+        const trophyY =
+        485;
+
+        /*
+        * Glow lembut di belakang trophy.
+        */
+        ctx.save();
+
+        const trophyGlow =
+        ctx.createRadialGradient(
+            STORY_WIDTH / 2,
+            trophyY +
+            trophyHeight * 0.48,
+            40,
+            STORY_WIDTH / 2,
+            trophyY +
+            trophyHeight * 0.48,
+            340
+        );
+
+        trophyGlow.addColorStop(
+        0,
+        "rgba(168, 85, 247, 0.22)"
+        );
+
+        trophyGlow.addColorStop(
+        1,
+        "rgba(168, 85, 247, 0)"
+        );
+
+        ctx.fillStyle =
+        trophyGlow;
+
+        ctx.fillRect(
+        170,
+        430,
+        740,
+        700
+        );
+
+        ctx.restore();
+
+        ctx.drawImage(
+        trophy,
+        trophyX,
+        trophyY,
+        trophyWidth,
+        trophyHeight
+        );
     }
 
+    /*
+    * =========================
+    * PERSONAL CARD
+    * =========================
+    */
+
     const cardX =
-      90;
+        105;
 
     const cardY =
-      1040;
+        1015;
 
     const cardWidth =
-      STORY_WIDTH - 180;
+        STORY_WIDTH - 210;
 
     const cardHeight =
-      235;
+        170;
 
     ctx.save();
 
     roundedRect(
-      ctx,
-      cardX,
-      cardY,
-      cardWidth,
-      cardHeight,
-      34
+        ctx,
+        cardX,
+        cardY,
+        cardWidth,
+        cardHeight,
+        30
     );
 
     ctx.fillStyle =
-      "rgba(19, 14, 38, 0.88)";
+        "rgba(10, 7, 27, 0.74)";
 
     ctx.fill();
 
     ctx.strokeStyle =
-      "rgba(168, 85, 247, 0.75)";
+        "rgba(168, 85, 247, 0.72)";
 
     ctx.lineWidth =
-      3;
+        3;
 
     ctx.stroke();
 
     ctx.restore();
 
+    /*
+    * Nama + Subdit benar-benar
+    * vertically centered.
+    */
+
     drawCenteredText(
-      ctx,
-      editableName
+        ctx,
+        editableName
         .trim()
         .toUpperCase(),
-      1110,
-      `800 56px "Open Sans", sans-serif`,
-      "#ffffff"
+        cardY + 62,
+        `800 54px "Open Sans", sans-serif`,
+        "#ffffff"
     );
 
     drawCenteredText(
-      ctx,
-      subdit.toUpperCase(),
-      1178,
-      `800 38px "Open Sans", sans-serif`,
-      "#a855f7"
+        ctx,
+        subdit.toUpperCase(),
+        cardY + 118,
+        `800 34px "Open Sans", sans-serif`,
+        "#a855f7"
+    );
+
+    /*
+    * =========================
+    * DISTANCE
+    * =========================
+    */
+
+    drawCenteredText(
+        ctx,
+        "TOTAL DISTANCE",
+        1240,
+        `700 27px "Open Sans", sans-serif`,
+        "#b56cff"
     );
 
     drawCenteredText(
-      ctx,
-      "TOTAL DISTANCE",
-      1320,
-      `700 28px "Open Sans", sans-serif`,
-      "#a855f7"
-    );
-
-    drawCenteredText(
-      ctx,
-      formatDistance(
+        ctx,
+        formatDistance(
         totalDistance
-      ),
-      1410,
-      `800 94px "Rammetto One", "Open Sans", sans-serif`,
-      "#ffffff"
+        ),
+        1320,
+        `800 88px "Rammetto One", "Open Sans", sans-serif`,
+        "#ffffff"
     );
 
     drawCenteredText(
-      ctx,
-      "KM",
-      1480,
-      `800 30px "Open Sans", sans-serif`,
-      "#a855f7"
+        ctx,
+        "KM",
+        1380,
+        `800 28px "Open Sans", sans-serif`,
+        "#a855f7"
     );
+
+    /*
+    * =========================
+    * RANK CARDS
+    * =========================
+    */
 
     const statY =
-      1550;
+        1440;
 
     const statHeight =
-      155;
+        142;
 
     const statWidth =
-      390;
+        390;
 
     const gap =
-      38;
+        38;
 
     const firstX =
-      STORY_WIDTH / 2 -
-      statWidth -
-      gap / 2;
+        STORY_WIDTH / 2 -
+        statWidth -
+        gap / 2;
 
     const secondX =
-      STORY_WIDTH / 2 +
-      gap / 2;
+        STORY_WIDTH / 2 +
+        gap / 2;
 
     [
-      {
+        {
         x: firstX,
         value:
-          genderRank
+            genderRank
             ? `#${genderRank}`
             : "-",
         label:
-          genderLabel,
-      },
-      {
+            genderLabel,
+        },
+        {
         x: secondX,
         value:
-          overallRank
+            overallRank
             ? `#${overallRank}`
             : "-",
         label:
-          "OVERALL RANK",
-      },
+            "OVERALL RANK",
+        },
     ].forEach(
-      ({
+        ({
         x,
         value,
         label,
-      }) => {
+        }) => {
         ctx.save();
 
         roundedRect(
-          ctx,
-          x,
-          statY,
-          statWidth,
-          statHeight,
-          28
+            ctx,
+            x,
+            statY,
+            statWidth,
+            statHeight,
+            26
         );
 
         ctx.fillStyle =
-          "rgba(16, 12, 34, 0.78)";
+            "rgba(9, 6, 25, 0.76)";
 
         ctx.fill();
 
         ctx.strokeStyle =
-          "rgba(139, 92, 246, 0.72)";
+            "rgba(139, 92, 246, 0.70)";
 
         ctx.lineWidth =
-          3;
+            3;
 
         ctx.stroke();
 
@@ -595,79 +727,98 @@ export default function AchievementShareButton({
         ctx.save();
 
         ctx.textAlign =
-          "center";
+            "center";
+
+        ctx.textBaseline =
+            "middle";
 
         ctx.fillStyle =
-          "#a855f7";
+            "#a855f7";
 
         ctx.font =
-          `800 56px "Open Sans", sans-serif`;
+            `800 52px "Open Sans", sans-serif`;
 
         ctx.fillText(
-          value,
-          x +
+            value,
+            x +
             statWidth / 2,
-          statY + 70
+            statY + 55
         );
 
         ctx.fillStyle =
-          "#ffffff";
+            "#ffffff";
 
         ctx.font =
-          `600 24px "Open Sans", sans-serif`;
+            `600 23px "Open Sans", sans-serif`;
 
         ctx.fillText(
-          label,
-          x +
+            label,
+            x +
             statWidth / 2,
-          statY + 120
+            statY + 105
         );
 
         ctx.restore();
-      }
+        }
+    );
+
+    /*
+    * =========================
+    * CLOSING
+    * =========================
+    *
+    * Sengaja tidak terlalu bawah,
+    * supaya skyline + road tetap
+    * terlihat sebagai artwork.
+    */
+
+    drawCenteredText(
+        ctx,
+        "Thank you for running with us.",
+        1645,
+        `500 29px "Open Sans", sans-serif`,
+        "#ffffff"
     );
 
     drawCenteredText(
-      ctx,
-      "Thank you for running with us.",
-      1815,
-      `500 30px "Open Sans", sans-serif`,
-      "#ffffff"
+        ctx,
+        "SEE YOU ON THE NEXT CHALLENGE!",
+        1695,
+        `800 29px "Open Sans", sans-serif`,
+        "#b45cff"
     );
 
-    drawCenteredText(
-      ctx,
-      "SEE YOU ON THE NEXT CHALLENGE!",
-      1865,
-      `800 30px "Open Sans", sans-serif`,
-      "#a855f7"
-    );
+    /*
+    * =========================
+    * EXPORT
+    * =========================
+    */
 
     return new Promise<Blob>(
-      (
+        (
         resolve,
         reject
-      ) => {
+        ) => {
         canvas.toBlob(
-          (blob) => {
+            (blob) => {
             if (!blob) {
-              reject(
+                reject(
                 new Error(
-                  "Gagal membuat gambar."
+                    "Gagal membuat gambar."
                 )
-              );
+                );
 
-              return;
+                return;
             }
 
             resolve(blob);
-          },
-          "image/png",
-          1
+            },
+            "image/png",
+            1
         );
-      }
+        }
     );
-  }
+    }
 
   async function handleDownload() {
     setError(null);
