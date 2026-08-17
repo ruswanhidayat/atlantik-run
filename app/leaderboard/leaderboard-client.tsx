@@ -2,6 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+type RankMovement =
+  | "up"
+  | "down"
+  | "same"
+  | "new";
+
 type LeaderboardRow = {
   nip: string;
   nama: string;
@@ -10,6 +16,9 @@ type LeaderboardRow = {
   totalDistance: number;
   genderRank: number;
   overallRank: number;
+  previousGenderRank: number | null;
+  rankMovement: RankMovement;
+  comparisonDate: string | null;
 };
 
 type LeaderboardClientProps = {
@@ -27,6 +36,54 @@ function formatDistance(value: number) {
   });
 }
 
+function formatLeaderboardDate(
+  value: string | null
+) {
+  if (!value) return null;
+
+  return new Intl.DateTimeFormat(
+    "id-ID",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "Asia/Jakarta",
+    }
+  ).format(
+    new Date(
+      `${value}T00:00:00+07:00`
+    )
+  );
+}
+
+function getMovementSymbol(
+  movement: RankMovement
+) {
+  if (movement === "up") return "↑";
+  if (movement === "down") return "↓";
+  if (movement === "new") return "+";
+
+  return "—";
+}
+
+function getMovementLabel(
+  movement: RankMovement
+) {
+  if (movement === "up") {
+    return "Peringkat naik";
+  }
+
+  if (movement === "down") {
+    return "Peringkat turun";
+  }
+
+  if (movement === "new") {
+    return "Baru masuk leaderboard";
+  }
+
+  return "Peringkat tetap";
+}
+
 export default function LeaderboardClient({
   leaderboard,
 }: LeaderboardClientProps) {
@@ -34,6 +91,12 @@ export default function LeaderboardClient({
     useState<GenderTab>("M");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const comparisonDate =
+    formatLeaderboardDate(
+      leaderboard[0]
+        ?.comparisonDate ?? null
+    );
 
   const filteredRows = useMemo(() => {
     const keyword = search.trim().toLowerCase();
@@ -143,6 +206,15 @@ export default function LeaderboardClient({
           <strong>{filteredRows.length}</strong> pelari
         </span>
       </div>
+
+      {comparisonDate ? (
+        <div className="full-leaderboard-comparison">
+          Peringkat dibandingkan dengan{" "}
+          <strong>
+            {comparisonDate}
+          </strong>
+        </div>
+      ) : null}
       
       <div className="full-leaderboard-scroll-hint">
         <span aria-hidden="true">←</span>
@@ -167,7 +239,25 @@ export default function LeaderboardClient({
             {paginatedRows.map((row) => (
               <tr key={row.nip}>
                 <td>
-                  <strong>#{row.genderRank}</strong>
+                  <span className="leaderboard-rank-with-movement">
+                    <strong>
+                      #{row.genderRank}
+                    </strong>
+
+                    <span
+                      className={`leaderboard-rank-movement is-${row.rankMovement}`}
+                      aria-label={getMovementLabel(
+                        row.rankMovement
+                      )}
+                      title={getMovementLabel(
+                        row.rankMovement
+                      )}
+                    >
+                      {getMovementSymbol(
+                        row.rankMovement
+                      )}
+                    </span>
+                  </span>
                 </td>
 
                 <td>#{row.overallRank}</td>
@@ -202,6 +292,30 @@ export default function LeaderboardClient({
           </tbody>
         </table>
       </div>
+
+      {comparisonDate ? (
+        <div className="leaderboard-movement-legend full-leaderboard-movement-legend">
+          <span>
+            <i className="is-up">↑</i>
+            Naik
+          </span>
+
+          <span>
+            <i className="is-down">↓</i>
+            Turun
+          </span>
+
+          <span>
+            <i className="is-same">—</i>
+            Tetap
+          </span>
+
+          <span>
+            <i className="is-new">+</i>
+            Baru
+          </span>
+        </div>
+      ) : null}
 
       {filteredRows.length > 0 && totalPages > 1 ? (
         <nav

@@ -71,6 +71,62 @@ function formatPercentage(value: number) {
   });
 }
 
+function formatLeaderboardDate(
+  value: string | null
+) {
+  if (!value) return null;
+
+  return new Intl.DateTimeFormat(
+    "id-ID",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "Asia/Jakarta",
+    }
+  ).format(
+    new Date(
+      `${value}T00:00:00+07:00`
+    )
+  );
+}
+
+function getMovementSymbol(
+  movement:
+    | "up"
+    | "down"
+    | "same"
+    | "new"
+) {
+  if (movement === "up") return "↑";
+  if (movement === "down") return "↓";
+  if (movement === "new") return "+";
+
+  return "—";
+}
+
+function getMovementLabel(
+  movement:
+    | "up"
+    | "down"
+    | "same"
+    | "new"
+) {
+  if (movement === "up") {
+    return "Peringkat naik";
+  }
+
+  if (movement === "down") {
+    return "Peringkat turun";
+  }
+
+  if (movement === "new") {
+    return "Baru masuk leaderboard";
+  }
+
+  return "Peringkat tetap";
+}
+
 function formatPace(
   seconds: number | null
 ) {
@@ -303,6 +359,12 @@ export default async function DashboardPage() {
     subditLeaderboard.filter(
       (row) =>
         row.gender === "F"
+    );
+
+  const subditComparisonDate =
+    formatLeaderboardDate(
+      subditLeaderboard[0]
+        ?.comparisonDate ?? null
     );
 
   const maleIndividualLeaderboard =
@@ -837,6 +899,15 @@ export default async function DashboardPage() {
             </div>
           </div>
 
+          {subditComparisonDate ? (
+            <div className="leaderboard-comparison-note">
+              Peringkat dibandingkan dengan{" "}
+              <strong>
+                {subditComparisonDate}
+              </strong>
+            </div>
+          ) : null}
+
           <div className="leaderboard-gender-grid">
             <section className="leaderboard-card">
               <div className="leaderboard-card-header">
@@ -875,12 +946,25 @@ export default async function DashboardPage() {
                           key={`${row.subdit}-${row.gender}`}
                         >
                           <td>
-                            <strong>
-                              #
-                              {
-                                row.rank
-                              }
-                            </strong>
+                            <span className="leaderboard-rank-with-movement">
+                              <strong>
+                                #{row.rank}
+                              </strong>
+
+                              <span
+                                className={`leaderboard-rank-movement is-${row.rankMovement}`}
+                                aria-label={getMovementLabel(
+                                  row.rankMovement
+                                )}
+                                title={getMovementLabel(
+                                  row.rankMovement
+                                )}
+                              >
+                                {getMovementSymbol(
+                                  row.rankMovement
+                                )}
+                              </span>
+                            </span>
                           </td>
 
                           <td>
@@ -964,12 +1048,25 @@ export default async function DashboardPage() {
                           key={`${row.subdit}-${row.gender}`}
                         >
                           <td>
-                            <strong>
-                              #
-                              {
-                                row.rank
-                              }
-                            </strong>
+                            <span className="leaderboard-rank-with-movement">
+                              <strong>
+                                #{row.rank}
+                              </strong>
+
+                              <span
+                                className={`leaderboard-rank-movement is-${row.rankMovement}`}
+                                aria-label={getMovementLabel(
+                                  row.rankMovement
+                                )}
+                                title={getMovementLabel(
+                                  row.rankMovement
+                                )}
+                              >
+                                {getMovementSymbol(
+                                  row.rankMovement
+                                )}
+                              </span>
+                            </span>
                           </td>
 
                           <td>
@@ -1014,6 +1111,29 @@ export default async function DashboardPage() {
               </div>
             </section>
           </div>
+          {subditComparisonDate ? (
+            <div className="leaderboard-movement-legend">
+              <span>
+                <i className="is-up">↑</i>
+                Naik
+              </span>
+
+              <span>
+                <i className="is-down">↓</i>
+                Turun
+              </span>
+
+              <span>
+                <i className="is-same">—</i>
+                Tetap
+              </span>
+
+              <span>
+                <i className="is-new">+</i>
+                Baru
+              </span>
+            </div>
+          ) : null}
         </section>
 
         {/* INDIVIDUAL */}

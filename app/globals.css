@@ -7037,3 +7037,167 @@ html {
     box-shadow: none;
   }
 }
+
+/* =========================================================
+   ATLANTIK RUN — LEADERBOARD RANK MOVEMENT
+   ========================================================= */
+
+.leaderboard-comparison-note,
+.full-leaderboard-comparison {
+  color: var(--run-muted-dark);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.leaderboard-comparison-note {
+  margin: 2px 0 -7px;
+}
+
+.full-leaderboard-comparison {
+  padding: 0 16px 11px;
+}
+
+.leaderboard-comparison-note strong,
+.full-leaderboard-comparison strong {
+  color: var(--run-text-soft);
+  font-weight: 600;
+}
+
+
+/* RANK + MOVEMENT */
+
+.leaderboard-rank-with-movement {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.leaderboard-rank-movement {
+  display: inline-flex;
+  width: 11px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+
+  opacity: 0.95;
+}
+
+.leaderboard-rank-movement.is-up {
+  color: #70d9ac;
+}
+
+.leaderboard-rank-movement.is-down {
+  color: #ee8f92;
+}
+
+.leaderboard-rank-movement.is-same {
+  color: #77707f;
+}
+
+.leaderboard-rank-movement.is-new {
+  color: var(--run-purple-soft);
+}
+
+
+/* LEGEND */
+
+.leaderboard-movement-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  margin-top: 9px;
+
+  color: var(--run-muted-dark);
+  font-size: 8px;
+  line-height: 1;
+}
+
+.leaderboard-movement-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.leaderboard-movement-legend i {
+  display: inline-flex;
+  min-width: 10px;
+  justify-content: center;
+
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.leaderboard-movement-legend .is-up {
+  color: #70d9ac;
+}
+
+.leaderboard-movement-legend .is-down {
+  color: #ee8f92;
+}
+
+.leaderboard-movement-legend .is-same {
+  color: #77707f;
+}
+
+.leaderboard-movement-legend .is-new {
+  color: var(--run-purple-soft);
+}
+
+
+/* FULL LEADERBOARD */
+
+.full-leaderboard-movement-legend {
+  margin: 0;
+  padding: 11px 16px;
+
+  border-top: 1px solid
+    rgba(255, 255, 255, 0.05);
+}
+
+
+/* MOBILE */
+
+@media (max-width: 760px) {
+  .leaderboard-comparison-note {
+    margin-bottom: -5px;
+    font-size: 8px;
+  }
+
+  .full-leaderboard-comparison {
+    padding: 0 12px 10px;
+    font-size: 8px;
+  }
+
+  .leaderboard-rank-with-movement {
+    gap: 4px;
+  }
+
+  .leaderboard-rank-movement {
+    width: 9px;
+    font-size: 9px;
+  }
+
+  .leaderboard-movement-legend {
+    gap: 9px;
+    font-size: 7px;
+  }
+
+  .leaderboard-movement-legend i {
+    min-width: 8px;
+    font-size: 9px;
+  }
+
+  .full-leaderboard-movement-legend {
+    padding: 10px 12px;
+  }
+}
