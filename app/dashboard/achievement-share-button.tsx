@@ -156,53 +156,12 @@ function drawCenteredText(
   ctx.restore();
 }
 
-function getAchievementFonts() {
-  const probe =
-    document.createElement(
-      "span"
-    );
-
-  probe.style.position =
-    "fixed";
-
-  probe.style.visibility =
-    "hidden";
-
-  probe.style.pointerEvents =
-    "none";
-
-  probe.style.fontFamily =
-    "var(--font-rammetto), var(--font-open-sans), sans-serif";
-
-  document.body.appendChild(
-    probe
-  );
-
-  const display =
-    getComputedStyle(
-      probe
-    ).fontFamily;
-
-  probe.style.fontFamily =
-    "var(--font-open-sans), sans-serif";
-
-  const body =
-    getComputedStyle(
-      probe
-    ).fontFamily;
-
-  probe.remove();
-
-  return {
-    display:
-      display ||
-      "sans-serif",
-
-    body:
-      body ||
-      "sans-serif",
-  };
-}
+// function getAchievementFonts() {
+//   return {
+//     display: `"Rammetto One", "Open Sans", sans-serif`,
+//     body: `"Open Sans", sans-serif`,
+//   };
+// }
 
 export default function AchievementShareButton({
   nama,
@@ -281,10 +240,10 @@ export default function AchievementShareButton({
       );
     }
 
-    await document.fonts.ready;
+    // await document.fonts.ready;
 
-    const fonts =
-        getAchievementFonts();
+    // const fonts =
+    //     getAchievementFonts();
 
     const gradient =
       ctx.createLinearGradient(
@@ -407,7 +366,7 @@ export default function AchievementShareButton({
     "#8b5cf6";
 
     ctx.font =
-    `400 58px ${fonts.display}`;
+    `400 58px "Rammetto One", "Open Sans", sans-serif`;
 
     ctx.textAlign =
     "left";
@@ -425,7 +384,7 @@ export default function AchievementShareButton({
     );
 
     ctx.font =
-    `700 28px ${fonts.body}`;
+    `700 28px "Open Sans", sans-serif`;
 
     ctx.fillStyle =
     "#ffffff";
@@ -442,7 +401,7 @@ export default function AchievementShareButton({
       ctx,
       "WE MADE IT TO",
       340,
-      "700 42px ${fonts.body}",
+      "700 42px "Open Sans", sans-serif",
       "#ffffff"
     );
 
@@ -450,7 +409,7 @@ export default function AchievementShareButton({
       ctx,
       "THE FINISH LINE!",
       415,
-      "800 72px ${fonts.display}",
+      "800 72px "Rammetto One", "Open Sans", sans-serif",
       "#a855f7"
     );
 
@@ -523,7 +482,7 @@ export default function AchievementShareButton({
         .trim()
         .toUpperCase(),
       1110,
-      "800 56px ${fonts.body}",
+      "800 56px "Open Sans", sans-serif",
       "#ffffff"
     );
 
@@ -531,7 +490,7 @@ export default function AchievementShareButton({
       ctx,
       subdit.toUpperCase(),
       1178,
-      "800 38px ${fonts.body}",
+      "800 38px "Open Sans", sans-serif",
       "#a855f7"
     );
 
@@ -539,7 +498,7 @@ export default function AchievementShareButton({
       ctx,
       "TOTAL DISTANCE",
       1320,
-      "700 28px ${fonts.body}",
+      "700 28px "Open Sans", sans-serif",
       "#a855f7"
     );
 
@@ -549,7 +508,7 @@ export default function AchievementShareButton({
         totalDistance
       ),
       1410,
-      "800 94px ${fonts.display}",
+      "800 94px "Rammetto One", "Open Sans", sans-serif",
       "#ffffff"
     );
 
@@ -557,7 +516,7 @@ export default function AchievementShareButton({
       ctx,
       "KM",
       1480,
-      "800 30px ${fonts.body}",
+      "800 30px "Open Sans", sans-serif",
       "#a855f7"
     );
 
@@ -642,7 +601,7 @@ export default function AchievementShareButton({
           "#a855f7";
 
         ctx.font =
-          "800 56px ${fonts.body}";
+          "800 56px "Open Sans", sans-serif";
 
         ctx.fillText(
           value,
@@ -655,7 +614,7 @@ export default function AchievementShareButton({
           "#ffffff";
 
         ctx.font =
-          "600 24px ${fonts.body}";
+          "600 24px "Open Sans", sans-serif";
 
         ctx.fillText(
           label,
@@ -672,7 +631,7 @@ export default function AchievementShareButton({
       ctx,
       "Thank you for running with us.",
       1815,
-      "500 30px ${fonts.body}",
+      "500 30px "Open Sans", sans-serif",
       "#ffffff"
     );
 
@@ -680,7 +639,7 @@ export default function AchievementShareButton({
       ctx,
       "SEE YOU ON THE NEXT CHALLENGE!",
       1865,
-      "800 30px ${fonts.body}",
+      "800 30px "Open Sans", sans-serif",
       "#a855f7"
     );
 
