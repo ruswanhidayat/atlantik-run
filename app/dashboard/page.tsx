@@ -23,6 +23,9 @@ import {
 import LastReportingDayNotice
   from "./last-reporting-day-notice";
 
+import AchievementShareButton
+  from "./achievement-share-button";
+
 type ActivityStatus = {
   tanggal: string;
   status: number;
@@ -204,14 +207,17 @@ export default async function DashboardPage() {
   // TEMPORARY:
   // NIP ini dipakai untuk preview indikator sebelum periode lomba.
   // Hapus pengecualian ini setelah testing selesai.
-  const isLiveTestUser =
-    // user.nip === "921102040";
-    false;
-  
-  // const showLastReportingDayNotice =
-  //   isLastReportingDayForUser(
-  //     user.nip
-  //   );
+  const isTestUser =
+    user.nip === "921102040";
+
+  const closingStartsAt =
+    new Date(
+      "2026-08-17T21:00:00+07:00"
+    );
+
+  const showClosingCard =
+    isTestUser ||
+    new Date() >= closingStartsAt;
   const runtime =
     getAtlantikRuntime(
       user.nip
@@ -514,6 +520,61 @@ export default async function DashboardPage() {
             </span>
           )}
         </section>
+
+        {showClosingCard ? (
+          <section className="run-closing-card">
+            <div
+              className="run-closing-card__icon"
+              aria-hidden="true"
+            >
+              🏁
+            </div>
+
+            <div className="run-closing-card__content">
+              <span className="run-closing-card__eyebrow">
+                ATLANTIK RUN
+              </span>
+
+              <h2 className="run-closing-card__title">
+                We made it to the finish line!
+              </h2>
+
+              <p className="run-closing-card__text">
+                Atlantik Run telah selesai.
+                Terima kasih untuk seluruh peserta
+                yang sudah berlari, mencatat kilometer,
+                dan ikut membawa semangat kompetisi
+                antar-Subdit selama kegiatan berlangsung.
+              </p>
+
+              <p className="run-closing-card__message">
+                Menang atau tidak, setiap kilometer
+                tetap berarti.
+                <br />
+
+                <strong>
+                  Thank you for running with us.
+                  See you on the next challenge!
+                </strong>
+              </p>
+
+              <AchievementShareButton
+                nama={user.nama}
+                subdit={user.subdit}
+                gender={user.gender}
+                totalDistance={
+                  personalStats.totalDistance
+                }
+                genderRank={
+                  personalStats.genderRank
+                }
+                overallRank={
+                  personalStats.overallRank
+                }
+              />
+            </div>
+          </section>
+        ) : null}
 
         {/* RECAP */}
         <section className="dashboard-recap-v2">
