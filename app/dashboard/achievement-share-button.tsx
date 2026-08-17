@@ -497,7 +497,7 @@ export default function AchievementShareButton({
         trophyWidth / 2;
 
         const trophyY =
-        460;
+        440;
 
         /*
         * Glow lembut di belakang trophy.
