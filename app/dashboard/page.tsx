@@ -234,7 +234,7 @@ export default async function DashboardPage() {
     runtime.currentMinutes < 21 * 60;
 
   const showCompetitionLive =
-    isLiveTestUser ||
+    // isLiveTestUser ||
     isCompetitionLive();
 
   const [
