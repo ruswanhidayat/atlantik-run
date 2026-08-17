@@ -482,7 +482,7 @@ export default function AchievementShareButton({
 
     if (trophy) {
         const trophyWidth =
-        700;
+        750;
 
         const trophyRatio =
         trophy.height /
@@ -497,7 +497,7 @@ export default function AchievementShareButton({
         trophyWidth / 2;
 
         const trophyY =
-        480;
+        460;
 
         /*
         * Glow lembut di belakang trophy.
