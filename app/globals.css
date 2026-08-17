@@ -7472,18 +7472,23 @@ html {
 .achievement-modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 9999;
 
-  display: grid;
-  place-items: center;
+  z-index: 2147483000;
 
-  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  overflow-y: auto;
 
   background:
-    rgba(5, 4, 12, 0.72);
+    rgba(5, 4, 12, 0.82);
 
   backdrop-filter:
     blur(10px);
+
   -webkit-backdrop-filter:
     blur(10px);
 }
@@ -7497,7 +7502,9 @@ html {
   );
 
   max-height:
-    calc(100dvh - 40px);
+    calc(
+      100dvh - 48px
+    );
 
   overflow-y: auto;
 
@@ -7923,10 +7930,11 @@ html {
   max-width: 640px
 ) {
   .achievement-modal-backdrop {
-    align-items:
-      end;
+    align-items: center;
+    justify-content: center;
 
-    padding: 10px;
+    padding:
+      16px 12px;
   }
 
   .achievement-modal {
@@ -7934,17 +7942,14 @@ html {
 
     max-height:
       calc(
-        100dvh -
-        20px
+        100dvh - 32px
       );
 
     padding:
       24px 18px
       20px;
 
-    border-radius:
-      22px 22px
-      16px 16px;
+    border-radius: 20px;
   }
 
   .achievement-summary {

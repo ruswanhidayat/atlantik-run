@@ -1,9 +1,14 @@
 "use client";
 
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
+
+import {
+  createPortal,
+} from "react-dom";
 
 type AchievementShareButtonProps = {
   nama: string;
@@ -152,31 +157,50 @@ function drawCenteredText(
 }
 
 function getAchievementFonts() {
-  const styles =
-    getComputedStyle(
-      document.documentElement
+  const probe =
+    document.createElement(
+      "span"
     );
 
-  const rammetto =
-    styles
-      .getPropertyValue(
-        "--font-rammetto"
-      )
-      .trim();
+  probe.style.position =
+    "fixed";
 
-  const openSans =
-    styles
-      .getPropertyValue(
-        "--font-open-sans"
-      )
-      .trim();
+  probe.style.visibility =
+    "hidden";
+
+  probe.style.pointerEvents =
+    "none";
+
+  probe.style.fontFamily =
+    "var(--font-rammetto), var(--font-open-sans), sans-serif";
+
+  document.body.appendChild(
+    probe
+  );
+
+  const display =
+    getComputedStyle(
+      probe
+    ).fontFamily;
+
+  probe.style.fontFamily =
+    "var(--font-open-sans), sans-serif";
+
+  const body =
+    getComputedStyle(
+      probe
+    ).fontFamily;
+
+  probe.remove();
 
   return {
     display:
-      `${rammetto}, ${openSans}, sans-serif`,
+      display ||
+      "sans-serif",
 
     body:
-      `${openSans}, sans-serif`,
+      body ||
+      "sans-serif",
   };
 }
 
@@ -218,6 +242,21 @@ export default function AchievementShareButton({
           : "FEMALE RANK",
       [gender]
     );
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow =
+        document.body.style.overflow;
+
+    document.body.style.overflow =
+        "hidden";
+
+    return () => {
+        document.body.style.overflow =
+        previousOverflow;
+    };
+    }, [isOpen]);
 
   async function generateImage() {
     const canvas =
@@ -671,262 +710,238 @@ export default function AchievementShareButton({
     );
   }
 
-  async function handleShare() {
+  async function handleDownload() {
     setError(null);
+
     setIsGenerating(
-      true
+        true
     );
 
     try {
-      const blob =
+        const blob =
         await generateImage();
 
-      const file =
-        new File(
-          [blob],
-          "atlantik-run-achievement.png",
-          {
-            type:
-              "image/png",
-          }
-        );
-
-      if (
-        navigator.share &&
-        navigator.canShare?.({
-          files: [file],
-        })
-      ) {
-        await navigator.share({
-          title:
-            "Atlantik Run — My Achievement",
-          text:
-            "We made it to the finish line! 🏁",
-          files: [file],
-        });
-
-        return;
-      }
-
-      const url =
+        const url =
         URL.createObjectURL(
-          blob
+            blob
         );
 
-      const link =
+        const link =
         document.createElement(
-          "a"
+            "a"
         );
 
-      link.href =
+        link.href =
         url;
 
-      link.download =
+        link.download =
         "atlantik-run-achievement.png";
 
-      document.body.appendChild(
+        document.body.appendChild(
         link
-      );
+        );
 
-      link.click();
+        link.click();
 
-      link.remove();
+        link.remove();
 
-      URL.revokeObjectURL(
-        url
-      );
+        window.setTimeout(
+        () => {
+            URL.revokeObjectURL(
+            url
+            );
+        },
+        1000
+        );
     } catch (err) {
-      console.error(
-        err
-      );
+        console.error(err);
 
-      setError(
+        setError(
         "Gagal membuat achievement image. Coba lagi."
-      );
+        );
     } finally {
-      setIsGenerating(
+        setIsGenerating(
         false
-      );
+        );
     }
-  }
+    }
 
   return (
     <>
-      <button
+        <button
         type="button"
         className="run-achievement-button"
         onClick={() =>
-          setIsOpen(true)
+            setIsOpen(true)
         }
-      >
+        >
         <span>
-          Share My Achievement
+            Share My Achievement
         </span>
 
-        <span
-          aria-hidden="true"
-        >
-          ↗
+        <span aria-hidden="true">
+            ↗
         </span>
-      </button>
+        </button>
 
-      {isOpen ? (
-        <div
-          className="achievement-modal-backdrop"
-          role="presentation"
-          onMouseDown={() =>
-            setIsOpen(false)
-          }
-        >
-          <section
-            className="achievement-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="achievement-modal-title"
-            onMouseDown={(
-              event
-            ) =>
-              event.stopPropagation()
-            }
-          >
-            <button
-              type="button"
-              className="achievement-modal-close"
-              onClick={() =>
-                setIsOpen(
-                  false
-                )
-              }
-              aria-label="Tutup"
-            >
-              ×
-            </button>
-
-            <span className="achievement-modal-kicker">
-              ATLANTIK RUN
-            </span>
-
-            <h2 id="achievement-modal-title">
-              Share Your Achievement
-            </h2>
-
-            <p className="achievement-modal-description">
-              Kamu bisa menyesuaikan
-              nama yang tampil sebelum
-              achievement image dibuat.
-            </p>
-
-            <label className="achievement-field">
-              <span>
-                Nama yang ditampilkan
-              </span>
-
-              <input
-                type="text"
-                value={
-                  editableName
+        {isOpen &&
+        typeof document !==
+        "undefined"
+        ? createPortal(
+            <div
+                className="achievement-modal-backdrop"
+                role="presentation"
+                onMouseDown={() =>
+                setIsOpen(false)
                 }
-                maxLength={32}
-                onChange={(
-                  event
-                ) =>
-                  setEditableName(
+            >
+                <section
+                className="achievement-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="achievement-modal-title"
+                onMouseDown={(
                     event
-                      .target
-                      .value
-                  )
+                ) =>
+                    event.stopPropagation()
                 }
-              />
+                >
+                <button
+                    type="button"
+                    className="achievement-modal-close"
+                    onClick={() =>
+                    setIsOpen(
+                        false
+                    )
+                    }
+                    aria-label="Tutup"
+                >
+                    ×
+                </button>
 
-              <small>
-                {
-                  editableName.length
+                <span className="achievement-modal-kicker">
+                    ATLANTIK RUN
+                </span>
+
+                <h2 id="achievement-modal-title">
+                    Share Your Achievement
+                </h2>
+
+                <p className="achievement-modal-description">
+                    Kamu bisa menyesuaikan
+                    nama yang tampil sebelum
+                    achievement image dibuat.
+                </p>
+
+                <label className="achievement-field">
+                    <span>
+                    Nama yang ditampilkan
+                    </span>
+
+                    <input
+                    type="text"
+                    value={
+                        editableName
+                    }
+                    maxLength={32}
+                    onChange={(
+                        event
+                    ) =>
+                        setEditableName(
+                        event
+                            .target
+                            .value
+                        )
+                    }
+                    />
+
+                    <small>
+                    {
+                        editableName.length
+                    }
+                    /32
+                    </small>
+                </label>
+
+                <div className="achievement-summary">
+                    <div>
+                    <span>
+                        Subdit
+                    </span>
+
+                    <strong>
+                        {subdit}
+                    </strong>
+                    </div>
+
+                    <div>
+                    <span>
+                        Total Jarak
+                    </span>
+
+                    <strong>
+                        {formatDistance(
+                        totalDistance
+                        )}{" "}
+                        km
+                    </strong>
+                    </div>
+
+                    <div>
+                    <span>
+                        {genderLabel}
+                    </span>
+
+                    <strong>
+                        {genderRank
+                        ? `#${genderRank}`
+                        : "-"}
+                    </strong>
+                    </div>
+
+                    <div>
+                    <span>
+                        Overall Rank
+                    </span>
+
+                    <strong>
+                        {overallRank
+                        ? `#${overallRank}`
+                        : "-"}
+                    </strong>
+                    </div>
+                </div>
+
+                {error ? (
+                    <p className="achievement-error">
+                    {error}
+                    </p>
+                ) : null}
+
+                <button
+                type="button"
+                className="achievement-share-submit"
+                disabled={
+                    isGenerating ||
+                    !editableName.trim()
                 }
-                /32
-              </small>
-            </label>
+                onClick={handleDownload}
+                >
+                {isGenerating
+                    ? "Membuat Image..."
+                    : "Share Achievement"}
+                </button>
 
-            <div className="achievement-summary">
-              <div>
-                <span>
-                  Subdit
-                </span>
-
-                <strong>
-                  {subdit}
-                </strong>
-              </div>
-
-              <div>
-                <span>
-                  Total Jarak
-                </span>
-
-                <strong>
-                  {formatDistance(
-                    totalDistance
-                  )}{" "}
-                  km
-                </strong>
-              </div>
-
-              <div>
-                <span>
-                  {genderLabel}
-                </span>
-
-                <strong>
-                  {genderRank
-                    ? `#${genderRank}`
-                    : "-"}
-                </strong>
-              </div>
-
-              <div>
-                <span>
-                  Overall Rank
-                </span>
-
-                <strong>
-                  {overallRank
-                    ? `#${overallRank}`
-                    : "-"}
-                </strong>
-              </div>
-            </div>
-
-            {error ? (
-              <p className="achievement-error">
-                {error}
-              </p>
-            ) : null}
-
-            <button
-              type="button"
-              className="achievement-share-submit"
-              disabled={
-                isGenerating ||
-                !editableName.trim()
-              }
-              onClick={
-                handleShare
-              }
-            >
-              {isGenerating
-                ? "Membuat Image..."
-                : "Share Achievement"}
-            </button>
-
-            <p className="achievement-share-note">
-              Jika perangkat
-              mendukung sharing file,
-              menu share akan terbuka.
-              Jika tidak, gambar akan
-              otomatis disimpan.
-            </p>
-          </section>
-        </div>
-      ) : null}
+                <p className="achievement-share-note">
+                Gambar akan dibuat dalam
+                format Instagram Story
+                dan disimpan ke perangkatmu.
+                </p>
+                </section>
+            </div>,
+            document.body
+            )
+        : null}
     </>
-  );
+    );
 }
