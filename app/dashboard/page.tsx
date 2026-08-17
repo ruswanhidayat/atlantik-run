@@ -541,10 +541,7 @@ export default async function DashboardPage() {
 
               <p className="run-closing-card__text">
                 Atlantik Run telah selesai.
-                Terima kasih untuk seluruh peserta
-                yang sudah berlari, mencatat kilometer,
-                dan ikut membawa semangat kompetisi
-                antar-Subdit selama kegiatan berlangsung.
+                Terima kasih untuk seluruh peserta yang sudah berlari, mencatat kilometer, dan ikut membawa semangat kompetisi antar-Subdit selama kegiatan berlangsung.
               </p>
 
               <p className="run-closing-card__message">

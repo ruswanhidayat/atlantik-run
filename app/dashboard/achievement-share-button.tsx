@@ -427,7 +427,7 @@ export default function AchievementShareButton({
     */
     if (logo) {
         const logoWidth =
-        145;
+        180;
 
         const ratio =
         logo.height /
@@ -482,7 +482,7 @@ export default function AchievementShareButton({
 
     if (trophy) {
         const trophyWidth =
-        640;
+        700;
 
         const trophyRatio =
         trophy.height /
@@ -497,7 +497,7 @@ export default function AchievementShareButton({
         trophyWidth / 2;
 
         const trophyY =
-        485;
+        480;
 
         /*
         * Glow lembut di belakang trophy.
@@ -626,25 +626,89 @@ export default function AchievementShareButton({
         1240,
         `700 27px "Open Sans", sans-serif`,
         "#b56cff"
-    );
+        );
 
-    drawCenteredText(
-        ctx,
+        const distanceText =
         formatDistance(
-        totalDistance
-        ),
-        1320,
-        `800 88px "Rammetto One", "Open Sans", sans-serif`,
-        "#ffffff"
-    );
+            totalDistance
+        );
 
-    drawCenteredText(
-        ctx,
+        const distanceFont =
+        `800 88px "Rammetto One", "Open Sans", sans-serif`;
+
+        const distanceUnitFont =
+        `800 30px "Open Sans", sans-serif`;
+
+        const distanceGap =
+        18;
+
+        ctx.save();
+
+        ctx.font =
+        distanceFont;
+
+        const distanceWidth =
+        ctx.measureText(
+            distanceText
+        ).width;
+
+        ctx.font =
+        distanceUnitFont;
+
+        const unitWidth =
+        ctx.measureText(
+            "KM"
+        ).width;
+
+        const distanceGroupWidth =
+        distanceWidth +
+        distanceGap +
+        unitWidth;
+
+        const distanceStartX =
+        STORY_WIDTH / 2 -
+        distanceGroupWidth / 2;
+
+        const distanceBaselineY =
+        1340;
+
+        /* ANGKA */
+
+        ctx.font =
+        distanceFont;
+
+        ctx.fillStyle =
+        "#ffffff";
+
+        ctx.textAlign =
+        "left";
+
+        ctx.textBaseline =
+        "alphabetic";
+
+        ctx.fillText(
+        distanceText,
+        distanceStartX,
+        distanceBaselineY
+        );
+
+        /* KM */
+
+        ctx.font =
+        distanceUnitFont;
+
+        ctx.fillStyle =
+        "#a855f7";
+
+        ctx.fillText(
         "KM",
-        1380,
-        `800 28px "Open Sans", sans-serif`,
-        "#a855f7"
-    );
+        distanceStartX +
+            distanceWidth +
+            distanceGap,
+        distanceBaselineY
+        );
+
+        ctx.restore();
 
     /*
     * =========================
@@ -1039,13 +1103,11 @@ export default function AchievementShareButton({
                 >
                 {isGenerating
                     ? "Membuat Image..."
-                    : "Share Achievement"}
+                    : "Download"}
                 </button>
 
                 <p className="achievement-share-note">
-                Gambar akan dibuat dalam
-                format Instagram Story
-                dan disimpan ke perangkatmu.
+                Gambar akan dibuat dalam format Instagram Story dan disimpan ke perangkatmu.
                 </p>
                 </section>
             </div>,
