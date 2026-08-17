@@ -472,146 +472,150 @@ export default function AchievementShareButton({
 
     /*
     * =========================
-    * TROPHY
+    * TROPHY + PERSONAL CARD
     * =========================
-    *
-    * Dibuat lebih besar dan
-    * diposisikan di pusat ribbon
-    * background.
+    */
+
+    const trophyWidth =
+    750;
+
+    const trophyRatio =
+    trophy
+        ? trophy.height /
+        trophy.width
+        : 1;
+
+    const trophyHeight =
+    trophyWidth *
+    trophyRatio;
+
+    const trophyX =
+    STORY_WIDTH / 2 -
+    trophyWidth / 2;
+
+    const trophyY =
+    410;
+
+    /*
+    * Glow di belakang trophy.
     */
 
     if (trophy) {
-        const trophyWidth =
-        750;
+    ctx.save();
 
-        const trophyRatio =
-        trophy.height /
-        trophy.width;
-
-        const trophyHeight =
-        trophyWidth *
-        trophyRatio;
-
-        const trophyX =
-        STORY_WIDTH / 2 -
-        trophyWidth / 2;
-
-        const trophyY =
-        440;
-
-        /*
-        * Glow lembut di belakang trophy.
-        */
-        ctx.save();
-
-        const trophyGlow =
+    const trophyGlow =
         ctx.createRadialGradient(
-            STORY_WIDTH / 2,
-            trophyY +
+        STORY_WIDTH / 2,
+        trophyY +
             trophyHeight * 0.48,
-            40,
-            STORY_WIDTH / 2,
-            trophyY +
+        40,
+        STORY_WIDTH / 2,
+        trophyY +
             trophyHeight * 0.48,
-            340
+        340
         );
 
-        trophyGlow.addColorStop(
+    trophyGlow.addColorStop(
         0,
         "rgba(168, 85, 247, 0.22)"
-        );
+    );
 
-        trophyGlow.addColorStop(
+    trophyGlow.addColorStop(
         1,
         "rgba(168, 85, 247, 0)"
-        );
+    );
 
-        ctx.fillStyle =
+    ctx.fillStyle =
         trophyGlow;
 
-        ctx.fillRect(
+    ctx.fillRect(
         170,
         430,
         740,
         700
-        );
+    );
 
-        ctx.restore();
-
-        ctx.drawImage(
-        trophy,
-        trophyX,
-        trophyY,
-        trophyWidth,
-        trophyHeight
-        );
+    ctx.restore();
     }
 
     /*
-    * =========================
     * PERSONAL CARD
-    * =========================
     */
 
     const cardX =
-        105;
+    105;
 
     const cardY =
-        1015;
+    1015;
 
     const cardWidth =
-        STORY_WIDTH - 210;
+    STORY_WIDTH - 210;
 
     const cardHeight =
-        170;
+    170;
 
     ctx.save();
 
     roundedRect(
-        ctx,
-        cardX,
-        cardY,
-        cardWidth,
-        cardHeight,
-        30
+    ctx,
+    cardX,
+    cardY,
+    cardWidth,
+    cardHeight,
+    30
     );
 
     ctx.fillStyle =
-        "rgba(10, 7, 27, 0.74)";
+    "rgba(10, 7, 27, 0.74)";
 
     ctx.fill();
 
     ctx.strokeStyle =
-        "rgba(168, 85, 247, 0.72)";
+    "rgba(168, 85, 247, 0.72)";
 
     ctx.lineWidth =
-        3;
+    3;
 
     ctx.stroke();
 
     ctx.restore();
 
     /*
-    * Nama + Subdit benar-benar
-    * vertically centered.
+    * Trophy digambar SETELAH card,
+    * supaya pedestal berada di depan card.
+    */
+
+    if (trophy) {
+    ctx.drawImage(
+        trophy,
+        trophyX,
+        trophyY,
+        trophyWidth,
+        trophyHeight
+    );
+    }
+
+    /*
+    * Nama + Subdit digambar paling akhir,
+    * supaya tetap berada di depan trophy.
     */
 
     drawCenteredText(
-        ctx,
-        editableName
+    ctx,
+    editableName
         .trim()
         .toUpperCase(),
-        cardY + 62,
-        `800 54px "Open Sans", sans-serif`,
-        "#ffffff"
+    cardY + 62,
+    `800 54px "Open Sans", sans-serif`,
+    "#ffffff"
     );
 
     drawCenteredText(
-        ctx,
-        subdit.toUpperCase(),
-        cardY + 118,
-        `800 34px "Open Sans", sans-serif`,
-        "#a855f7"
+    ctx,
+    subdit.toUpperCase(),
+    cardY + 118,
+    `800 34px "Open Sans", sans-serif`,
+    "#a855f7"
     );
 
     /*
